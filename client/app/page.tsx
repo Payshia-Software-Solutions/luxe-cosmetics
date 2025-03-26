@@ -1,7 +1,10 @@
 import React from 'react';
 import Hero from '@/components/Hero';
 import FeaturedProducts from '@/components/FeaturedProducts';
+import BrandGrid from '@/components/BrandGrid';
 import TrendingProducts from '@/components/TrendingProducts';
+import CategoryGrid from '@/components/CategoryGrid';
+import CTA from '@/components/CTA';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -18,7 +21,10 @@ export default function Home() {
     <div>
       <Hero />
       <FeaturedProducts />
+      <BrandGrid />
       <TrendingProducts />
+      <CategoryGrid Category="Serum" />
+      <CTA />
     </div>
   );
 }

@@ -9,55 +9,14 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Image from 'next/image';
-
-const products = [
-  {
-    id: '1',
-    slug: 'natural-glow-serum',
-    name: 'Natural Glow Serum',
-    price: 49.99,
-    rating: 4.8,
-    image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: '2',
-    slug: 'hydrating-face-cream',
-    name: 'Hydrating Face Cream',
-    price: 39.99,
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: '3',
-    slug: 'rose-water-toner',
-    name: 'Rose Water Toner',
-    price: 24.99,
-    rating: 4.7,
-    image: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: '4',
-    slug: 'vitamin-c-moisturizer',
-    name: 'Vitamin C Moisturizer',
-    price: 54.99,
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: '5',
-    slug: 'vitamin-c-moisturizer',
-    name: 'Vitamin C Moisturizer',
-    price: 54.99,
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
-  }
-];
+import { products } from '@/data/products';
 
 export default function FeaturedProducts() {
   return (
-    <section className="py-16 dark:bg-[#1c3c34] bg-[#fff0e9] transition-colors">
+    <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+
+        <h2 className="text-5xl font-bold text-gray-900 dark:text-white border-b pb-2 mb-2">
           Featured Products
         </h2>
 
@@ -83,10 +42,10 @@ export default function FeaturedProducts() {
           {products.map((product) => (
             <SwiperSlide key={product.id}>
               <Link href={`/products/${product.slug}`}>
-                <div className="bg-white dark:bg-[#1e1e1e] rounded-lg shadow overflow-hidden transition-transform hover:shadow-lg mt-3 mb-12">
+                <div className="bg-white dark:bg-[#1c3c34] rounded-lg shadow overflow-hidden transition-transform hover:shadow-lg mt-3 mb-12">
                   <div className="aspect-w-1 aspect-h-1">
                     <Image
-                      src={product.image}
+                      src={product.images[0]}
                       alt={product.name}
                       className="w-full h-64 object-cover"
                       width={1000}
@@ -94,7 +53,7 @@ export default function FeaturedProducts() {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2 line-clamp-1">
                       {product.name}
                     </h3>
                     <div className="flex items-center mb-2">
@@ -117,6 +76,7 @@ export default function FeaturedProducts() {
             </SwiperSlide>
           ))}
         </Swiper>
+
       </div>
     </section>
   );
