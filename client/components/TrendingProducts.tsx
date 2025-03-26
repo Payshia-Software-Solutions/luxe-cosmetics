@@ -44,7 +44,7 @@ export default function TrendingProducts() {
           {trendingProducts.map((product) => (
             <div
               key={product.id}
-              className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+              className="group relative  rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
             >
               <div className="aspect-w-1 aspect-h-1">
                 <Image
