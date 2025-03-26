@@ -17,7 +17,7 @@ export default function BrandGrid() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-5">
-            <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-8">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
                 Our Cosmetic Brands
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">

@@ -12,7 +12,7 @@ export default function CategoryGrid({ Category }: CategoryViewProps) {
     <section className="py-16 bg-white dark:bg-[#1e1e1e] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 mb-8">
-          <h2 className="text-5xl font-bold text-gray-900 dark:text-white border-b-2 pb-2">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b-2 pb-2">
             {Category}
           </h2>
         </div>
@@ -25,7 +25,7 @@ export default function CategoryGrid({ Category }: CategoryViewProps) {
                   <Image
                     src={product.images[0]}
                     alt={product.name}
-                    className="w-full h-64 object-cover"
+                    className="w-full h-48 object-cover"
                     width={1000}
                     height={1000}
                   />

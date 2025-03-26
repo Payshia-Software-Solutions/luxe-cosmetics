@@ -11,13 +11,13 @@ export default function TrendingProducts() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 mb-8">
           <Sparkles className="h-8 w-8 text-pink-600" />
-          <h2 className="text-5xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
             Trending Now
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {products.map((product) => (
+          {products.slice(0, 3).map((product) => (
             <div
               key={product.id}
               className="group relative  rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
