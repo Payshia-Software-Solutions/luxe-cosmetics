@@ -236,12 +236,18 @@ export default function ProductView({ product }: ProductViewProps) {
 
           <Swiper
             modules={[Navigation, Pagination]}
-            spaceBetween={20}
+            spaceBetween={5}
             slidesPerView={1.5}
             breakpoints={{
               640: { slidesPerView: 2.5 },
-              1024: { slidesPerView: 3.5 },
-              1280: { slidesPerView: 4.5 }
+              1024: {
+                slidesPerView: 3.5,
+                spaceBetween: 15
+              },
+              1280: {
+                slidesPerView: 4.5,
+                spaceBetween: 20
+              }
             }}
             navigation={false}
             pagination={{ clickable: true }}
