@@ -83,8 +83,8 @@ export default function FeaturedProducts() {
                       src={product.image}
                       alt={product.name}
                       className="w-full h-64 object-cover"
-                      width={100}
-                      height={100}
+                      width={1000}
+                      height={1000}
                     />
                   </div>
                   <div className="p-4">

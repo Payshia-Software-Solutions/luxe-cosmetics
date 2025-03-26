@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Star, Heart, Share2, Minus, Plus, ShoppingCart, ChevronRight } from 'lucide-react';
 
 import type { Product } from '@/data/products';
+import { products } from '@/data/products';
+
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -15,9 +17,10 @@ export default function ProductView({ product }: ProductViewProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState('description');
 
-  // const relatedProducts = products
-  //   .filter(p => p.category === product.category && p.id !== product.id)
-  //   .slice(0, 3);
+  const relatedProducts = products
+    .filter(p => p.category === product?.category && p.id !== product?.id)
+    .slice(0, 4); // Limiting to 4 related products
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -41,8 +44,8 @@ export default function ProductView({ product }: ProductViewProps) {
               src={product.images[selectedImage]}
               alt={product.name}
               className="w-full h-[600px] object-cover"
-              width={100}
-              height={100}
+              width={1000}
+              height={1000}
             />
           </div>
           <div className="grid grid-cols-3 gap-4">
@@ -54,8 +57,8 @@ export default function ProductView({ product }: ProductViewProps) {
                   }`}
               >
                 <Image src={image} alt="" className="w-full h-24 object-cover"
-                  width={100}
-                  height={100} />
+                  width={1000}
+                  height={1000} />
               </button>
             ))}
           </div>
@@ -220,18 +223,20 @@ export default function ProductView({ product }: ProductViewProps) {
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
           Related Products
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* {relatedProducts.map((product) => (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {relatedProducts.map((product) => (
             <Link
-              to={`/product/${product.slug}`}
+              href={`/product/${product.slug}`}
               key={product.id}
               className="group bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
             >
               <div className="aspect-w-1 aspect-h-1">
-                <img
+                <Image
                   src={product.images[0]}
                   alt={product.name}
                   className="w-full h-64 object-cover transform transition-transform group-hover:scale-105"
+                  width={100}
+                  height={100}
                 />
               </div>
               <div className="p-4">
@@ -254,7 +259,7 @@ export default function ProductView({ product }: ProductViewProps) {
                 </div>
               </div>
             </Link>
-          ))} */}
+          ))}
         </div>
       </div>
     </div>

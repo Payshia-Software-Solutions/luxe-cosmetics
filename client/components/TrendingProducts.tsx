@@ -51,8 +51,8 @@ export default function TrendingProducts() {
                   src={product.image}
                   alt={product.name}
                   className="w-full h-80 object-cover transform transition-transform group-hover:scale-105"
-                  width={100}
-                  height={100}
+                  width={1000}
+                  height={1000}
                 />
                 <div className="absolute top-4 right-4 bg-pink-600 text-white px-3 py-1 rounded-full text-sm">
                   {product.sales}+ sold
