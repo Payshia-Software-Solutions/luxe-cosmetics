@@ -128,3 +128,14 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.truncate-2-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* Limit the text to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* Hide the text that overflows */
+  text-overflow: ellipsis;
+  /* Optional: add ellipsis (…) for overflowed text */
+}
