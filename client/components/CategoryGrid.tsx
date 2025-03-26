@@ -17,10 +17,10 @@ export default function CategoryGrid({ Category }: CategoryViewProps) {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-y-4 md:gap-x-8">
           {products.map((product) => (
             <Link key={product.id} href={`/products/${product.slug}`}>
-              <div className="bg-white dark:bg-[#1c3c34] rounded-lg shadow overflow-hidden transition-transform hover:shadow-lg mt-3 mb-12">
+              <div className="bg-white dark:bg-[#1c3c34] rounded-lg shadow overflow-hidden transition-transform hover:shadow-lg mt-3">
                 <div className="aspect-w-1 aspect-h-1">
                   <Image
                     src={product.images[0]}
@@ -31,7 +31,7 @@ export default function CategoryGrid({ Category }: CategoryViewProps) {
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2  line-clamp-1">
                     {product.name}
                   </h3>
                   <div className="flex items-center mb-2">
