@@ -4,6 +4,7 @@ import { Star, Heart, Share2, Minus, Plus, ShoppingCart, ChevronRight } from 'lu
 
 import type { Product } from '@/data/products';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface ProductViewProps {
   product: Product;
@@ -36,10 +37,12 @@ export default function ProductView({ product }: ProductViewProps) {
         {/* Product Images */}
         <div className="space-y-4">
           <div className="aspect-w-1 aspect-h-1 rounded-2xl overflow-hidden">
-            <img
+            <Image
               src={product.images[selectedImage]}
               alt={product.name}
               className="w-full h-[600px] object-cover"
+              width={100}
+              height={100}
             />
           </div>
           <div className="grid grid-cols-3 gap-4">
@@ -50,7 +53,9 @@ export default function ProductView({ product }: ProductViewProps) {
                 className={`rounded-lg overflow-hidden border-2 ${selectedImage === index ? 'border-pink-600' : 'border-transparent'
                   }`}
               >
-                <img src={image} alt="" className="w-full h-24 object-cover" />
+                <Image src={image} alt="" className="w-full h-24 object-cover"
+                  width={100}
+                  height={100} />
               </button>
             ))}
           </div>

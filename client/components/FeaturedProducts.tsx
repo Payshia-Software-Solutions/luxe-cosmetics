@@ -8,6 +8,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import Image from 'next/image';
 
 const products = [
   {
@@ -78,10 +79,12 @@ export default function FeaturedProducts() {
               <Link href={`/products/${product.slug}`}>
                 <div className="bg-white dark:bg-[#1e1e1e] rounded-lg shadow overflow-hidden transition-transform hover:shadow-lg mt-3 mb-12">
                   <div className="aspect-w-1 aspect-h-1">
-                    <img
+                    <Image
                       src={product.image}
                       alt={product.name}
                       className="w-full h-64 object-cover"
+                      width={100}
+                      height={100}
                     />
                   </div>
                   <div className="p-4">

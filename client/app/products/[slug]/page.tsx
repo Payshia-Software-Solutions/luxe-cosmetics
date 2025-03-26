@@ -1,38 +1,91 @@
 import ProductView from "@/components/ProductView";
 import type { Product } from '@/data/products';
 
-// Simulated product data (Replace this with an API call)
+// Simulated product data (Replace this with an API call in a real project)
 const products: Product[] = [
     {
-        id: "1",
-        slug: "natural-glow-serum",
-        name: "Natural Glow Serum",
+        id: '1',
+        slug: 'natural-glow-serum',
+        name: 'Natural Glow Serum',
         price: 49.99,
         rating: 4.8,
-        review: 120,
-        description: "A premium serum for glowing skin.",
-        longDescription: "Our Natural Glow Serum is infused with Vitamin C and Hyaluronic Acid to give you a radiant complexion.",
-        benefits: ["Hydrates skin", "Reduces dark spots", "Enhances glow"],
-        specifications: { Volume: "30ml", "Skin Type": "All" },
-        ingredients: "Vitamin C, Hyaluronic Acid, Aloe Vera",
+        review: 128,
+        description: 'Our bestselling Natural Glow Serum is formulated with powerful antioxidants and natural ingredients to give your skin a radiant, healthy glow. This lightweight serum absorbs quickly and works for all skin types.',
+        longDescription: `
+          Transform your skincare routine with our Natural Glow Serum, a revolutionary formula designed to enhance your skin's natural radiance while providing deep nourishment and protection.
+    
+          This lightweight yet powerful serum combines the latest in skincare technology with natural ingredients to deliver visible results. The fast-absorbing formula penetrates deeply into the skin, working at a cellular level to improve texture, tone, and overall skin health.
+    
+          Perfect for all skin types, this serum can be used both morning and night as part of your daily skincare routine. Its non-comedogenic formula ensures it won't clog pores while delivering essential nutrients to your skin.
+        `,
+        benefits: [
+            'Brightens and evens skin tone',
+            'Reduces fine lines and wrinkles',
+            'Hydrates and nourishes',
+            'Protects against environmental damage'
+        ],
+        specifications: {
+            'Skin Type': 'All Skin Types',
+            'Size': '30ml / 1.0 fl oz',
+            'Usage': 'Morning and Evening',
+            'Storage': 'Store in a cool, dry place',
+            'Shelf Life': '24 months',
+            'Country of Origin': 'USA'
+        },
+        ingredients: 'Hyaluronic Acid, Vitamin C, Niacinamide, Peptides, Natural Extracts',
         images: [
-            "https://example.com/image1.jpg",
-            "https://example.com/image2.jpg",
+            'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
         ],
-        category: "Skincare",
-        breadcrumbs: ["Home", "Skincare", "Serums"],
-        metaDescription: "Get glowing skin with our Natural Glow Serum.",
+        category: 'Serums',
+        breadcrumbs: ['Skincare', 'Treatments', 'Serums'],
+        metaDescription: 'Transform your skin with our Natural Glow Serum. This lightweight, fast-absorbing formula combines powerful antioxidants and natural ingredients for a radiant, healthy complexion.',
         reviews: [
-            { id: "r1", user: "Jane Doe", rating: 5, comment: "Amazing product!" },
-        ],
+            {
+                id: 1,
+                user: 'Sarah M.',
+                rating: 5,
+                date: '2024-02-15',
+                title: 'Amazing Results!',
+                comment: 'I\'ve been using this serum for a month and my skin has never looked better. The glow is real!',
+                verified: true,
+                helpful: 45
+            },
+            {
+                id: 2,
+                user: 'Emily R.',
+                rating: 4,
+                date: '2024-02-10',
+                title: 'Good but pricey',
+                comment: 'The serum works well and I can see improvement in my skin texture. A bit expensive though.',
+                verified: true,
+                helpful: 32
+            }
+        ]
     },
+    // Add more products as necessary
 ];
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
+
+
+export default async function Page({
+    params,
+}: {
+    params: Promise<{ slug: string }>
+}) {
+    const { slug } = await params
     // Find product by slug
-    const product = products.find((p) => p.slug === params.slug);
+    const product = products.find((p) => p.slug === slug);
+    if (!product) {
+        return (
+            <div className="text-center py-8">
+                <h1 className="text-3xl font-bold">Product Not Found</h1>
+                <p>The product you&apos;re looking for is not available.</p>
+            </div>
+        );
+    }
 
-    if (!product) return <p>Product not found</p>;
-
+    // Return the ProductView component with the found product
     return <ProductView product={product} />;
 }

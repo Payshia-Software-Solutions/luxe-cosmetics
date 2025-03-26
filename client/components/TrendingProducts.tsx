@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 
 const trendingProducts = [
   {
@@ -46,10 +47,12 @@ export default function TrendingProducts() {
               className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
             >
               <div className="aspect-w-1 aspect-h-1">
-                <img
+                <Image
                   src={product.image}
                   alt={product.name}
                   className="w-full h-80 object-cover transform transition-transform group-hover:scale-105"
+                  width={100}
+                  height={100}
                 />
                 <div className="absolute top-4 right-4 bg-pink-600 text-white px-3 py-1 rounded-full text-sm">
                   {product.sales}+ sold

@@ -6,9 +6,6 @@ import { useTheme } from 'next-themes';
 import Cart from './Cart'; // Make sure the path is correct
 import Link from 'next/link';
 
-interface NavbarProps {
-  onCartClick: () => void;
-}
 
 export default function Navbar() {
   const { theme, setTheme, systemTheme } = useTheme();

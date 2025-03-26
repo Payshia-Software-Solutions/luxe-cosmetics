@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
+import Image from 'next/image';
 
 interface CartProps {
   onClose: () => void;
@@ -59,7 +60,9 @@ const Cart: React.FC<CartProps> = ({ onClose }) => {
           ) : (
             cartItems.map((item) => (
               <div key={item.id} className="flex items-center space-x-4">
-                <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" />
+                <Image src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg"
+                  width={100}
+                  height={100} />
                 <div className="flex-1">
                   <h3 className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">${item.price.toFixed(2)}</p>

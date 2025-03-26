@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { FaInstagram, FaFacebook, FaTwitter, FaTiktok, FaYoutube, FaPinterest } from "react-icons/fa";
 
@@ -63,11 +64,15 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto px-6 mt-10 border-t border-gray-700 pt-6 flex flex-wrap justify-between items-center">
                 <div className="flex gap-4">
                     <span className="text-sm">Security certification</span>
-                    <img src="/images/security-logos.png" alt="Security" className="h-6" />
+                    <Image src="/images/security-logos.png" alt="Security" className="h-6"
+                        width={100}
+                        height={100} />
                 </div>
                 <div className="flex gap-4">
                     <span className="text-sm">We accept</span>
-                    <img src="/images/payment-logos.png" alt="Payment Methods" className="h-6" />
+                    <Image src="/images/payment-logos.png" alt="Payment Methods" className="h-6"
+                        width={100}
+                        height={100} />
                 </div>
             </div>
 
