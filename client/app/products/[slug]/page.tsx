@@ -7,7 +7,6 @@ export const metadata: Metadata = {
     title: "Cosmetic Shop | Premium Beauty & Skincare Products Online",
     description: "Discover a wide range of premium beauty and skincare products at our Cosmetic Shop. Shop for makeup, skincare, haircare, and more with fast delivery and expert advice.",
     keywords: "cosmetic shop, beauty products, skincare, makeup, skincare products, premium cosmetics, online beauty store, skincare online, makeup online, beauty essentials",
-    author: "Your Company Name",
     robots: "index, follow",
     og: {
         title: "Cosmetic Shop | Premium Beauty & Skincare Products Online",
@@ -19,7 +18,6 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Cosmetic Shop | Premium Beauty & Skincare Products Online",
         description: "Shop the latest beauty and skincare products at our Cosmetic Shop. Free shipping and expert recommendations.",
-        image: "https://yourcosmeticshop.com/twitter-image.jpg",  // Replace with your actual image
     },
     viewport: "width=device-width, initial-scale=1",
 };
