@@ -3,7 +3,7 @@ import Sidebar from '@/components/Sidebar';
 import Navbar from '@/components/Navbar';
 import SessionProvider from '@/components/SessionProvider';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth'; // Update import path
 import '@/app/globals.css';
 
 export const metadata = {
