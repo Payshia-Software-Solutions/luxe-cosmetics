@@ -3,31 +3,28 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, User, Sun, Moon, Search } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import Cart from './Cart'; // Make sure the path is correct
+import Cart from './Cart';
 import Link from 'next/link';
-
 
 export default function Navbar() {
   const { theme, setTheme, systemTheme } = useTheme();
   const [showCart, setShowCart] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [scrolling, setScrolling] = useState(false); // To track scroll position
-  const [showTopBar, setShowTopBar] = useState(true); // To show/hide the top bar
+  const [scrolling, setScrolling] = useState(false);
+  const [showTopBar, setShowTopBar] = useState(true);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    // Handle scroll position change
     const handleScroll = () => {
-      // If scrolling down, hide the top bar
       if (window.scrollY > 50) {
         setShowTopBar(false);
       } else {
         setShowTopBar(true);
       }
-      setScrolling(window.scrollY > 0); // Track whether we are scrolling
+      setScrolling(window.scrollY > 0);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -40,8 +37,7 @@ export default function Navbar() {
     setShowCart(!showCart);
   };
 
-  // Ensure theme switching works only after mounting
-  const currentTheme = mounted ? theme === 'system' ? systemTheme : theme : 'light';
+  const currentTheme = mounted ? (theme === 'system' ? systemTheme : theme) : 'light';
 
   return (
     <>
@@ -54,17 +50,34 @@ export default function Navbar() {
 
       {/* Navbar */}
       <nav
-        className={`fixed w-full bg-white dark:bg-[#1e1e1e] z-50 transition-all duration-300 ease-in-out ${scrolling ? 'shadow-lg' : 'shadow-none'
-          }`}
+        className={`fixed w-full bg-white dark:bg-[#1e1e1e] z-50 transition-all duration-300 ease-in-out ${
+          scrolling ? 'shadow-lg' : 'shadow-none'
+        }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto ">
           <div className="flex justify-between items-center h-16">
+            
+            {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/">
                 <h1 className="text-2xl font-bold text-pink-600 dark:text-pink-400">LUXE</h1>
               </Link>
             </div>
 
+            {/* Navigation Links */}
+            <div className="hidden md:flex space-x-6 ml-10">
+              <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition">
+                About Us
+              </Link>
+              <Link href="/shop" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition">
+                Shop
+              </Link>
+              <Link href="/contactus" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition">
+                Contact Us
+              </Link>
+            </div>
+
+            {/* Search Bar */}
             <div className="hidden md:block">
               <div className="relative">
                 <input
@@ -76,7 +89,9 @@ export default function Navbar() {
               </div>
             </div>
 
+            {/* Icons */}
             <div className="flex items-center space-x-4">
+              {/* Theme Switch */}
               <button
                 onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -87,9 +102,13 @@ export default function Navbar() {
                   <Moon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                 )}
               </button>
+
+              {/* User Icon */}
               <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                 <User className="h-6 w-6 text-gray-600 dark:text-gray-300" />
               </button>
+
+              {/* Cart Icon */}
               <button
                 onClick={handleCartToggle}
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -97,11 +116,12 @@ export default function Navbar() {
                 <ShoppingCart className="h-6 w-6 text-gray-600 dark:text-gray-300" />
               </button>
             </div>
+
           </div>
         </div>
       </nav>
 
-      {/* Conditionally render the Cart component */}
+      {/* Cart Modal */}
       {showCart && <Cart onClose={() => setShowCart(false)} />}
     </>
   );
