@@ -10,9 +10,11 @@ const JoinOur = () => {
         <img
           src="/assets/about/bg.jpg"
           alt="Community of Luxe users"
-          className="w-full h-full object-cover opacity-20"
+          className="w-full h-full object-cover "
         />
       </div>
+
+      <div className="absolute opacity-50 inset-0 bg-white z-10"></div>
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
