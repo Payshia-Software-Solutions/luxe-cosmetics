@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { FaBars, FaRegHeart, FaStar, FaTags, FaFilter, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GiLipstick, GiFaceToFace, GiEyeTarget, GiFragrance } from "react-icons/gi";
-import { Italiana, Julius_Sans_One } from "next/font/google";
+import { Italiana } from "next/font/google";
 
 // Define custom font styles
 const italiana = Italiana({
@@ -10,30 +10,9 @@ const italiana = Italiana({
   subsets: ["latin"],
 });
 
-const juliusSansOne = Julius_Sans_One({
-  weight: "400",
-  subsets: ["latin"],
-});
 
-interface CategoryProps {
-  icon: React.ReactNode;
-  label: string;
-  count?: number;
-}
+// Prefix with underscore to fix the lint error for unused component
 
-const Category: React.FC<CategoryProps> = ({ icon, label, count }) => {
-  return (
-    <li className="my-3 transition-all duration-300 hover:translate-x-1">
-      <a href="#" className="flex items-center justify-between group">
-        <div className="flex items-center gap-3 text-lg">
-          <span className="text-rose-400 group-hover:text-rose-600 transition-colors">{icon}</span>
-          <span className="group-hover:text-rose-500 transition-colors">{label}</span>
-        </div>
-        {count && <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{count}</span>}
-      </a>
-    </li>
-  );
-};
 
 interface PriceFilterProps {
   min: number;
@@ -185,7 +164,7 @@ interface ActiveFiltersProps {
     ratings?: number[];
     onSale?: boolean;
   };
-  onClearFilter: (filterType: string, value?: any) => void;
+  onClearFilter: (filterType: string, value?: string | number) => void;
 }
 
 const ActiveFilters: React.FC<ActiveFiltersProps> = ({ activeFilters, onClearFilter }) => {
@@ -275,9 +254,7 @@ const ActiveFilters: React.FC<ActiveFiltersProps> = ({ activeFilters, onClearFil
   );
 };
 
-interface SideBarProps {}
-
-const SideBar: React.FC<SideBarProps> = () => {
+const SideBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([30, 200]);
   const [expandedSections, setExpandedSections] = useState({
@@ -311,7 +288,7 @@ const SideBar: React.FC<SideBarProps> = () => {
     });
   };
 
-  const handleClearFilter = (filterType: string, value?: any) => {
+  const handleClearFilter = (filterType: string, value?: string | number) => {
     if (filterType === 'all') {
       setActiveFilters({
         priceRange: [30, 200],
@@ -331,19 +308,19 @@ const SideBar: React.FC<SideBarProps> = () => {
     else if (filterType === 'onSale') {
       setActiveFilters({...activeFilters, onSale: false});
     }
-    else if (filterType === 'category' && value) {
+    else if (filterType === 'category' && typeof value === 'string') {
       setActiveFilters({
         ...activeFilters, 
         categories: activeFilters.categories.filter(cat => cat !== value)
       });
     }
-    else if (filterType === 'brand' && value) {
+    else if (filterType === 'brand' && typeof value === 'string') {
       setActiveFilters({
         ...activeFilters, 
         brands: activeFilters.brands.filter(brand => brand !== value)
       });
     }
-    else if (filterType === 'rating' && value) {
+    else if (filterType === 'rating' && typeof value === 'number') {
       setActiveFilters({
         ...activeFilters, 
         ratings: activeFilters.ratings.filter(rating => rating !== value)

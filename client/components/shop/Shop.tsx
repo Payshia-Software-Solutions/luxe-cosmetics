@@ -9,16 +9,11 @@ import { motion } from "framer-motion";
 const Shop: React.FC = () => {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [filterActive, setFilterActive] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState(products);
 
-  // Filter products based on search term
   useEffect(() => {
-    const filtered = products.filter(product =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredProducts(filtered);
-  }, [searchTerm]);
+    setFilteredProducts(products);
+  }, []);
 
   const handleAddToCart = (productId: string) => {
     console.log(`Add to cart: ${productId}`);
@@ -71,25 +66,9 @@ const Shop: React.FC = () => {
           <span className="block text-rose-500">Perfect Beauty</span>
         </h1>
         <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-          Explore our curated collection of premium cosmetics for your self-care routine
+          Explore our curated collection of premium cosmetics for your self-care routine&apos;s essentials.
         </p>
       </motion.div>
-
-      {/* Search Bar */}
-      <div className="relative mb-8 max-w-lg mx-auto">
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-3 rounded-full border border-gray-300 shadow-sm focus:ring-2 focus:ring-rose-300 focus:border-rose-500 focus:outline-none transition-all duration-300"
-        />
-        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-          <svg className="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-          </svg>
-        </div>
-      </div>
 
       {/* Mobile Filter Toggle */}
       <div className="lg:hidden mb-6">
@@ -123,7 +102,7 @@ const Shop: React.FC = () => {
           {filteredProducts.length === 0 ? (
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-900">No products found</h3>
-              <p className="mt-2 text-sm text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
+              <p className="mt-2 text-sm text-gray-500">Try adjusting your filter to find what you&apos;re looking for.</p>
             </div>
           ) : (
             <motion.div 

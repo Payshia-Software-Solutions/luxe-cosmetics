@@ -135,7 +135,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <p className="text-sm font-medium text-pink-600 dark:text-pink-400 uppercase">CeraVe</p>
               )}
               {product.slug.includes('loreal') && (
-                <p className="text-sm font-medium text-pink-600 dark:text-pink-400 uppercase">L'Oréal</p>
+                <p className="text-sm font-medium text-pink-600 dark:text-pink-400 uppercase">L&apos;Oréal</p>
               )}
               {product.slug.includes('garnier') && (
                 <p className="text-sm font-medium text-pink-600 dark:text-pink-400 uppercase">Garnier</p>

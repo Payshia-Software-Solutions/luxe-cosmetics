@@ -1,17 +1,13 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';  // Import next/image for image optimization
 import OurPromise from './OurPromise';
 import JoinOur from './JoinOur';
-import OurCollection from './OurCollection';
 
 const AboutUsPage: React.FC = () => {
-  const [sections, setSections] = useState<HTMLElement[]>([]);
-
   useEffect(() => {
-   
     const animatableSections = Array.from(document.querySelectorAll('[data-animate="true"]')) as HTMLElement[];
-    setSections(animatableSections);
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -23,7 +19,6 @@ const AboutUsPage: React.FC = () => {
       },
       { threshold: 0.1 }
     );
-
 
     animatableSections.forEach(section => {
       observer.observe(section);
@@ -62,10 +57,12 @@ const AboutUsPage: React.FC = () => {
         className="relative h-screen flex items-center justify-center overflow-hidden"
       >
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src="/assets/about/bg.jpg" 
             alt="Beautiful cosmetics flatlay" 
-            className="w-full h-full object-cover"
+            layout="fill"
+            objectFit="cover" 
+            quality={100} 
           />
         </div>
         <div className="absolute opacity-50 inset-0 bg-gradient-to-b from-transparent to-white z-10"></div>
@@ -81,7 +78,7 @@ const AboutUsPage: React.FC = () => {
             variants={fadeIn}
             className="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto"
           >
-            Beauty that's honest, natural, and made for you.
+            Beauty that&apos;s honest, natural, and made for you.
           </motion.p>
           <motion.div variants={fadeIn}>
             <a href="#story" className="inline-block animate-bounce mt-8">
@@ -102,19 +99,21 @@ const AboutUsPage: React.FC = () => {
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-12 md:mb-0">
-              <img 
+              <Image 
                 src="/assets/about/bg2.jpg"   
                 alt="Founders of Luxe" 
                 className="rounded-lg shadow-xl w-full max-w-lg mx-auto"
+                width={600}
+                height={400}
               />
             </div>
             <div className="md:w-1/2 md:pl-12">
               <h2 className="text-4xl font-bold text-gray-800 mb-6 relative">
-                Our Story
+                Our Story&apos;s Origins
                 <span className="absolute bottom-0 left-0 w-24 h-1 bg-pink-400"></span>
               </h2>
               <p className="text-gray-600 mb-6 text-lg">
-                Luxe was born from a simple but powerful idea: beauty shouldn't come with compromise.
+                Luxe was born from a simple but powerful idea: beauty shouldn&apos;t come with compromise.
               </p>
               <p className="text-gray-600 mb-6">
                 Founded in 2021 by a group of friends who were frustrated with the misleading claims and harmful 
@@ -157,45 +156,39 @@ const AboutUsPage: React.FC = () => {
               </p>
             </div>
             
+            {/* Additional value cards */}
             <div className="bg-white rounded-xl shadow-lg p-8 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
               <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-6">
                 <svg className="w-8 h-8 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Genuine Products</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Cruelty-Free</h3>
               <p className="text-gray-600">
-                When we claim a benefit, we've tested it thoroughly. No false promises, just honest beauty solutions.
+                We never test on animals, and all our products are certified cruelty-free by international standards.
               </p>
             </div>
             
             <div className="bg-white rounded-xl shadow-lg p-8 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
               <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-6">
                 <svg className="w-8 h-8 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Made For Young Skin</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Sustainable Packaging</h3>
               <p className="text-gray-600">
-                Formulated specifically for teenagers and young adults, addressing the unique needs of younger skin.
+                Our commitment to the planet means all our packaging is recyclable, biodegradable, or reusable.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Products Section */}
-      <section 
-        data-animate="true"
-        className="pacity-0 transform translate-y-10 transition duration-1000 ease-out"
-      >
-        <OurCollection/>
-      </section>
-
       {/* Promise Section */}
       <section 
         data-animate="true"
-        className=" bg-pink-50 opacity-0 transform translate-y-10 transition duration-1000 ease-out"
+        className="bg-pink-50 opacity-0 transform translate-y-10 transition duration-1000 ease-out"
       >
        <OurPromise/>
       </section>

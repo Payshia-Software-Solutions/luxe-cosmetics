@@ -1,23 +1,26 @@
-"use client"
+"use client";
 import React from 'react';
+import Image from 'next/image'; // Importing Image component from Next.js
 
 const OurPromise = () => {
   return (
     <section 
-      className="py-8 bg-pink-50   transform translate-y-10 transition duration-1000 ease-out"
+      className="py-8 bg-pink-50 transform translate-y-10 transition duration-1000 ease-out"
     >
       <div className="container mx-auto px-6 text-center max-w-3xl">
         <h2 className="text-4xl font-bold text-gray-800 mb-6">Our Promise</h2>
         <div className="w-24 h-1 bg-pink-400 mx-auto mb-12"></div>
         
         <p className="text-gray-600 mb-6 text-lg italic">
-          "Every Luxe product is 100% genuine. When we say natural, we mean it. 
-          When we claim a benefit, we've tested it."
+          &quot;Every Luxe product is 100% genuine. When we say natural, we mean it. 
+          When we claim a benefit, we&apos;ve tested it.&quot;
         </p>
         
-        <img 
+        <Image
           src="/assets/about/logo.png"   
-          alt="Luxe logo" 
+          alt="Luxe logo"
+          width={200}   // Set appropriate width for the logo
+          height={200}  // Set appropriate height for the logo
           className="mx-auto rounded-lg border-4 border-white shadow-lg mb-12"
         />
         

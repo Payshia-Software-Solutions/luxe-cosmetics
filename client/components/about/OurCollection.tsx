@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";  // Import Image from Next.js
 
 const OurCollection = () => {
   return (
@@ -13,9 +14,11 @@ const OurCollection = () => {
         <div className="flex flex-col md:flex-row gap-12">
           <div className="md:w-1/2 group cursor-pointer">
             <div className="relative overflow-hidden rounded-xl mb-6">
-              <img
+              <Image
                 src="/assets/about/productc1.jpg"
                 alt="Luxe skincare collection"
+                width={600} // Set the image width
+                height={400} // Set the image height
                 className="w-full h-96 object-cover transition duration-700 ease-in-out group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-pink-600/70 to-transparent flex items-end">
@@ -23,7 +26,7 @@ const OurCollection = () => {
               </div>
             </div>
 
-            <p className="text-gray-600  text-lg  font-semibold">
+            <p className="text-gray-600 text-lg font-semibold">
               Our skincare line features gentle, effective formulations designed
               specifically for young skin. From hydrating serums to
               blemish-fighting treatments, each product is crafted with natural
@@ -33,16 +36,18 @@ const OurCollection = () => {
 
           <div className="md:w-1/2 group cursor-pointer">
             <div className="relative overflow-hidden rounded-xl mb-6">
-              <img
+              <Image
                 src="/assets/about/productc2.jpg"
                 alt="Luxe makeup collection"
-                       className="w-full h-96 object-cover transition duration-700 ease-in-out group-hover:scale-110"
+                width={600} // Set the image width
+                height={400} // Set the image height
+                className="w-full h-96 object-cover transition duration-700 ease-in-out group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-pink-600/70 to-transparent flex items-end">
                 <h3 className="text-2xl font-bold text-white p-6">Makeup</h3>
               </div>
             </div>
-            <p className="text-gray-600 font-norma text-lg  font-semibold">
+            <p className="text-gray-600 font-normal text-lg font-semibold">
               Express yourself with our range of makeup products that offer
               brilliant color and reliable performance without compromising on
               ingredients. Our formulations are designed to work with your skin,

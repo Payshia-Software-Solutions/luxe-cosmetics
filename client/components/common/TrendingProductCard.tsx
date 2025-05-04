@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, Heart, TrendingUp, Eye, Clock, Flame } from 'lucide-react';
+import { Star, Heart,  Eye, Clock, Flame } from 'lucide-react';
 
 
 // Assuming we're using the Product interface from your previous code
