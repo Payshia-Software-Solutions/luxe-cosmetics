@@ -60,7 +60,7 @@ export default function Navbar() {
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/">
-                <h1 className="text-2xl font-bold text-pink-600 dark:text-pink-400">LUXE</h1>
+                <h1 className="text-2xl font-bold uppercase text-pink-600 dark:text-pink-400">paris beauty</h1>
               </Link>
             </div>
 

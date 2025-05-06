@@ -169,10 +169,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </div>
             
             {/* Description - fixed height with line clamp */}
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 h-10">
+            {/* <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 h-10">
               {product.description}
             </p>
-            
+             */}
             {/* Push the price and button to the bottom */}
             <div className="mt-auto">
               <div className="flex items-center justify-between">
