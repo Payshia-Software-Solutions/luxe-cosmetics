@@ -1,4 +1,3 @@
-import JoinOur from '@/components/about/JoinOur'
 import React from 'react'
 
 function page() {
