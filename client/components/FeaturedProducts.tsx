@@ -232,11 +232,12 @@ export default function FeaturedProducts() {
               pauseOnMouseEnter: true,
             }}
             loop={products.length > 4}
-            className="py-12"
+            className="py-12 mb-12"
           >
             {products.map((product) => (
               <SwiperSlide key={product.id}>
                 <ProductCard
+                  
                   product={product}
                   onAddToCart={handleAddToCart}
                   onToggleWishlist={handleToggleWishlist}
