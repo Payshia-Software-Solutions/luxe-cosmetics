@@ -40,7 +40,7 @@ const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
   
   return (
     <div 
-      className="group relative rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+      className="mb-12 group relative rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
