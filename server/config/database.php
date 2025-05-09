@@ -2,7 +2,7 @@
 // config/database.php
 
 $host = 'localhost';
-$db   = 'paris_beauty';
+$db   = 'luxe-cosmetics';
 $user = 'root';
 $pass = "";
 $charset = 'utf8mb4';
