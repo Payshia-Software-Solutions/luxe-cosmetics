@@ -11,11 +11,64 @@ import "swiper/css/pagination";
 
 import ProductCard from "./common/ProductCard";
 
+// Define the Product interface to match the API response format
+interface Product {
+  product_id: number;
+  product_code: string;
+  product_name: string;
+  slug: string;
+  display_name: string;
+  name_si: string;
+  name_ti: string;
+  print_name: string;
+  section_id: number;
+  department_id: number;
+  category_id: number;
+  brand_id: number;
+  measurement: string;
+  reorder_level: number;
+  lead_days: number;
+  cost_price: number;
+  selling_price: number;
+  minimum_price: number;
+  wholesale_price: number;
+  price_2: number;
+  item_type: string;
+  item_location: string;
+  image_path: string;
+  created_by: string;
+  created_at: string;
+  active_status: number;
+  generic_id: string | null;
+  supplier_list: string;
+  size_id: number;
+  color_id: number | null;
+  product_description: string;
+  how_to_use: string | null;
+  recipe_type: string;
+  barcode: string;
+  expiry_good: number;
+  location_list: string;
+  opening_stock: number;
+  special_promo: number;
+  special_promo_type: string;
+  special_promo_message: string | null;
+  rating: string;
+  review: number;
+  long_description: string;
+  benefits: string;
+  specifications: string;
+  category: string;
+  meta_description: string | null;
+  reviews: string | null;
+  hover_image: string | null;
+}
+
 export default function FeaturedProducts() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [wishlist, setWishlist] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+  const [wishlist, setWishlist] = useState<number[]>([]);
 
   // Fetch products using axios
   useEffect(() => {
@@ -52,100 +105,16 @@ export default function FeaturedProducts() {
           throw new Error("Could not extract products array from response");
         }
 
-        // Map API field names to expected Product interface field names
-        const validProducts = productsData
-          .filter((product) => {
-            // Basic validation - ensure it has minimum required properties
-            return (
-              product &&
-              typeof product === "object" &&
-              (product.id || product.product_id) &&
-              (product.name || product.product_name || product.display_name)
-            );
-          })
-          .map((product) => {
-            // Process images
-            const images = [];
-            console.log(
-              `Processing images for product ${
-                product.id || product.product_id
-              }:`,
-              product
-            );
-
-            // Check for image_path (your actual database column name)
-            if (product.image_path) {
-              const imageUrl = product.image_path.startsWith("/")
-                ? product.image_path
-                : `/assets/product/${product.image_path}`;
-              console.log("Using image_path with path:", imageUrl);
-              images.push(imageUrl);
-            }
-            // Still keep these checks as fallbacks
-            else if (product.image_url) {
-              const imageUrl = product.image_url.startsWith("/")
-                ? product.image_url
-                : `/assets/product/${product.image_url}`;
-              console.log("Using image_url with path:", imageUrl);
-              images.push(imageUrl);
-            } else if (
-              product.images &&
-              Array.isArray(product.images) &&
-              product.images.length > 0
-            ) {
-              const processedImages = product.images.map((img) => {
-                const fullPath = img.startsWith("/")
-                  ? img
-                  : `/assets/product/${img}`;
-                return fullPath;
-              });
-              console.log("Final processed images array:", processedImages);
-              images.push(...processedImages);
-            } else {
-              // Add placeholder image if no images are available
-              console.log("No images found, using placeholder");
-              images.push("/placeholder-product.jpg");
-            }
-
-            // If there's only one image, duplicate it to enable hover effect
-            if (images.length === 1) {
-              console.log("Only one image found, duplicating for hover effect");
-              images.push(images[0]);
-            }
-
-            console.log("Final images array for product:", images);
-
-            // Ensure all required properties exist with defaults if needed
-            return {
-              id: product.id || product.product_id?.toString(),
-              slug:
-                product.slug ||
-                (product.product_name || product.name || "")
-                  .toLowerCase()
-                  .replace(/\s+/g, "-"),
-              name:
-                product.name || product.product_name || product.display_name,
-              price: Number(product.price || product.selling_price || 0),
-              rating: Number(product.rating || product.average_rating || 5),
-              review: Number(
-                product.review_count || product.reviews_count || 0
-              ),
-              description:
-                product.description || product.short_description || "",
-              longDescription:
-                product.long_description || product.description || "",
-              benefits: Array.isArray(product.benefits) ? product.benefits : [],
-              specifications: product.specifications || {},
-              ingredients: product.ingredients || "",
-              images: images,
-              category: product.category || "Beauty",
-              breadcrumbs: Array.isArray(product.breadcrumbs)
-                ? product.breadcrumbs
-                : [],
-              metaDescription: product.meta_description || "",
-              reviews: Array.isArray(product.reviews) ? product.reviews : [],
-            };
-          });
+        // Filter to ensure we have valid products
+        const validProducts = productsData.filter((product: any) => {
+          // Basic validation - ensure it has minimum required properties
+          return (
+            product &&
+            typeof product === "object" &&
+            (product.product_id) &&
+            (product.product_name || product.display_name)
+          );
+        });
 
         console.log("Processed Products:", validProducts);
         setProducts(validProducts);
@@ -163,11 +132,11 @@ export default function FeaturedProducts() {
     fetchProducts();
   }, []);
 
-  const handleAddToCart = (productId) => {
+  const handleAddToCart = (productId: number) => {
     console.log(`Add to cart: ${productId}`);
   };
 
-  const handleToggleWishlist = (productId) => {
+  const handleToggleWishlist = (productId: number) => {
     setWishlist((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
@@ -232,16 +201,15 @@ export default function FeaturedProducts() {
               pauseOnMouseEnter: true,
             }}
             loop={products.length > 4}
-            className="py-12 mb-12"
+            className="py-12"
           >
             {products.map((product) => (
-              <SwiperSlide key={product.id}>
+              <SwiperSlide key={product.product_id}>
                 <ProductCard
-                  
                   product={product}
                   onAddToCart={handleAddToCart}
                   onToggleWishlist={handleToggleWishlist}
-                  isInWishlist={wishlist.includes(product.id)}
+                  isInWishlist={wishlist.includes(product.product_id)}
                 />
               </SwiperSlide>
             ))}
