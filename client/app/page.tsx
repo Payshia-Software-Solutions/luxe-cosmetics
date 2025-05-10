@@ -6,7 +6,7 @@ import TrendingProducts from '@/components/TrendingProducts';
 import CategoryGrid from '@/components/CategoryGrid';
 import CTA from '@/components/CTA';
 import { Metadata } from 'next';
-import OurPromise from '@/components/about/OurPromise';
+
 
 export const metadata: Metadata = {
   title: "Cosmetic Shop | Premium Beauty & Skincare Products Online",
@@ -27,7 +27,7 @@ export default function Home() {
       <CategoryGrid Category="Serum" />
       <CTA />
 
-      <OurPromise/>
+
     </div>
   );
 }

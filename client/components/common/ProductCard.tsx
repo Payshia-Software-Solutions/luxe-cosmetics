@@ -80,11 +80,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   // Create image paths array - main image and hover image if available
   const images = [
-    `/images/products/${product.image_path}`, // Assuming images are in this directory
+    `assets/images/products/${product.image_path}`, // Assuming images are in this directory
   ];
 
   if (product.hover_image) {
-    images.push(`/images/products/${product.hover_image}`);
+    images.push(`assets/images/products/${product.hover_image}`);
   }
 
   // Only show hover image if there are at least 2 images
@@ -122,6 +122,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Fixed height image container */}
           <div className="relative w-full h-64">
             {/* Main image */}
+          
             <div className="relative w-full h-64 overflow-hidden rounded-lg group">
               <Image
                 src={`${imageBasePath}${product.image_path}`}
