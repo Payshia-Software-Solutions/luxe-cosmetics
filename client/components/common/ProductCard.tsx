@@ -88,7 +88,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   }
 
   // Only show hover image if there are at least 2 images
-  const hasHoverImage = images.length >= 2;
+  // const hasHoverImage = images.length >= 2;
 
   // Helper function to determine brand from brand_id
   const getBrandName = (brandId: number) => {

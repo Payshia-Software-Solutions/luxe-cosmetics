@@ -5,14 +5,15 @@ import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { ShoppingBag } from "lucide-react";
-import { ToastContainer, toast } from "react-toastify"; // Import Toastify
+import { ToastContainer, toast } from "react-toastify";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
+import "react-toastify/dist/ReactToastify.css";
 
 import ProductCard from "./common/ProductCard";
-import Cart from "./Cart";
+
+import { useCart } from "./CartContext";
 
 interface Product {
   product_id: number;
@@ -66,21 +67,14 @@ interface Product {
   hover_image: string | null;
 }
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
-
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<number[]>([]);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  
+  // Use the cart context instead of local state
+  const { cartItems, addToCart, openCart, getCartCount } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -130,25 +124,19 @@ export default function FeaturedProducts() {
 
     if (!productToAdd) return;
 
-    const existingItemIndex = cartItems.findIndex(item => item.id === productId.toString());
+    const newCartItem = {
+      id: productId.toString(),
+      name: productToAdd.display_name || productToAdd.product_name,
+      price: productToAdd.selling_price,
+      quantity: 1,
+      image: `/assets/product/${productToAdd.image_path}`,
+    };
 
-    if (existingItemIndex >= 0) {
-      const updatedCartItems = [...cartItems];
-      updatedCartItems[existingItemIndex].quantity += 1;
-      setCartItems(updatedCartItems);
-    } else {
-      const newCartItem = {
-        id: productId.toString(),
-        name: productToAdd.display_name || productToAdd.product_name,
-        price: productToAdd.selling_price,
-        quantity: 1,
-        image: `/assets/product/${productToAdd.image_path}`,
-      };
-
-      setCartItems([...cartItems, newCartItem]);
-    }
-
-    setIsCartOpen(true);
+    // Add to cart using context function
+    addToCart(newCartItem);
+    
+    // Open cart
+    openCart();
 
     // Show success toast notification
     toast.success(`${productToAdd.display_name || productToAdd.product_name} added to cart!`);
@@ -158,18 +146,6 @@ export default function FeaturedProducts() {
     setWishlist((prev) =>
       prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
     );
-  };
-
-  const handleQuantityChange = (id: string, delta: number) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-      )
-    );
-  };
-
-  const handleRemoveItem = (id: string) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
   if (loading) {
@@ -210,11 +186,11 @@ export default function FeaturedProducts() {
             Featured Products
           </h2>
           <button
-            onClick={() => setIsCartOpen(true)}
+            onClick={openCart}
             className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full"
           >
             <ShoppingBag className="h-5 w-5" />
-            <span>Cart ({cartItems.reduce((total, item) => total + item.quantity, 0)})</span>
+            <span>Cart ({getCartCount()})</span>
           </button>
         </div>
 
@@ -254,16 +230,7 @@ export default function FeaturedProducts() {
         )}
       </div>
 
-      {isCartOpen && (
-        <Cart
-          onClose={() => setIsCartOpen(false)}
-          cartItems={cartItems}
-          onQuantityChange={handleQuantityChange}
-          onRemoveItem={handleRemoveItem}
-        />
-      )}
-      
-      {/* Toast Container */}
+      {/* Cart is conditionally rendered by the context */}
       <ToastContainer />
     </section>
   );

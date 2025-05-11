@@ -1,28 +1,13 @@
+"use client";
+
 import React from 'react';
 import { X, ShoppingBag } from 'lucide-react';
 import CartRow from './CartRow';
+import { useCart } from './CartContext';
 
-interface CartProps {
-  onClose: () => void;
-  cartItems?: CartItem[];  // Make cartItems optional
-  onQuantityChange: (id: string, delta: number) => void;
-  onRemoveItem: (id: string) => void;
-}
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
-
-const Cart: React.FC<CartProps> = ({ 
-  onClose, 
-  cartItems = [], // Add default empty array 
-  onQuantityChange, 
-  onRemoveItem 
-}) => {
+const Cart: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const { cartItems,  updateQuantity, removeFromCart } = useCart();
+  
   const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   const shipping = cartItems.length > 0 ? 5.99 : 0;
   const total = subtotal + shipping;
@@ -47,8 +32,8 @@ const Cart: React.FC<CartProps> = ({
               <CartRow 
                 key={item.id} 
                 item={item} 
-                onQuantityChange={onQuantityChange} 
-                onRemove={onRemoveItem} 
+                onQuantityChange={(id, delta) => updateQuantity(id, delta)} 
+                onRemove={removeFromCart} 
               />
             ))
           )}

@@ -7,9 +7,9 @@ import SideBar from "./SideBar";
 import { motion } from "framer-motion";
 import { Product } from "@/types";
 import { ShoppingBag } from "lucide-react";
-import Cart from "../Cart";
 import { ToastContainer, toast } from "react-toastify"; 
 import "react-toastify/dist/ReactToastify.css";
+import { useCart } from "../CartContext"; // Import the cart context
 
 interface Filters {
   priceRange?: [number, number];
@@ -18,14 +18,6 @@ interface Filters {
   ratings?: number[];
   onSale?: boolean;
   sort?: string;
-}
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
 }
 
 const Shop: React.FC = () => {
@@ -47,22 +39,21 @@ const Shop: React.FC = () => {
   const [isSorting, setIsSorting] = useState(false);
   const prevSortRef = useRef<string | undefined>("");
   
-  // Add cart state
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Fetch initial products
+  const {  addToCart, openCart, getCartCount } = useCart();
+
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const response = await axios.get('http://localhost/luxe-cosmetics/server/products');
         
-        // Check if response contains data and is properly structured
+  
         if (response.data && response.data.success && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else if (Array.isArray(response.data)) {
-          // Handle case where API might directly return an array
+
           setProducts(response.data);
         } else {
           setError('Invalid data format received from server');
@@ -79,26 +70,26 @@ const Shop: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // Track previous sort value
+
   useEffect(() => {
-    // Check if sort value has changed
+
     if (prevSortRef.current !== filters.sort) {
-      // Set sorting flag for any change including initial sort
+   
       setIsSorting(true);
       
-      // Reset the sorting flag after animation completes
+
       const timer = setTimeout(() => {
         setIsSorting(false);
-      }, 800); // Slightly longer to ensure animations complete
+      }, 800); 
       
-      // Update the reference
+    
       prevSortRef.current = filters.sort;
       
       return () => clearTimeout(timer);
     }
   }, [filters.sort]);
 
-  // Combined filter application in a single useEffect
+
   useEffect(() => {
     const applyAllFilters = async () => {
       try {
@@ -196,47 +187,28 @@ const Shop: React.FC = () => {
     applyAllFilters();
   }, [filters, products]);
 
-  // Updated handleAddToCart function based on FeaturedProducts component
+  // Updated handleAddToCart function using the CartContext
   const handleAddToCart = (productId: number) => {
     const productToAdd = filteredProducts.find(product => product.product_id === productId);
 
     if (!productToAdd) return;
 
-    const existingItemIndex = cartItems.findIndex(item => item.id === productId.toString());
+    const newCartItem = {
+      id: productId.toString(),
+      name: productToAdd.display_name || productToAdd.product_name,
+      price: productToAdd.selling_price,
+      quantity: 1,
+      image: `/assets/product/${productToAdd.image_path}`,
+    };
 
-    if (existingItemIndex >= 0) {
-      const updatedCartItems = [...cartItems];
-      updatedCartItems[existingItemIndex].quantity += 1;
-      setCartItems(updatedCartItems);
-    } else {
-      const newCartItem = {
-        id: productId.toString(),
-        name: productToAdd.display_name || productToAdd.product_name,
-        price: productToAdd.selling_price,
-        quantity: 1,
-        image: `/assets/product/${productToAdd.image_path}`,
-      };
-
-      setCartItems([...cartItems, newCartItem]);
-    }
-
-    setIsCartOpen(true);
+    // Add to cart using context function
+    addToCart(newCartItem);
     
+    // Open cart
+    openCart();
+
     // Show success toast notification
     toast.success(`${productToAdd.display_name || productToAdd.product_name} added to cart!`);
-  };
-
-  // Cart functions imported from FeaturedProducts component
-  const handleQuantityChange = (id: string, delta: number) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-      )
-    );
-  };
-
-  const handleRemoveItem = (id: string) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
   const handleToggleWishlist = (productId: number) => {
@@ -398,14 +370,14 @@ const Shop: React.FC = () => {
         </p>
       </motion.div>
 
-      {/* Cart button - Added from FeaturedProducts */}
+      {/* Cart button - Using CartContext functions and cart count */}
       <div className="flex justify-end mb-6">
         <button
-          onClick={() => setIsCartOpen(true)}
+          onClick={openCart}
           className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-full transition-all duration-200 shadow-md"
         >
           <ShoppingBag className="h-5 w-5" />
-          <span>Cart ({cartItems.reduce((total, item) => total + item.quantity, 0)})</span>
+          <span>Cart ({getCartCount()})</span>
         </button>
       </div>
 
@@ -537,15 +509,7 @@ const Shop: React.FC = () => {
         </div>
       </div>
 
-      {/* Cart component - Added from FeaturedProducts */}
-      {isCartOpen && (
-        <Cart
-          onClose={() => setIsCartOpen(false)}
-          cartItems={cartItems}
-          onQuantityChange={handleQuantityChange}
-          onRemoveItem={handleRemoveItem}
-        />
-      )}
+      {/* Cart component is conditionally rendered by the CartContext, no need to include it here */}
       
       {/* Toast Container */}
       <ToastContainer />
