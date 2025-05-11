@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { ThemeProvider } from 'next-themes';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import './globals.css';
+import React, { useEffect, useState } from "react";
+import { ThemeProvider } from "next-themes";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import "./globals.css";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { CartProvider } from "@/components/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +23,11 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -31,15 +36,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Meta content can go here */}
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased transition-colors`}>
+      <head>{/* Meta content can go here */}</head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased transition-colors`}
+      >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {mounted && (
             <div className="min-h-screen">
               <Navbar />
-              <main className="pt-16">{children}</main>
+              <main className="pt-16">
+                {" "}
+                <CartProvider>{children}</CartProvider>
+              </main>
               <Footer />
             </div>
           )}

@@ -4,14 +4,16 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-
+import { ShoppingBag } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify"; // Import Toastify
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
 import ProductCard from "./common/ProductCard";
+import Cart from "./Cart";
 
-// Define the Product interface to match the API response format
 interface Product {
   product_id: number;
   product_code: string;
@@ -64,27 +66,30 @@ interface Product {
   hover_image: string | null;
 }
 
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
+
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<number[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Fetch products using axios
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "http://localhost/luxe-cosmetics/server/products"
-        );
+        const response = await axios.get("http://localhost/luxe-cosmetics/server/products");
 
-        console.log("API Response:", response.data);
-
-        // Process and validate the products data
         let productsData = response.data;
 
-        // Handle different response formats
         if (!Array.isArray(productsData)) {
           if (productsData?.products) {
             productsData = productsData.products;
@@ -93,36 +98,24 @@ export default function FeaturedProducts() {
           } else if (productsData?.results) {
             productsData = productsData.results;
           } else if (productsData?.product_id) {
-            // Single product object
             productsData = [productsData];
           } else {
             throw new Error("Unexpected response format");
           }
         }
-        
-        // Validate we have an array
+
         if (!Array.isArray(productsData)) {
           throw new Error("Could not extract products array from response");
         }
 
-        // Filter to ensure we have valid products
         const validProducts = productsData.filter((product: any) => {
-          // Basic validation - ensure it has minimum required properties
-          return (
-            product &&
-            typeof product === "object" &&
-            (product.product_id) &&
-            (product.product_name || product.display_name)
-          );
+          return product && typeof product === "object" && product.product_id && (product.product_name || product.display_name);
         });
 
-        console.log("Processed Products:", validProducts);
         setProducts(validProducts);
         setError(null);
       } catch (err) {
-        console.error("Error fetching products:", err);
         setError("Failed to load products. Please try again later.");
-        // Initialize empty array to prevent undefined errors
         setProducts([]);
       } finally {
         setLoading(false);
@@ -133,15 +126,50 @@ export default function FeaturedProducts() {
   }, []);
 
   const handleAddToCart = (productId: number) => {
-    console.log(`Add to cart: ${productId}`);
+    const productToAdd = products.find(product => product.product_id === productId);
+
+    if (!productToAdd) return;
+
+    const existingItemIndex = cartItems.findIndex(item => item.id === productId.toString());
+
+    if (existingItemIndex >= 0) {
+      const updatedCartItems = [...cartItems];
+      updatedCartItems[existingItemIndex].quantity += 1;
+      setCartItems(updatedCartItems);
+    } else {
+      const newCartItem = {
+        id: productId.toString(),
+        name: productToAdd.display_name || productToAdd.product_name,
+        price: productToAdd.selling_price,
+        quantity: 1,
+        image: `/assets/product/${productToAdd.image_path}`,
+      };
+
+      setCartItems([...cartItems, newCartItem]);
+    }
+
+    setIsCartOpen(true);
+
+    // Show success toast notification
+    toast.success(`${productToAdd.display_name || productToAdd.product_name} added to cart!`);
   };
 
   const handleToggleWishlist = (productId: number) => {
     setWishlist((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
+      prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
     );
+  };
+
+  const handleQuantityChange = (id: string, delta: number) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
+      )
+    );
+  };
+
+  const handleRemoveItem = (id: string) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
   if (loading) {
@@ -181,6 +209,13 @@ export default function FeaturedProducts() {
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
             Featured Products
           </h2>
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full"
+          >
+            <ShoppingBag className="h-5 w-5" />
+            <span>Cart ({cartItems.reduce((total, item) => total + item.quantity, 0)})</span>
+          </button>
         </div>
 
         {Array.isArray(products) && products.length > 0 ? (
@@ -215,11 +250,21 @@ export default function FeaturedProducts() {
             ))}
           </Swiper>
         ) : (
-          <div className="py-12 text-center">
-            No featured products available at this time.
-          </div>
+          <div className="py-12 text-center">No featured products available at this time.</div>
         )}
       </div>
+
+      {isCartOpen && (
+        <Cart
+          onClose={() => setIsCartOpen(false)}
+          cartItems={cartItems}
+          onQuantityChange={handleQuantityChange}
+          onRemoveItem={handleRemoveItem}
+        />
+      )}
+      
+      {/* Toast Container */}
+      <ToastContainer />
     </section>
   );
 }

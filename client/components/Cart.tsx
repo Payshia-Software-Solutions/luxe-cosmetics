@@ -1,43 +1,28 @@
-import React, { useState } from 'react';
-import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
-import Image from 'next/image';
+import React from 'react';
+import { X, ShoppingBag } from 'lucide-react';
+import CartRow from './CartRow';
 
 interface CartProps {
   onClose: () => void;
+  cartItems?: CartItem[];  // Make cartItems optional
+  onQuantityChange: (id: string, delta: number) => void;
+  onRemoveItem: (id: string) => void;
 }
 
-const initialCartItems = [
-  {
-    id: '1',
-    name: 'Natural Glow Serum',
-    price: 49.99,
-    quantity: 1,
-    image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: '2',
-    name: 'Hydrating Face Cream',
-    price: 39.99,
-    quantity: 2,
-    image: 'https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
-  }
-];
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
 
-const Cart: React.FC<CartProps> = ({ onClose }) => {
-  const [cartItems, setCartItems] = useState(initialCartItems);
-
-  const handleQuantityChange = (id: string, delta: number) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-      )
-    );
-  };
-
-  const handleRemoveItem = (id: string) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
-  };
-
+const Cart: React.FC<CartProps> = ({ 
+  onClose, 
+  cartItems = [], // Add default empty array 
+  onQuantityChange, 
+  onRemoveItem 
+}) => {
   const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   const shipping = cartItems.length > 0 ? 5.99 : 0;
   const total = subtotal + shipping;
@@ -59,27 +44,12 @@ const Cart: React.FC<CartProps> = ({ onClose }) => {
             <p className="text-gray-500 dark:text-gray-400 text-center">Your cart is empty.</p>
           ) : (
             cartItems.map((item) => (
-              <div key={item.id} className="flex items-center space-x-4">
-                <Image src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg"
-                  width={100}
-                  height={100} />
-                <div className="flex-1">
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">${item.price.toFixed(2)}</p>
-                  <div className="flex items-center mt-2 space-x-2">
-                    <button onClick={() => handleQuantityChange(item.id, -1)} className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <span className="text-gray-600 dark:text-gray-300">{item.quantity}</span>
-                    <button onClick={() => handleQuantityChange(item.id, 1)} className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-                <button onClick={() => handleRemoveItem(item.id)} className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
+              <CartRow 
+                key={item.id} 
+                item={item} 
+                onQuantityChange={onQuantityChange} 
+                onRemove={onRemoveItem} 
+              />
             ))
           )}
         </div>

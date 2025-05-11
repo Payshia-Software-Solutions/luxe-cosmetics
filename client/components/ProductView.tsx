@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Star, Heart, Share2, Minus, Plus, ShoppingCart, ChevronRight } from 'lucide-react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import type { Product } from '@/data/products';
 import { products } from '@/data/products';
@@ -11,6 +13,14 @@ import RelatedProducts from './RelatedProducts';
 
 interface ProductViewProps {
   product: Product;
+}
+
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
 }
 
 const getValidImagePath = (imagePath: string): string => {
@@ -43,6 +53,24 @@ export default function ProductView({ product }: ProductViewProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState('description');
   const [imageError, setImageError] = useState<Record<number, boolean>>({});
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  // Load cart items from local storage on component mount
+  useEffect(() => {
+    const storedCart = localStorage.getItem('cart');
+    if (storedCart) {
+      try {
+        setCartItems(JSON.parse(storedCart));
+      } catch (e) {
+        console.error('Failed to parse cart from localStorage:', e);
+      }
+    }
+  }, []);
+
+  // Save cart items to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // Log product images on component mount to verify paths
   useEffect(() => {
@@ -60,6 +88,38 @@ export default function ProductView({ product }: ProductViewProps) {
   const handleImageError = (index: number) => {
     console.error(`Failed to load image at index ${index}:`, product.images[index]);
     setImageError(prev => ({ ...prev, [index]: true }));
+  };
+
+  // Add to cart function
+  const handleAddToCart = () => {
+    const productToAdd = product;
+    
+    // Check if product already exists in cart
+    const existingItemIndex = cartItems.findIndex(item => item.id === product.id.toString());
+
+    if (existingItemIndex >= 0) {
+      // If product exists, update quantity
+      const updatedCartItems = [...cartItems];
+      updatedCartItems[existingItemIndex].quantity += quantity;
+      setCartItems(updatedCartItems);
+    } else {
+      // If product doesn't exist, add new item
+      const newCartItem = {
+        id: product.id.toString(),
+        name: product.name,
+        price: product.price,
+        quantity: quantity,
+        image: getValidImagePath(product.images[0]), // Use first product image
+      };
+
+      setCartItems([...cartItems, newCartItem]);
+    }
+
+    // Show success toast notification
+    toast.success(`${product.name} added to cart!`);
+    
+    // Reset quantity to 1 after adding to cart
+    setQuantity(1);
   };
 
   // Filter related products from the same category
@@ -127,9 +187,6 @@ export default function ProductView({ product }: ProductViewProps) {
                 </button>
               ))}
             </div>
-            
-            {/* Debug information (remove in production) */}
-          
           </div>
 
           {/* Product Info */}
@@ -193,11 +250,21 @@ export default function ProductView({ product }: ProductViewProps) {
                     <Plus className="h-5 w-5" />
                   </button>
                 </div>
-                <button className="flex-1 bg-pink-600 hover:bg-pink-700 text-white px-8 py-3 rounded-full font-medium flex items-center justify-center space-x-2 transition-colors">
+                <button 
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-pink-600 hover:bg-pink-700 text-white px-8 py-3 rounded-full font-medium flex items-center justify-center space-x-2 transition-colors"
+                >
                   <ShoppingCart className="h-5 w-5" />
                   <span>Add to Cart</span>
                 </button>
               </div>
+              
+              {/* Cart items count indicator */}
+              {cartItems.length > 0 && (
+                <div className="mt-4 text-sm text-gray-600 dark:text-gray-300">
+                  Cart: {cartItems.reduce((total, item) => total + item.quantity, 0)} item(s)
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -294,6 +361,9 @@ export default function ProductView({ product }: ProductViewProps) {
         products={categoryRelatedProducts} 
         currentProductId={product.id} 
       />
+      
+      {/* Toast Container */}
+      <ToastContainer />
     </>
   );
 }
