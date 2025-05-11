@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, User, Sun, Moon, Search } from 'lucide-react';
+import {  User, Sun, Moon, Search } from 'lucide-react';
+
+import CartButton from './CartButton';
+
 import { useTheme } from 'next-themes';
 import Cart from './Cart';
 import Link from 'next/link';
@@ -113,7 +116,7 @@ export default function Navbar() {
                 onClick={handleCartToggle}
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                <ShoppingCart className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+               <CartButton/>
               </button>
             </div>
 

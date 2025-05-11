@@ -5,59 +5,11 @@ import axios from "axios";
 import ProductCard from "../common/ProductCard";
 import SideBar from "./SideBar";
 import { motion } from "framer-motion";
-
-// Define the Product interface based on your API response
-interface Product {
-  product_id: number;
-  product_code: string;
-  product_name: string;
-  slug: string;
-  display_name: string;
-  name_si: string;
-  name_ti: string;
-  print_name: string;
-  section_id: number;
-  department_id: number;
-  category_id: number;
-  brand_id: number;
-  measurement: string;
-  reorder_level: number;
-  lead_days: number;
-  cost_price: number;
-  selling_price: number;
-  minimum_price: number;
-  wholesale_price: number;
-  price_2: number;
-  item_type: string;
-  item_location: string;
-  image_path: string;
-  created_by: string;
-  created_at: string;
-  active_status: number;
-  generic_id: string | null;
-  supplier_list: string;
-  size_id: number;
-  color_id: number | null;
-  product_description: string;
-  how_to_use: string | null;
-  recipe_type: string;
-  barcode: string;
-  expiry_good: number;
-  location_list: string;
-  opening_stock: number;
-  special_promo: number;
-  special_promo_type: string;
-  special_promo_message: string | null;
-  rating: string;
-  review: number;
-  long_description: string;
-  benefits: string;
-  specifications: string;
-  category: string;
-  meta_description: string | null;
-  reviews: string | null;
-  hover_image: string | null;
-}
+import { Product } from "@/types";
+import { ShoppingBag } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify"; 
+import "react-toastify/dist/ReactToastify.css";
+import { useCart } from "../CartContext"; // Import the cart context
 
 interface Filters {
   priceRange?: [number, number];
@@ -86,19 +38,22 @@ const Shop: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isSorting, setIsSorting] = useState(false);
   const prevSortRef = useRef<string | undefined>("");
+  
 
-  // Fetch initial products
+  const {  addToCart, openCart, getCartCount } = useCart();
+
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const response = await axios.get('http://localhost/luxe-cosmetics/server/products');
         
-        // Check if response contains data and is properly structured
+  
         if (response.data && response.data.success && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else if (Array.isArray(response.data)) {
-          // Handle case where API might directly return an array
+
           setProducts(response.data);
         } else {
           setError('Invalid data format received from server');
@@ -115,45 +70,44 @@ const Shop: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // Track previous sort value
+
   useEffect(() => {
-    // Check if sort value has changed
+
     if (prevSortRef.current !== filters.sort) {
-      // Set sorting flag for any change including initial sort
+   
       setIsSorting(true);
       
-      // Reset the sorting flag after animation completes
+
       const timer = setTimeout(() => {
         setIsSorting(false);
-      }, 800); // Slightly longer to ensure animations complete
+      }, 800); 
       
-      // Update the reference
+    
       prevSortRef.current = filters.sort;
       
       return () => clearTimeout(timer);
     }
   }, [filters.sort]);
 
-  // Combined filter application in a single useEffect
+
   useEffect(() => {
     const applyAllFilters = async () => {
       try {
         setIsSearching(true);
         let results: Product[] = [];
         
-        // Step 1: Get products by category if categories are selected
         if (filters.categories && filters.categories.length > 0) {
-          // Create promises for each category search
-          const categoryPromises = filters.categories.map(category => 
+
+          const categoryPromises = filters.categories.map((category: string | number | boolean) => 
             axios.get(`http://localhost/luxe-cosmetics/server/products/search/category?term=${encodeURIComponent(category)}`)
           );
           
-          // Wait for all requests to complete
+   
           const responses = await Promise.all(categoryPromises);
           
-          // Combine and deduplicate results, accessing the nested data array
-          const categoryResults = responses.flatMap(response => {
-            // Check if the response has the nested data structure
+
+          const categoryResults = responses.flatMap((response: { data: { success: any; data: any; }; }) => {
+   
             if (response.data && response.data.success && Array.isArray(response.data.data)) {
               return response.data.data;
             } else if (Array.isArray(response.data)) {
@@ -162,18 +116,15 @@ const Shop: React.FC = () => {
             return [];
           });
           
-          // Deduplicate based on product_id
           results = Array.from(
-            new Map(categoryResults.map(item => [item.product_id, item])).values()
+            new Map((categoryResults as Product[]).map((item: Product) => [item.product_id, item])).values()
           );
         } else {
-          // If no categories selected, use all products
+         
           results = [...products];
         }
         
-        // Step 2: Apply client-side filters
-        
-        // Apply price filter
+    
         if (filters.priceRange) {
           results = results.filter(product => 
             product.selling_price >= filters.priceRange![0] && 
@@ -184,15 +135,15 @@ const Shop: React.FC = () => {
         // Apply brand filter
         if (filters.brands && filters.brands.length > 0) {
           results = results.filter(product => 
-            filters.brands!.some(brand => product.brand_id.toString() === brand || product.product_name.includes(brand))
+            filters.brands!.some((brand: any) => product.brand_id.toString() === brand || product.product_name.includes(brand))
           );
         }
         
         // Apply rating filter
         if (filters.ratings && filters.ratings.length > 0) {
           results = results.filter(product => {
-            const productRating = parseFloat(product.rating);
-            return filters.ratings!.some(rating => productRating >= rating);
+            const productRating = parseFloat(product.rating.toString());
+            return filters.ratings!.some((rating: number) => productRating >= rating);
           });
         }
         
@@ -236,9 +187,28 @@ const Shop: React.FC = () => {
     applyAllFilters();
   }, [filters, products]);
 
+  // Updated handleAddToCart function using the CartContext
   const handleAddToCart = (productId: number) => {
-    console.log(`Add to cart: ${productId}`);
-    // Add animation flash or notification here
+    const productToAdd = filteredProducts.find(product => product.product_id === productId);
+
+    if (!productToAdd) return;
+
+    const newCartItem = {
+      id: productId.toString(),
+      name: productToAdd.display_name || productToAdd.product_name,
+      price: productToAdd.selling_price,
+      quantity: 1,
+      image: `/assets/product/${productToAdd.image_path}`,
+    };
+
+    // Add to cart using context function
+    addToCart(newCartItem);
+    
+    // Open cart
+    openCart();
+
+    // Show success toast notification
+    toast.success(`${productToAdd.display_name || productToAdd.product_name} added to cart!`);
   };
 
   const handleToggleWishlist = (productId: number) => {
@@ -266,7 +236,7 @@ const Shop: React.FC = () => {
       return;
     }
     
-    setFilters(prev => ({
+    setFilters((prev: any) => ({
       ...prev,
       [filterType]: value
     }));
@@ -400,6 +370,17 @@ const Shop: React.FC = () => {
         </p>
       </motion.div>
 
+      {/* Cart button - Using CartContext functions and cart count */}
+      <div className="flex justify-end mb-6">
+        <button
+          onClick={openCart}
+          className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-full transition-all duration-200 shadow-md"
+        >
+          <ShoppingBag className="h-5 w-5" />
+          <span>Cart ({getCartCount()})</span>
+        </button>
+      </div>
+
       {/* Mobile Filter Toggle */}
       <div className="lg:hidden mb-6">
         <button
@@ -527,6 +508,11 @@ const Shop: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Cart component is conditionally rendered by the CartContext, no need to include it here */}
+      
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 };
