@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import ProductView from "@/components/ProductView";
-import { Metadata } from 'next';
+// import { Metadata } from 'next';
 
 // export const metadata: Metadata = {
 //     title: "Cosmetic Shop | Premium Beauty & Skincare Products Online",
@@ -61,14 +61,33 @@ interface ProductData {
   specifications: {
     ingredients: string[];
     skin_type: string[];
-  } | string; // Handle both parsed object and string JSON
+  } | string; 
   category: string;
   meta_description: string;
-  reviews: string; // JSON string
+  reviews: string; 
   hover_image: string;
 }
 
-// Define the type expected by your ProductView component (based on the Product interface in ProductView)
+
+interface ProductSpecifications {
+  ingredients?: string[];
+  skin_type?: string[];
+  [key: string]: string[] | string | undefined; 
+}
+
+interface ProductReview {
+  id?: number;
+  user: string;
+  rating: number;
+  title?: string;
+  comment: string;
+  date?: string;
+  timestamp?: string;
+  verified?: boolean;
+  helpful?: number;
+}
+
+
 interface FormattedProduct {
   id: number;
   name: string;
@@ -76,51 +95,40 @@ interface FormattedProduct {
   category: string;
   price: number;
   rating: number;
-  reviews: Array<{
-    id?: number;
-    user: string;
-    rating: number;
-    title?: string;
-    comment: string;
-    date?: string;
-    timestamp?: string;
-    verified?: boolean;
-    helpful?: number;
-  }>;
+  reviews: ProductReview[];
   description: string;
   longDescription: string;
   benefits: string[];
-  specifications: Record<string, any>;
+  specifications: ProductSpecifications;
   images: string[];
   breadcrumbs: string[];
 }
 
-// Helper function to ensure image paths are valid
+
 const getValidImagePath = (imagePath: string): string => {
   if (!imagePath) {
-    return '/images/placeholder.jpg'; // Fallback image
+    return '/images/placeholder.jpg'; 
   }
   
-  // If it's already a full URL, return as is
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
   
-  // If it starts with a slash, it's already a valid local path
+  
   if (imagePath.startsWith('/')) {
     return imagePath;
   }
   
-  // Otherwise, make it a valid local path by adding a slash
+
   return `/${imagePath}`;
 };
 
 export default function Page({
     params,
 }: {
-    params: Promise<{ slug: string }> // Note the Promise type here
+    params: Promise<{ slug: string }> 
 }) {
-    // Unwrap the params Promise using React.use()
+
     const resolvedParams = React.use(params);
     const { slug } = resolvedParams;
     
@@ -142,9 +150,9 @@ export default function Page({
                 const data: ProductData = await response.json();
                 setProduct(data);
                 setIsLoading(false);
-            } catch (err: any) {
+            } catch (err: unknown) { // Using unknown instead of any
                 console.error('Error fetching product:', err);
-                setError(err.message);
+                setError(err instanceof Error ? err.message : 'An unknown error occurred');
                 setIsLoading(false);
             }
         };
@@ -181,7 +189,7 @@ export default function Page({
     }
 
     // Parse reviews JSON string
-    let parsedReviews = [];
+    let parsedReviews: ProductReview[] = [];
     try {
         parsedReviews = product.reviews ? JSON.parse(product.reviews) : [];
     } catch (e) {
@@ -189,7 +197,7 @@ export default function Page({
     }
 
     // Parse specifications if it's a string
-    let parsedSpecifications = {};
+    let parsedSpecifications: ProductSpecifications = {};
     if (typeof product.specifications === 'string') {
         try {
             parsedSpecifications = JSON.parse(product.specifications);
@@ -209,9 +217,11 @@ export default function Page({
         category: product.category || '',
         price: product.selling_price,
         rating: parseFloat(product.rating) || 0,
-        reviews: parsedReviews.map((review: any, index: number) => ({
-            id: index + 1,  // Generate ID if not provided
-            ...review,
+        reviews: parsedReviews.map((review: ProductReview, index: number) => ({
+            id: review.id || index + 1,  // Generate ID if not provided
+            user: review.user,
+            rating: review.rating,
+            comment: review.comment,
             date: review.timestamp || new Date().toISOString().split('T')[0],
             verified: review.verified !== undefined ? review.verified : true,
             helpful: review.helpful || 0,

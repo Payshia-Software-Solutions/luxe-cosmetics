@@ -14,7 +14,7 @@ import type { Product } from '@/data/products';
 
 interface RelatedProductsProps {
   products: Product[];
-  currentProductId: number;
+  currentProductId: string;
 }
 
 // Helper function to ensure image paths are valid

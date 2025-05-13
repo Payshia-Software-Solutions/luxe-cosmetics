@@ -1,33 +1,52 @@
 "use client";
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
 export interface CartItem {
-  id: string;
+  id: number;
   name: string;
   price: number;
   quantity: number;
-  image: string;
+  image?: string;
 }
 
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (item: CartItem) => void;
-  removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, delta: number) => void;
+  removeFromCart: (id: number) => void;
+  updateQuantity: (id: number, delta: number) => void;
   clearCart: () => void;
   isCartOpen: boolean;
   toggleCart: () => void;
   openCart: () => void;
   closeCart: () => void;
   getCartCount: () => number;
+  getTotalAmount: () => number;
 }
+
+const CART_STORAGE_KEY = 'shopping-cart';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  // Initialize state with data from localStorage (if available)
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    // Only run in browser environment
+    if (typeof window !== 'undefined') {
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+      return savedCart ? JSON.parse(savedCart) : [];
+    }
+    return [];
+  });
+  
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Save cart items to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    }
+  }, [cartItems]);
 
   // Add item to cart
   const addToCart = (itemToAdd: CartItem) => {
@@ -47,12 +66,12 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // Remove item from cart
-  const removeFromCart = (id: string) => {
+  const removeFromCart = (id: number) => {
     setCartItems(prevItems => prevItems.filter(item => item.id !== id));
   };
 
   // Update item quantity
-  const updateQuantity = (id: string, delta: number) => {
+  const updateQuantity = (id: number, delta: number) => {
     setCartItems(prevItems => 
       prevItems.map(item => 
         item.id === id 
@@ -87,6 +106,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
+  // Get total cart amount
+  const getTotalAmount = () => {
+    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+
   const value: CartContextType = {
     cartItems,
     addToCart,
@@ -98,6 +122,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     openCart,
     closeCart,
     getCartCount,
+    getTotalAmount,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

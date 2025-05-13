@@ -12,7 +12,6 @@ import "swiper/css/pagination";
 import "react-toastify/dist/ReactToastify.css";
 
 import ProductCard from "./common/ProductCard";
-
 import { useCart } from "./CartContext";
 
 interface Product {
@@ -72,15 +71,16 @@ export default function FeaturedProducts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<number[]>([]);
-  
-  // Use the cart context instead of local state
-  const { cartItems, addToCart, openCart, getCartCount } = useCart();
+
+  const { addToCart, openCart, getCartCount } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost/luxe-cosmetics/server/products");
+        const response = await axios.get(
+          "http://localhost/luxe-cosmetics/server/products"
+        );
 
         let productsData = response.data;
 
@@ -98,17 +98,22 @@ export default function FeaturedProducts() {
           }
         }
 
-        if (!Array.isArray(productsData)) {
-          throw new Error("Could not extract products array from response");
-        }
-
-        const validProducts = productsData.filter((product: any) => {
-          return product && typeof product === "object" && product.product_id && (product.product_name || product.display_name);
-        });
+        // Type guard to ensure we're working with Product objects
+        const validProducts = (productsData as unknown[]).filter(
+          (product): product is Product => {
+            return (
+              typeof product === "object" &&
+              product !== null &&
+              "product_id" in product &&
+              ("product_name" in product || "display_name" in product)
+            );
+          }
+        );
 
         setProducts(validProducts);
         setError(null);
       } catch (err) {
+        console.error(err);
         setError("Failed to load products. Please try again later.");
         setProducts([]);
       } finally {
@@ -120,31 +125,31 @@ export default function FeaturedProducts() {
   }, []);
 
   const handleAddToCart = (productId: number) => {
-    const productToAdd = products.find(product => product.product_id === productId);
-
+    const productToAdd = products.find(
+      (product) => product.product_id === productId
+    );
     if (!productToAdd) return;
 
     const newCartItem = {
-      id: productId.toString(),
+      id: productId,
       name: productToAdd.display_name || productToAdd.product_name,
       price: productToAdd.selling_price,
       quantity: 1,
       image: `/assets/product/${productToAdd.image_path}`,
     };
 
-    // Add to cart using context function
     addToCart(newCartItem);
-    
-    // Open cart
     openCart();
-
-    // Show success toast notification
-    toast.success(`${productToAdd.display_name || productToAdd.product_name} added to cart!`);
+    toast.success(
+      `${productToAdd.display_name || productToAdd.product_name} added to cart!`
+    );
   };
 
   const handleToggleWishlist = (productId: number) => {
     setWishlist((prev) =>
-      prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
     );
   };
 
@@ -194,7 +199,7 @@ export default function FeaturedProducts() {
           </button>
         </div>
 
-        {Array.isArray(products) && products.length > 0 ? (
+        {products.length > 0 ? (
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={5}
@@ -215,7 +220,9 @@ export default function FeaturedProducts() {
             className="py-12"
           >
             {products.map((product) => (
-              <SwiperSlide key={product.product_id}>
+              <SwiperSlide 
+              className="mb-8"
+              key={product.product_id}>
                 <ProductCard
                   product={product}
                   onAddToCart={handleAddToCart}
@@ -226,11 +233,12 @@ export default function FeaturedProducts() {
             ))}
           </Swiper>
         ) : (
-          <div className="py-12 text-center">No featured products available at this time.</div>
+          <div className="py-12 text-center">
+            No featured products available at this time.
+          </div>
         )}
       </div>
 
-      {/* Cart is conditionally rendered by the context */}
       <ToastContainer />
     </section>
   );
