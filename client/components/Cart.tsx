@@ -2,15 +2,24 @@
 
 import React from 'react';
 import { X, ShoppingBag } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import CartRow from './CartRow';
 import { useCart } from './CartContext';
 
 const Cart: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { cartItems,  updateQuantity, removeFromCart } = useCart();
+  const router = useRouter();
+  const { cartItems, updateQuantity, removeFromCart } = useCart();
   
   const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  const shipping = cartItems.length > 0 ? 5.99 : 0;
-  const total = subtotal + shipping;
+  // const shipping = cartItems.length > 0 ? 5.99 : 0;
+  const total = subtotal;
+
+  const handleCheckout = () => {
+    // Close the cart drawer
+    onClose();
+    // Navigate to checkout page
+    router.push('/checkout');
+  };
 
   return (
     <div className="fixed inset-y-0 right-0 w-full md:w-96 bg-white dark:bg-gray-900 shadow-xl transform transition-transform duration-300 ease-in-out z-50">
@@ -47,15 +56,18 @@ const Cart: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <span className="text-gray-500 dark:text-gray-400">Subtotal</span>
                 <span className="text-gray-900 dark:text-white">${subtotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-sm">
+              {/* <div className="flex justify-between text-sm">
                 <span className="text-gray-500 dark:text-gray-400">Shipping</span>
                 <span className="text-gray-900 dark:text-white">${shipping.toFixed(2)}</span>
-              </div>
+              </div> */}
               <div className="flex justify-between text-lg font-medium">
                 <span className="text-gray-900 dark:text-white">Total</span>
                 <span className="text-gray-900 dark:text-white">${total.toFixed(2)}</span>
               </div>
-              <button className="w-full bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-full font-medium flex items-center justify-center space-x-2 transition-colors">
+              <button 
+                onClick={handleCheckout}
+                className="w-full bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-full font-medium flex items-center justify-center space-x-2 transition-colors"
+              >
                 <ShoppingBag className="h-5 w-5" />
                 <span>Checkout</span>
               </button>

@@ -42,7 +42,7 @@ const getValidImagePath = (imagePath: string): string => {
     finalPath = `/assets/product/${imagePath}`;
   }
   
-  // Log the original and transformed image path for debugging
+ 
   console.log(`Image path transformation: ${imagePath} → ${finalPath}`);
   
   return finalPath;
@@ -55,7 +55,7 @@ export default function ProductView({ product }: ProductViewProps) {
   const [imageError, setImageError] = useState<Record<number, boolean>>({});
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Load cart items from local storage on component mount
+  
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
@@ -67,12 +67,12 @@ export default function ProductView({ product }: ProductViewProps) {
     }
   }, []);
 
-  // Save cart items to local storage whenever they change
+  
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Log product images on component mount to verify paths
+ 
   useEffect(() => {
     console.log('Product data:', product);
     console.log('Product images array:', product.images);
@@ -90,39 +90,39 @@ export default function ProductView({ product }: ProductViewProps) {
     setImageError(prev => ({ ...prev, [index]: true }));
   };
 
-  // Add to cart function
+
   const handleAddToCart = () => {
-    const productToAdd = product;
     
-    // Check if product already exists in cart
+    
+   
     const existingItemIndex = cartItems.findIndex(item => item.id === product.id.toString());
 
     if (existingItemIndex >= 0) {
-      // If product exists, update quantity
+   
       const updatedCartItems = [...cartItems];
       updatedCartItems[existingItemIndex].quantity += quantity;
       setCartItems(updatedCartItems);
     } else {
-      // If product doesn't exist, add new item
+   
       const newCartItem = {
         id: product.id.toString(),
         name: product.name,
         price: product.price,
         quantity: quantity,
-        image: getValidImagePath(product.images[0]), // Use first product image
+        image: getValidImagePath(product.images[0]), 
       };
 
       setCartItems([...cartItems, newCartItem]);
     }
 
-    // Show success toast notification
+   
     toast.success(`${product.name} added to cart!`);
     
-    // Reset quantity to 1 after adding to cart
+    
     setQuantity(1);
   };
 
-  // Filter related products from the same category
+  
   const categoryRelatedProducts = products.filter(p => p.category === product?.category);
 
   return (
