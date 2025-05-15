@@ -5,6 +5,7 @@ import axios from "axios";
 import ProductCard from "../common/ProductCard";
 import SideBar from "./SideBar";
 import { motion } from "framer-motion";
+
 import { Product } from "@/types";
 import { ShoppingBag } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify"; 
@@ -352,7 +353,39 @@ const Shop: React.FC = () => {
     );
   };
 
+  if (loading) {
+    return (
+      <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b pb-2 mb-2">
+            Featured Products
+          </h2>
+          <div className="py-12 flex justify-center items-center">
+            <div className="animate-pulse text-lg">Loading products...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b pb-2 mb-2">
+            Featured Products
+          </h2>
+          <div className="py-12 text-center text-red-600 dark:text-red-400">
+            {error}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+
   return (
+    
     <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
       <motion.div 

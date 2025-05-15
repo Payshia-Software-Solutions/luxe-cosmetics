@@ -5,9 +5,11 @@ import { Star, Heart, ShoppingBag } from "lucide-react";
 
 // Updated Product interface to match the new data structure
 export interface Product {
+
   product_id: number;
   product_code: string;
   product_name: string;
+
   slug: string;
   display_name: string;
   name_si: string;

@@ -1,4 +1,5 @@
 export interface Product {
+
   product_id: number;
   product_code: string;
   product_name: string;
@@ -57,3 +58,4 @@ export interface ProductCardProps {
   onToggleWishlist: (productId: number) => void;
   isInWishlist: boolean;
 }
+

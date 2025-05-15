@@ -87,7 +87,6 @@ interface ProductReview {
   helpful?: number;
 }
 
-
 interface FormattedProduct {
   id: number;
   name: string;
@@ -104,6 +103,35 @@ interface FormattedProduct {
   breadcrumbs: string[];
 }
 
+export interface Product {
+    id: number;
+    slug: string;
+    name: string;
+    price: number;
+    rating: number;
+    review: number;
+    description: string;
+    longDescription: string;
+    benefits: string[];
+    specifications: Record<string, string>;
+    ingredients: string;
+    images: string[];
+    category: string;
+    breadcrumbs: string[];
+    metaDescription: string;
+    reviews: Review[];
+  }
+  
+  export interface Review {
+    id: number;
+    user: string;
+    rating: number;
+    date: string;
+    title: string;
+    comment: string;
+    verified: boolean;
+    helpful: number;
+  }
 
 const getValidImagePath = (imagePath: string): string => {
   if (!imagePath) {
@@ -128,6 +156,7 @@ export default function Page({
 }: {
     params: Promise<{ slug: string }> 
 }) {
+
 
     const resolvedParams = React.use(params);
     const { slug } = resolvedParams;

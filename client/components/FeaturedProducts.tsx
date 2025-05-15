@@ -66,20 +66,52 @@ interface Product {
   hover_image: string | null;
 }
 
+interface Product {
+   id: number;
+    slug: string;
+    name: string;
+    price: number;
+    rating: number;
+    review: number;
+    description: string;
+    longDescription: string;
+    benefits: string[];
+    specifications: Record<string, string>;
+    ingredients: string;
+    images: string[];
+    category: string;
+    breadcrumbs: string[];
+    metaDescription: string;
+    reviews: Review[];
+}
+
+
+export interface Review {
+  id: number;
+  user: string;
+  rating: number;
+  date: string;
+  title: string;
+  comment: string;
+  verified: boolean;
+  helpful: number;
+}
+
+
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<number[]>([]);
-
   const { addToCart, openCart, getCartCount } = useCart();
+
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          "http://localhost/luxe-cosmetics/server/products"
+          `${process.env.NEXT_PUBLIC_API_URL}/products`
         );
 
         let productsData = response.data;
@@ -101,6 +133,7 @@ export default function FeaturedProducts() {
         // Type guard to ensure we're working with Product objects
         const validProducts = (productsData as unknown[]).filter(
           (product): product is Product => {
+
             return (
               typeof product === "object" &&
               product !== null &&
@@ -109,7 +142,6 @@ export default function FeaturedProducts() {
             );
           }
         );
-
         setProducts(validProducts);
         setError(null);
       } catch (err) {
@@ -146,6 +178,7 @@ export default function FeaturedProducts() {
   };
 
   const handleToggleWishlist = (productId: number) => {
+
     setWishlist((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
@@ -220,10 +253,12 @@ export default function FeaturedProducts() {
             className="py-12"
           >
             {products.map((product) => (
+
               <SwiperSlide 
               className="mb-8"
               key={product.product_id}>
                 <ProductCard
+
                   product={product}
                   onAddToCart={handleAddToCart}
                   onToggleWishlist={handleToggleWishlist}
