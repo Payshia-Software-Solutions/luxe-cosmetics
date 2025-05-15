@@ -11,15 +11,7 @@ import { ShoppingBag } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useCart } from "../CartContext"; // Import the cart context
-
-interface Filters {
-  priceRange?: [number, number];
-  categories?: string[];
-  brands?: string[];
-  ratings?: number[];
-  onSale?: boolean;
-  sort?: string;
-}
+import { Filters } from "@/types/Filters";
 
 const Shop: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -99,6 +91,7 @@ const Shop: React.FC = () => {
 
         if (filters.categories && filters.categories.length > 0) {
 
+<<<<<<< Updated upstream
           const categoryPromises = filters.categories.map((category: string) =>
             axios.get<{ success: boolean; data: Product[] }>(`http://localhost/luxe-cosmetics/server/products/search/category?term=${encodeURIComponent(category)}`)
           );
@@ -112,11 +105,32 @@ const Shop: React.FC = () => {
             const resData = response.data as { success: boolean; data: Product[] };
             if (resData.success && Array.isArray(resData.data)) {
               return resData.data;
+=======
+          type CategoryFilter = string | number | boolean;
+          const categoryPromises = filters.categories.map((category: CategoryFilter) =>
+            axios.get(`http://localhost/luxe-cosmetics/server/products/search/category?term=${encodeURIComponent(category)}`)
+          );
+
+
+          const responses: { data: { success: boolean; data: Product[] } }[] = await Promise.all(categoryPromises);
+
+
+
+          const categoryResults = responses.flatMap((response: { data: { success: boolean; data: Product[] } }) => {
+
+            if (response.data && response.data.success && Array.isArray(response.data.data)) {
+              return response.data.data;
+            } else if (Array.isArray(response.data)) {
+              return response.data;
+>>>>>>> Stashed changes
             }
             return [];
           });
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
           results = Array.from(
             new Map((categoryResults as Product[]).map((item: Product) => [item.product_id, item])).values()
           );
@@ -224,7 +238,14 @@ const Shop: React.FC = () => {
     setFilterActive(!filterActive);
   };
 
+<<<<<<< Updated upstream
   const handleFilterChange = <K extends keyof Filters>(filterType: K, value: Filters[K]) => {
+=======
+  const handleFilterChange = (
+    filterType: keyof Filters | 'resetAll',
+    value: string[] | boolean | [number, number] | string
+  ) => {
+>>>>>>> Stashed changes
     if (filterType === 'resetAll') {
       setFilters({
         categories: [],
@@ -237,7 +258,11 @@ const Shop: React.FC = () => {
       return;
     }
 
+<<<<<<< Updated upstream
     setFilters((prev: Filters) => ({
+=======
+    setFilters((prev) => ({
+>>>>>>> Stashed changes
       ...prev,
       [filterType]: value
     }));
@@ -263,6 +288,47 @@ const Shop: React.FC = () => {
       transition: { duration: 0.3 }
     }
   };
+<<<<<<< Updated upstream
+=======
+
+  // Sort animation variants
+  // const sortVariants = {
+  //   initial: {
+  //     opacity: 0,
+  //     scale: 0.8,
+  //   },
+  //   animate: {
+  //     opacity: 1,
+  //     scale: 1,
+  //     transition: {
+  //       type: "spring",
+  //       stiffness: 260,
+  //       damping: 20
+  //     }
+  //   },
+  //   exit: {
+  //     opacity: 0,
+  //     scale: 0.8,
+  //     transition: {
+  //       duration: 0.2
+  //     }
+  //   }
+  // };
+
+  // Product reordering animation variants
+  // const reorderVariants = {
+  //   initial: { scale: 0.95, opacity: 0.8 },
+  //   animate: {
+  //     scale: 1,
+  //     opacity: 1,
+  //     transition: {
+  //       type: "spring",
+  //       stiffness: 300,
+  //       damping: 25
+  //     }
+  //   }
+  // };
+>>>>>>> Stashed changes
 
   // Sort indicator component
   const SortIndicator = () => {
@@ -348,7 +414,7 @@ const Shop: React.FC = () => {
 
 
   return (
-    
+
     <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
       <motion.div

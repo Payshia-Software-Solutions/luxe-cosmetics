@@ -3,13 +3,13 @@ import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { GiLipstick, GiFaceToFace, GiEyeTarget, GiFragrance } from "react-icons/gi";
 import { FaRegHeart } from "react-icons/fa";
-import { JSX } from "react";
 // Import our components
 import PriceFilter from "./PriceFilter";
 import SectionHeader from "./SectionHeader";
 import Checkbox from "./Checkbox";
 import ActiveFilters from "./ActiveFilters";
 import SortDropdown from "./SortDropdown";
+<<<<<<< Updated upstream
 
 
 
@@ -35,6 +35,10 @@ interface SideBarProps {
   onFilterChange: (filterType: string, value: FilterValue) => void;
   activeFilters: FilterState;
 }
+=======
+import { Category } from "@/types/Category";
+import { SideBarProps } from "@/types/SideBarProps";
+>>>>>>> Stashed changes
 
 const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
   const [expandedSections, setExpandedSections] = useState({
@@ -53,9 +57,6 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
     { icon: <GiFragrance size={20} />, label: "Fragrance", count: 45 },
     { icon: <FaRegHeart size={20} />, label: "Skincare", count: 216 }
   ];
-
-
-
 
 
   const brands = ['Fenty Beauty', 'Glossier', 'Charlotte Tilbury', 'Rare Beauty', 'Dior'];

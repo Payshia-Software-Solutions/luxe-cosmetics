@@ -1,11 +1,5 @@
 import React from "react";
-
-interface CheckboxProps {
-  id: string;
-  label: React.ReactNode;
-  checked?: boolean;
-  onChange?: () => void;
-}
+import { CheckboxProps } from "@/types/CheckboxProps";
 
 const Checkbox: React.FC<CheckboxProps> = ({ id, label, checked = false, onChange }) => {
   return (
@@ -21,8 +15,8 @@ const Checkbox: React.FC<CheckboxProps> = ({ id, label, checked = false, onChang
         <div className={`border-2 rounded w-5 h-5 flex flex-shrink-0 justify-center items-center mr-2 
           ${checked ? 'bg-rose-500 border-rose-500' : 'border-gray-300 bg-white'}`}
         >
-          <svg 
-            className={`fill-current w-3 h-3 text-white pointer-events-none ${checked ? 'opacity-100' : 'opacity-0'}`} 
+          <svg
+            className={`fill-current w-3 h-3 text-white pointer-events-none ${checked ? 'opacity-100' : 'opacity-0'}`}
             viewBox="0 0 20 20"
           >
             <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />

@@ -13,90 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import ProductCard from "./common/ProductCard";
 import { useCart } from "./CartContext";
-
-interface Product {
-  product_id: number;
-  product_code: string;
-  product_name: string;
-  slug: string;
-  display_name: string;
-  name_si: string;
-  name_ti: string;
-  print_name: string;
-  section_id: number;
-  department_id: number;
-  category_id: number;
-  brand_id: number;
-  measurement: string;
-  reorder_level: number;
-  lead_days: number;
-  cost_price: number;
-  selling_price: number;
-  minimum_price: number;
-  wholesale_price: number;
-  price_2: number;
-  item_type: string;
-  item_location: string;
-  image_path: string;
-  created_by: string;
-  created_at: string;
-  active_status: number;
-  generic_id: string | null;
-  supplier_list: string;
-  size_id: number;
-  color_id: number | null;
-  product_description: string;
-  how_to_use: string | null;
-  recipe_type: string;
-  barcode: string;
-  expiry_good: number;
-  location_list: string;
-  opening_stock: number;
-  special_promo: number;
-  special_promo_type: string;
-  special_promo_message: string | null;
-  rating: string;
-  review: number;
-  long_description: string;
-  benefits: string;
-  specifications: string;
-  category: string;
-  meta_description: string | null;
-  reviews: string | null;
-  hover_image: string | null;
-}
-
-interface Product {
-   id: number;
-    slug: string;
-    name: string;
-    price: number;
-    rating: number;
-    review: number;
-    description: string;
-    longDescription: string;
-    benefits: string[];
-    specifications: Record<string, string>;
-    ingredients: string;
-    images: string[];
-    category: string;
-    breadcrumbs: string[];
-    metaDescription: string;
-    reviews: Review[];
-}
-
-
-export interface Review {
-  id: number;
-  user: string;
-  rating: number;
-  date: string;
-  title: string;
-  comment: string;
-  verified: boolean;
-  helpful: number;
-}
-
+import { Product } from "@/types/product";
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -290,9 +207,9 @@ export default function FeaturedProducts() {
           >
             {products.map((product) => (
 
-              <SwiperSlide 
-              className="mb-8"
-              key={product.product_id}>
+              <SwiperSlide
+                className="mb-8"
+                key={product.product_id}>
                 <ProductCard
 
                   product={product}

@@ -1,18 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Trash2, Plus, Minus } from 'lucide-react';
-
-interface CartRowProps {
-  item: {
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-    image: string;
-  };
-  onQuantityChange: (id: string, delta: number) => void;
-  onRemove: (id: string) => void;
-}
+import { CartRowProps } from '@/types/CartRowProps';
 
 const CartRow: React.FC<CartRowProps> = ({ item, onQuantityChange, onRemove }) => {
   return (

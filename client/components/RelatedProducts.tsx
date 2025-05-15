@@ -9,30 +9,24 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-
-import type { Product } from '@/data/products';
-
-interface RelatedProductsProps {
-  products: Product[];
-  currentProductId: string;
-}
+import { RelatedProductsProps } from '@/types/RelatedProductsProps';
 
 // Helper function to ensure image paths are valid
 const getValidImagePath = (imagePath: string): string => {
   if (!imagePath) {
     return '/images/placeholder.jpg'; // Fallback image
   }
-  
-  
+
+
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
-  
+
   // If it starts with a slash, it's already a valid local path
   if (imagePath.startsWith('/')) {
     return imagePath;
   }
-  
+
   // Otherwise, make it a valid local path by adding a slash
   return `/${imagePath}`;
 };
@@ -99,7 +93,7 @@ export default function RelatedProducts({ products, currentProductId }: RelatedP
                       <span className="text-xl font-bold text-gray-900 dark:text-white">
                         ${product.price}
                       </span>
-                      <button 
+                      <button
                         className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
                         onClick={(e) => {
                           e.preventDefault(); // Prevent navigation when clicking the button

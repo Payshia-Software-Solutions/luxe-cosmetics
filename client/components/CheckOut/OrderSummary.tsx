@@ -2,39 +2,9 @@
 import React, { useState, useEffect } from "react";
 import config from "@/config";
 import Image from "next/image";
-// Adjusted to match CartContext item structure
-interface CartItem {
-  id: number | string;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
-}
-
-// Define interface for promo code data
-interface PromoCodeData {
-  is_active: boolean;
-  start_date: string;
-  end_date: string;
-  min_order_value: string;
-  discount_type: "percentage" | "fixed";
-  discount_value: string;
-}
-
-// Define interface for applicable product data
-interface ApplicableProductData {
-  product_id: string | number;
-}
-
-// Define props interface for the component
-interface OrderSummaryProps {
-  cart: CartItem[];
-  finalAmount: number;
-  shippingFee: number;
-  setPromoCode: (code: string) => void;
-  setFinalPayAmount: (amount: number) => void;
-  setDiscountAmount: (amount: number) => void;
-}
+import { PromoCodeData } from "@/types/PromoCodeData";
+import { ApplicableProductData } from "@/types/ApplicableProductData";
+import { OrderSummaryProps } from "@/types/OrderSummaryProps";
 
 // Declare fbq for Facebook Pixel tracking
 declare global {

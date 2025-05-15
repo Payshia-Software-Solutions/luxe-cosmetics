@@ -1,22 +1,7 @@
 "use client";
 import { useState, ChangeEvent } from "react";
-
-// Define the address data interface
-interface DeliveryAddressData {
-  country: string;
-  firstName: string;
-  lastName: string;
-  address: string;
-  apartment: string;
-  city: string;
-  postalCode: string;
-  phone: string;
-}
-
-// Define props interface for the component
-interface DeliveryFormProps {
-  setDeliveryAddress: (address: DeliveryAddressData) => void;
-}
+import { DeliveryAddressData } from "@/types/DeliveryAddressData";
+import { DeliveryFormProps } from "@/types/DeliveryFormProps";
 
 export default function DeliveryForm({ setDeliveryAddress }: DeliveryFormProps) {
   const [formData, setFormData] = useState<DeliveryAddressData>({

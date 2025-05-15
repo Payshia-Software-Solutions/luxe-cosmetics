@@ -3,25 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { Star, Heart, Share2, Minus, Plus, ShoppingCart, ChevronRight } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-import type { Product } from '@/data/products';
 import { products } from '@/data/products';
-
 import Link from 'next/link';
 import Image from 'next/image';
 import RelatedProducts from './RelatedProducts';
-
-interface ProductViewProps {
-  product: Product;
-}
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
+import type { CartItem } from '@/types/ProductViewCartItem';
+import { ProductViewProps } from '@/types/ProductViewProps ';
 
 const getValidImagePath = (imagePath: string): string => {
   let finalPath;
@@ -42,11 +29,16 @@ const getValidImagePath = (imagePath: string): string => {
     finalPath = `/assets/product/${imagePath}`;
   }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   
  
 =======
 
   // Log the original and transformed image path for debugging
+>>>>>>> Stashed changes
+=======
+
+
 >>>>>>> Stashed changes
   console.log(`Image path transformation: ${imagePath} → ${finalPath}`);
 
@@ -60,7 +52,7 @@ export default function ProductView({ product }: ProductViewProps) {
   const [imageError, setImageError] = useState<Record<number, boolean>>({});
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  
+
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
@@ -72,12 +64,12 @@ export default function ProductView({ product }: ProductViewProps) {
     }
   }, []);
 
-  
+
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
- 
+
   useEffect(() => {
     console.log('Product data:', product);
     console.log('Product images array:', product.images);
@@ -98,40 +90,51 @@ export default function ProductView({ product }: ProductViewProps) {
 
   const handleAddToCart = () => {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     
     
    
 =======
     // Check if product already exists in cart
 >>>>>>> Stashed changes
+=======
+
+
+
+>>>>>>> Stashed changes
     const existingItemIndex = cartItems.findIndex(item => item.id === product.id.toString());
 
     if (existingItemIndex >= 0) {
-   
+
       const updatedCartItems = [...cartItems];
       updatedCartItems[existingItemIndex].quantity += quantity;
       setCartItems(updatedCartItems);
     } else {
-   
+
       const newCartItem = {
         id: product.id.toString(),
         name: product.name,
         price: product.price,
         quantity: quantity,
-        image: getValidImagePath(product.images[0]), 
+        image: getValidImagePath(product.images[0]),
       };
 
       setCartItems([...cartItems, newCartItem]);
     }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
    
+=======
+
+>>>>>>> Stashed changes
     toast.success(`${product.name} added to cart!`);
-    
-    
+
+
     setQuantity(1);
   };
 
+<<<<<<< Updated upstream
   
 =======
     toast.success(`${product.name} added to cart!`);
@@ -140,6 +143,9 @@ export default function ProductView({ product }: ProductViewProps) {
 
 
   // Filter related products from the same category
+>>>>>>> Stashed changes
+=======
+
 >>>>>>> Stashed changes
   const categoryRelatedProducts = products.filter(p => p.category === product?.category);
 

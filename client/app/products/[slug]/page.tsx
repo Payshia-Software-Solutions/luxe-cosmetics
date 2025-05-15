@@ -3,6 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import ProductView from "@/components/ProductView";
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+import { ProductData } from "@/types/ProductData";
+import { ProductSpecifications } from "@/types/ProductSpecifications";
+import { ProductReview } from "@/types/ProductReview";
+import { FormattedProduct } from '@/types/FormattedProduct';
+>>>>>>> Stashed changes
 // import { Metadata } from 'next';
 =======
 
@@ -11,6 +18,7 @@ import ProductView from "@/components/ProductView";
 import { Metadata } from 'next';
 >>>>>>> Stashed changes
 
+<<<<<<< Updated upstream
 export const metadata: Metadata = {
   title: "Cosmetic Shop | Premium Beauty & Skincare Products Online",
   description: "Discover a wide range of premium beauty and skincare products at our Cosmetic Shop. Shop for makeup, skincare, haircare, and more with fast delivery and expert advice.",
@@ -111,6 +119,9 @@ interface FormattedProduct {
   images: string[];
   breadcrumbs: string[];
 }
+=======
+// Define the type for your API response based on the sample data
+>>>>>>> Stashed changes
 
 export interface Product {
     id: number;
@@ -129,9 +140,9 @@ export interface Product {
     breadcrumbs: string[];
     metaDescription: string;
     reviews: Review[];
-  }
-  
-  export interface Review {
+}
+
+export interface Review {
     id: number;
     user: string;
     rating: number;
@@ -140,23 +151,14 @@ export interface Product {
     comment: string;
     verified: boolean;
     helpful: number;
-  }
+}
 
 const getValidImagePath = (imagePath: string): string => {
-  if (!imagePath) {
-    return '/images/placeholder.jpg'; 
-  }
-  
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-    return imagePath;
-  }
-  
-  
-  if (imagePath.startsWith('/')) {
-    return imagePath;
-  }
-  
+    if (!imagePath) {
+        return '/images/placeholder.jpg';
+    }
 
+<<<<<<< Updated upstream
   return `/${imagePath}`;
 =======
     product_id: number;
@@ -253,13 +255,30 @@ const getValidImagePath = (imagePath: string): string => {
 
     return `/${imagePath}`;
 >>>>>>> Stashed changes
+=======
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        return imagePath;
+    }
+
+
+    if (imagePath.startsWith('/')) {
+        return imagePath;
+    }
+
+
+    return `/${imagePath}`;
+>>>>>>> Stashed changes
 };
 
 export default function Page({
     params,
 }: {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     params: Promise<{ slug: string }> 
+=======
+    params: Promise<{ slug: string }>
+>>>>>>> Stashed changes
 }) {
 
 
@@ -279,6 +298,10 @@ export default function Page({
             try {
                 setIsLoading(true);
                 const response = await fetch(`http://localhost/luxe-cosmetics/server/products/get-by-slug/${slug}`);
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
                 if (!response.ok) {
                     throw new Error('Failed to fetch product data');
                 }
