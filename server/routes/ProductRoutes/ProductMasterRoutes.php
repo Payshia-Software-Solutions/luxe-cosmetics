@@ -36,6 +36,11 @@ return [
     'GET /products/{product_id}/' => function ($product_id) use ($productController) { // Pass product_id directly
         $productController->getRecordById($product_id); // Pass product_id to the method
     },
+    'GET /products/search/category' => function () use ($productController) {
+    // Get search term from query parameter
+    $searchTerm = isset($_GET['term']) ? $_GET['term'] : '';
+    $productController->searchByCategoryString($searchTerm);
+},
     'GET /products/get-by-slug/{slug}/' => function ($slug) use ($productController) { // Pass product_id directly
         $productController->getRecordBySlug($slug); // Pass product_slug to the method
     },

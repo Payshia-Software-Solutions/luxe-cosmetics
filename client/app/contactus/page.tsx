@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -55,6 +56,7 @@ function ContactUsPage() {
       setLoading(false);
     }
   };
+
 
   return (
     <section className="py-16 bg-[#fff0e9] dark:bg-[#1e1e1e] transition-colors">

@@ -391,4 +391,41 @@ class ProductController
             echo json_encode(['error' => 'Invalid input']);
         }
     }
+
+
+
+    public function searchByCategoryString($searchTerm = '')
+{
+    // If search term is empty, check if it was sent via GET parameter
+    if (empty($searchTerm) && isset($_GET['term'])) {
+        $searchTerm = $_GET['term'];
+    }
+    
+    // If there's still no search term, return an error
+    if (empty($searchTerm)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Search term is required']);
+        return;
+    }
+    
+    // Call the model function to search for products
+    $records = $this->model->searchProductsByCategoryString($searchTerm);
+    
+    // Check if any products were found
+    if ($records && count($records) > 0) {
+        echo json_encode([
+            'success' => true,
+            'count' => count($records),
+            'data' => $records
+        ]);
+    } else {
+        // Return 200 status with empty result rather than 404
+        // This is common for search APIs where "no results" is not an error
+        echo json_encode([
+            'success' => true,
+            'count' => 0,
+            'data' => []
+        ]);
+    }
+}
 }

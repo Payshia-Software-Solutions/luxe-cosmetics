@@ -4,34 +4,118 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-
+import { ShoppingBag } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import "react-toastify/dist/ReactToastify.css";
 
 import ProductCard from "./common/ProductCard";
+import { useCart } from "./CartContext";
+
+interface Product {
+  product_id: number;
+  product_code: string;
+  product_name: string;
+  slug: string;
+  display_name: string;
+  name_si: string;
+  name_ti: string;
+  print_name: string;
+  section_id: number;
+  department_id: number;
+  category_id: number;
+  brand_id: number;
+  measurement: string;
+  reorder_level: number;
+  lead_days: number;
+  cost_price: number;
+  selling_price: number;
+  minimum_price: number;
+  wholesale_price: number;
+  price_2: number;
+  item_type: string;
+  item_location: string;
+  image_path: string;
+  created_by: string;
+  created_at: string;
+  active_status: number;
+  generic_id: string | null;
+  supplier_list: string;
+  size_id: number;
+  color_id: number | null;
+  product_description: string;
+  how_to_use: string | null;
+  recipe_type: string;
+  barcode: string;
+  expiry_good: number;
+  location_list: string;
+  opening_stock: number;
+  special_promo: number;
+  special_promo_type: string;
+  special_promo_message: string | null;
+  rating: string;
+  review: number;
+  long_description: string;
+  benefits: string;
+  specifications: string;
+  category: string;
+  meta_description: string | null;
+  reviews: string | null;
+  hover_image: string | null;
+}
+
+interface Product {
+   id: number;
+    slug: string;
+    name: string;
+    price: number;
+    rating: number;
+    review: number;
+    description: string;
+    longDescription: string;
+    benefits: string[];
+    specifications: Record<string, string>;
+    ingredients: string;
+    images: string[];
+    category: string;
+    breadcrumbs: string[];
+    metaDescription: string;
+    reviews: Review[];
+}
+
+
+export interface Review {
+  id: number;
+  user: string;
+  rating: number;
+  date: string;
+  title: string;
+  comment: string;
+  verified: boolean;
+  helpful: number;
+}
+
 
 export default function FeaturedProducts() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [wishlist, setWishlist] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+  const [wishlist, setWishlist] = useState<number[]>([]);
+  const { addToCart, openCart, getCartCount } = useCart();
 
-  // Fetch products using axios
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          "http://localhost/luxe-cosmetics/server/products"
+          `${process.env.NEXT_PUBLIC_API_URL}/products`
         );
 
-        console.log("API Response:", response.data);
-
-        // Process and validate the products data
         let productsData = response.data;
 
-        // Handle different response formats
         if (!Array.isArray(productsData)) {
           if (productsData?.products) {
             productsData = productsData.products;
@@ -40,120 +124,29 @@ export default function FeaturedProducts() {
           } else if (productsData?.results) {
             productsData = productsData.results;
           } else if (productsData?.product_id) {
-            // Single product object
             productsData = [productsData];
           } else {
             throw new Error("Unexpected response format");
           }
         }
-        
-        // Validate we have an array
-        if (!Array.isArray(productsData)) {
-          throw new Error("Could not extract products array from response");
-        }
 
-        // Map API field names to expected Product interface field names
-        const validProducts = productsData
-          .filter((product) => {
-            // Basic validation - ensure it has minimum required properties
+        // Type guard to ensure we're working with Product objects
+        const validProducts = (productsData as unknown[]).filter(
+          (product): product is Product => {
+
             return (
-              product &&
               typeof product === "object" &&
-              (product.id || product.product_id) &&
-              (product.name || product.product_name || product.display_name)
+              product !== null &&
+              "product_id" in product &&
+              ("product_name" in product || "display_name" in product)
             );
-          })
-          .map((product) => {
-            // Process images
-            const images = [];
-            console.log(
-              `Processing images for product ${
-                product.id || product.product_id
-              }:`,
-              product
-            );
-
-            // Check for image_path (your actual database column name)
-            if (product.image_path) {
-              const imageUrl = product.image_path.startsWith("/")
-                ? product.image_path
-                : `/assets/product/${product.image_path}`;
-              console.log("Using image_path with path:", imageUrl);
-              images.push(imageUrl);
-            }
-            // Still keep these checks as fallbacks
-            else if (product.image_url) {
-              const imageUrl = product.image_url.startsWith("/")
-                ? product.image_url
-                : `/assets/product/${product.image_url}`;
-              console.log("Using image_url with path:", imageUrl);
-              images.push(imageUrl);
-            } else if (
-              product.images &&
-              Array.isArray(product.images) &&
-              product.images.length > 0
-            ) {
-              const processedImages = product.images.map((img) => {
-                const fullPath = img.startsWith("/")
-                  ? img
-                  : `/assets/product/${img}`;
-                return fullPath;
-              });
-              console.log("Final processed images array:", processedImages);
-              images.push(...processedImages);
-            } else {
-              // Add placeholder image if no images are available
-              console.log("No images found, using placeholder");
-              images.push("/placeholder-product.jpg");
-            }
-
-            // If there's only one image, duplicate it to enable hover effect
-            if (images.length === 1) {
-              console.log("Only one image found, duplicating for hover effect");
-              images.push(images[0]);
-            }
-
-            console.log("Final images array for product:", images);
-
-            // Ensure all required properties exist with defaults if needed
-            return {
-              id: product.id || product.product_id?.toString(),
-              slug:
-                product.slug ||
-                (product.product_name || product.name || "")
-                  .toLowerCase()
-                  .replace(/\s+/g, "-"),
-              name:
-                product.name || product.product_name || product.display_name,
-              price: Number(product.price || product.selling_price || 0),
-              rating: Number(product.rating || product.average_rating || 5),
-              review: Number(
-                product.review_count || product.reviews_count || 0
-              ),
-              description:
-                product.description || product.short_description || "",
-              longDescription:
-                product.long_description || product.description || "",
-              benefits: Array.isArray(product.benefits) ? product.benefits : [],
-              specifications: product.specifications || {},
-              ingredients: product.ingredients || "",
-              images: images,
-              category: product.category || "Beauty",
-              breadcrumbs: Array.isArray(product.breadcrumbs)
-                ? product.breadcrumbs
-                : [],
-              metaDescription: product.meta_description || "",
-              reviews: Array.isArray(product.reviews) ? product.reviews : [],
-            };
-          });
-
-        console.log("Processed Products:", validProducts);
+          }
+        );
         setProducts(validProducts);
         setError(null);
       } catch (err) {
-        console.error("Error fetching products:", err);
+        console.error(err);
         setError("Failed to load products. Please try again later.");
-        // Initialize empty array to prevent undefined errors
         setProducts([]);
       } finally {
         setLoading(false);
@@ -163,11 +156,29 @@ export default function FeaturedProducts() {
     fetchProducts();
   }, []);
 
-  const handleAddToCart = (productId) => {
-    console.log(`Add to cart: ${productId}`);
+  const handleAddToCart = (productId: number) => {
+    const productToAdd = products.find(
+      (product) => product.product_id === productId
+    );
+    if (!productToAdd) return;
+
+    const newCartItem = {
+      id: productId,
+      name: productToAdd.display_name || productToAdd.product_name,
+      price: productToAdd.selling_price,
+      quantity: 1,
+      image: `/assets/product/${productToAdd.image_path}`,
+    };
+
+    addToCart(newCartItem);
+    openCart();
+    toast.success(
+      `${productToAdd.display_name || productToAdd.product_name} added to cart!`
+    );
   };
 
-  const handleToggleWishlist = (productId) => {
+  const handleToggleWishlist = (productId: number) => {
+
     setWishlist((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
@@ -212,9 +223,16 @@ export default function FeaturedProducts() {
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
             Featured Products
           </h2>
+          <button
+            onClick={openCart}
+            className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full"
+          >
+            <ShoppingBag className="h-5 w-5" />
+            <span>Cart ({getCartCount()})</span>
+          </button>
         </div>
 
-        {Array.isArray(products) && products.length > 0 ? (
+        {products.length > 0 ? (
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={5}
@@ -232,16 +250,19 @@ export default function FeaturedProducts() {
               pauseOnMouseEnter: true,
             }}
             loop={products.length > 4}
-            className="py-12 mb-12"
+            className="py-12"
           >
             {products.map((product) => (
-              <SwiperSlide key={product.id}>
+
+              <SwiperSlide 
+              className="mb-8"
+              key={product.product_id}>
                 <ProductCard
-                  
+
                   product={product}
                   onAddToCart={handleAddToCart}
                   onToggleWishlist={handleToggleWishlist}
-                  isInWishlist={wishlist.includes(product.id)}
+                  isInWishlist={wishlist.includes(product.product_id)}
                 />
               </SwiperSlide>
             ))}
@@ -252,6 +273,8 @@ export default function FeaturedProducts() {
           </div>
         )}
       </div>
+
+      <ToastContainer />
     </section>
   );
 }
