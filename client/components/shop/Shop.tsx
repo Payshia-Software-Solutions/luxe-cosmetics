@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 import { Product } from "@/types";
 import { ShoppingBag } from "lucide-react";
-import { ToastContainer, toast } from "react-toastify"; 
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useCart } from "../CartContext"; // Import the cart context
 
@@ -39,9 +39,9 @@ const Shop: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isSorting, setIsSorting] = useState(false);
   const prevSortRef = useRef<string | undefined>("");
-  
 
-  const {  addToCart, openCart, getCartCount } = useCart();
+
+  const { addToCart, openCart, getCartCount } = useCart();
 
 
   useEffect(() => {
@@ -49,8 +49,8 @@ const Shop: React.FC = () => {
       try {
         setLoading(true);
         const response = await axios.get('http://localhost/luxe-cosmetics/server/products');
-        
-  
+
+
         if (response.data && response.data.success && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else if (Array.isArray(response.data)) {
@@ -75,17 +75,17 @@ const Shop: React.FC = () => {
   useEffect(() => {
 
     if (prevSortRef.current !== filters.sort) {
-   
+
       setIsSorting(true);
-      
+
 
       const timer = setTimeout(() => {
         setIsSorting(false);
-      }, 800); 
-      
-    
+      }, 800);
+
+
       prevSortRef.current = filters.sort;
-      
+
       return () => clearTimeout(timer);
     }
   }, [filters.sort]);
@@ -96,50 +96,50 @@ const Shop: React.FC = () => {
       try {
         setIsSearching(true);
         let results: Product[] = [];
-        
+
         if (filters.categories && filters.categories.length > 0) {
 
-          const categoryPromises = filters.categories.map((category: string | number | boolean) => 
-            axios.get(`http://localhost/luxe-cosmetics/server/products/search/category?term=${encodeURIComponent(category)}`)
+          const categoryPromises = filters.categories.map((category: string) =>
+            axios.get<{ success: boolean; data: Product[] }>(`http://localhost/luxe-cosmetics/server/products/search/category?term=${encodeURIComponent(category)}`)
           );
-          
-   
-          const responses = await Promise.all(categoryPromises);
-          
 
-          const categoryResults = responses.flatMap((response: { data: { success: any; data: any; }; }) => {
-   
-            if (response.data && response.data.success && Array.isArray(response.data.data)) {
-              return response.data.data;
-            } else if (Array.isArray(response.data)) {
-              return response.data;
+
+
+          const responses = await Promise.all(categoryPromises);
+
+
+          const categoryResults = responses.flatMap((response) => {
+            const resData = response.data as { success: boolean; data: Product[] };
+            if (resData.success && Array.isArray(resData.data)) {
+              return resData.data;
             }
             return [];
           });
-          
+
+
           results = Array.from(
             new Map((categoryResults as Product[]).map((item: Product) => [item.product_id, item])).values()
           );
         } else {
-         
+
           results = [...products];
         }
-        
-    
+
+
         if (filters.priceRange) {
-          results = results.filter(product => 
-            product.selling_price >= filters.priceRange![0] && 
+          results = results.filter(product =>
+            product.selling_price >= filters.priceRange![0] &&
             product.selling_price <= filters.priceRange![1]
           );
         }
-        
+
         // Apply brand filter
         if (filters.brands && filters.brands.length > 0) {
-          results = results.filter(product => 
-            filters.brands!.some((brand: any) => product.brand_id.toString() === brand || product.product_name.includes(brand))
+          results = results.filter(product =>
+            filters.brands!.some((brand: string) => product.brand_id.toString() === brand || product.product_name.includes(brand))
           );
         }
-        
+
         // Apply rating filter
         if (filters.ratings && filters.ratings.length > 0) {
           results = results.filter(product => {
@@ -147,12 +147,12 @@ const Shop: React.FC = () => {
             return filters.ratings!.some((rating: number) => productRating >= rating);
           });
         }
-        
+
         // Apply sale filter
         if (filters.onSale) {
           results = results.filter(product => product.special_promo === 1);
         }
-        
+
         // Step 3: Apply sorting (IMPORTANT: Sorting happens last)
         if (filters.sort) {
           switch (filters.sort) {
@@ -173,7 +173,7 @@ const Shop: React.FC = () => {
               break;
           }
         }
-        
+
         // Finally, update filtered products
         setFilteredProducts(results);
       } catch (err) {
@@ -204,7 +204,7 @@ const Shop: React.FC = () => {
 
     // Add to cart using context function
     addToCart(newCartItem);
-    
+
     // Open cart
     openCart();
 
@@ -224,7 +224,7 @@ const Shop: React.FC = () => {
     setFilterActive(!filterActive);
   };
 
-  const handleFilterChange = (filterType: string, value: any) => {
+  const handleFilterChange = <K extends keyof Filters>(filterType: K, value: Filters[K]) => {
     if (filterType === 'resetAll') {
       setFilters({
         categories: [],
@@ -236,12 +236,13 @@ const Shop: React.FC = () => {
       });
       return;
     }
-    
-    setFilters((prev: any) => ({
+
+    setFilters((prev: Filters) => ({
       ...prev,
       [filterType]: value
     }));
   };
+
 
   // Staggered animation for product cards
   const containerVariants = {
@@ -262,49 +263,11 @@ const Shop: React.FC = () => {
       transition: { duration: 0.3 }
     }
   };
-  
-  // Sort animation variants
-  const sortVariants = {
-    initial: {
-      opacity: 0,
-      scale: 0.8,
-    },
-    animate: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 260,
-        damping: 20
-      }
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.8,
-      transition: {
-        duration: 0.2
-      }
-    }
-  };
-  
-  // Product reordering animation variants
-  const reorderVariants = {
-    initial: { scale: 0.95, opacity: 0.8 },
-    animate: { 
-      scale: 1, 
-      opacity: 1,
-      transition: { 
-        type: "spring", 
-        stiffness: 300, 
-        damping: 25 
-      } 
-    }
-  };
 
   // Sort indicator component
   const SortIndicator = () => {
     if (!filters.sort) return null;
-    
+
     const getSortIcon = () => {
       switch (filters.sort) {
         case 'price_asc':
@@ -319,7 +282,7 @@ const Shop: React.FC = () => {
           return '•';
       }
     };
-    
+
     const getSortLabel = () => {
       switch (filters.sort) {
         case 'price_asc':
@@ -334,16 +297,16 @@ const Shop: React.FC = () => {
           return 'Sorted';
       }
     };
-    
+
     return (
       <motion.div
         key={filters.sort} // This key ensures animation plays when sort changes
         initial={{ opacity: 0, scale: 0.8, x: -10 }}
         animate={{ opacity: 1, scale: 1, x: 0 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 500, 
-          damping: 25 
+        transition={{
+          type: "spring",
+          stiffness: 500,
+          damping: 25
         }}
         className="inline-flex items-center bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-sm font-medium"
       >
@@ -388,7 +351,7 @@ const Shop: React.FC = () => {
     
     <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -426,10 +389,10 @@ const Shop: React.FC = () => {
           </svg>
         </button>
       </div>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Sidebar - hidden on mobile unless toggled */}
-        <motion.div 
+        <motion.div
           className={`lg:col-span-3 ${filterActive ? 'block' : 'hidden lg:block'}`}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -437,7 +400,7 @@ const Shop: React.FC = () => {
         >
           <div className="bg-white p-6 rounded-lg shadow-md sticky top-24">
             <h2 className="text-xl font-semibold mb-6 text-gray-800">Filters</h2>
-            <SideBar 
+            <SideBar
               onFilterChange={handleFilterChange}
               activeFilters={filters}
             />
@@ -451,19 +414,19 @@ const Shop: React.FC = () => {
             <div className="flex items-center space-x-2">
               {filters.categories && filters.categories.length > 0 && (
                 <span className="text-sm text-gray-600">
-                  Showing results for: 
+                  Showing results for:
                   <span className="font-medium ml-1">
                     {filters.categories.join(', ')}
                   </span>
                 </span>
               )}
-              
+
               {/* Sort indicator with animation */}
               {filters.sort && <SortIndicator />}
             </div>
             <div className="flex space-x-4">
               {filters.categories && filters.categories.length > 0 && (
-                <button 
+                <button
                   onClick={() => handleFilterChange('categories', [])}
                   className="text-[12px] font-bold py-2 px-4  bg-rose-100 rounded-full text-rose-500 hover:text-rose-700 transition-colors"
                 >
@@ -471,7 +434,7 @@ const Shop: React.FC = () => {
                 </button>
               )}
               {filters.sort && (
-                <button 
+                <button
                   onClick={() => handleFilterChange('sort', '')}
                   className="text-[12px] font-bold py-2 px-4   bg-rose-100 rounded-full text-rose-500 hover:text-rose-700 transition-colors"
                 >
@@ -497,7 +460,7 @@ const Shop: React.FC = () => {
               <p className="mt-2 text-sm text-gray-500">Try adjusting your filters to find what you&apos;re looking for.</p>
             </div>
           ) : (
-            <motion.div 
+            <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
               variants={containerVariants}
               initial="hidden"
@@ -514,8 +477,8 @@ const Shop: React.FC = () => {
               }}
             >
               {filteredProducts.map((product, index) => (
-                <motion.div 
-                  key={`product-${product.product_id || index}`} 
+                <motion.div
+                  key={`product-${product.product_id || index}`}
                   variants={itemVariants}
                   // Only apply layout animation when sorting
                   {...(isSorting && { layout: true })}
@@ -543,7 +506,7 @@ const Shop: React.FC = () => {
       </div>
 
       {/* Cart component is conditionally rendered by the CartContext, no need to include it here */}
-      
+
       {/* Toast Container */}
       <ToastContainer />
     </div>
