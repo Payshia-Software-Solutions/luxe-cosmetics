@@ -5,7 +5,7 @@ import { Star, Heart, ShoppingBag } from 'lucide-react';
 
 // Using your exact Product interface
 export interface Product {
-  id: string;
+  id: number;
   slug: string;
   name: string;
   price: number;
@@ -36,8 +36,8 @@ export interface Review {
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: (productId: string) => void;
-  onToggleWishlist: (productId: string) => void;
+  onAddToCart: (productId: number) => void;
+  onToggleWishlist: (productId: number) => void;
   isInWishlist: boolean;
 }
 

@@ -11,11 +11,43 @@ import "swiper/css/pagination";
 
 import ProductCard from "./common/ProductCard";
 
+interface Product {
+   id: number;
+    slug: string;
+    name: string;
+    price: number;
+    rating: number;
+    review: number;
+    description: string;
+    longDescription: string;
+    benefits: string[];
+    specifications: Record<string, string>;
+    ingredients: string;
+    images: string[];
+    category: string;
+    breadcrumbs: string[];
+    metaDescription: string;
+    reviews: Review[];
+}
+
+
+export interface Review {
+  id: number;
+  user: string;
+  rating: number;
+  date: string;
+  title: string;
+  comment: string;
+  verified: boolean;
+  helpful: number;
+}
+
+
 export default function FeaturedProducts() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [wishlist, setWishlist] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+  const [wishlist, setWishlist] = useState<number[]>([]);
 
   // Fetch products using axios
   useEffect(() => {
@@ -23,7 +55,7 @@ export default function FeaturedProducts() {
       try {
         setLoading(true);
         const response = await axios.get(
-          "http://localhost/luxe-cosmetics/server/products"
+          `${process.env.NEXT_PUBLIC_API_URL}/products`
         );
 
         console.log("API Response:", response.data);
@@ -53,7 +85,7 @@ export default function FeaturedProducts() {
         }
 
         // Map API field names to expected Product interface field names
-        const validProducts = productsData
+        const validProducts: Product[] = productsData
           .filter((product) => {
             // Basic validation - ensure it has minimum required properties
             return (
@@ -93,7 +125,7 @@ export default function FeaturedProducts() {
               Array.isArray(product.images) &&
               product.images.length > 0
             ) {
-              const processedImages = product.images.map((img) => {
+              const processedImages = product.images.map((img: string) => {
                 const fullPath = img.startsWith("/")
                   ? img
                   : `/assets/product/${img}`;
@@ -163,11 +195,11 @@ export default function FeaturedProducts() {
     fetchProducts();
   }, []);
 
-  const handleAddToCart = (productId) => {
+  const handleAddToCart = (productId:number) => {
     console.log(`Add to cart: ${productId}`);
   };
 
-  const handleToggleWishlist = (productId) => {
+  const handleToggleWishlist = (productId:number) => {
     setWishlist((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
@@ -236,8 +268,7 @@ export default function FeaturedProducts() {
           >
             {products.map((product) => (
               <SwiperSlide key={product.id}>
-                <ProductCard
-                  
+                <ProductCard                  
                   product={product}
                   onAddToCart={handleAddToCart}
                   onToggleWishlist={handleToggleWishlist}

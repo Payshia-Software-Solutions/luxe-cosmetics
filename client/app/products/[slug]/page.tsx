@@ -1,16 +1,39 @@
+"use client";
+
+import React, { useState,  } from "react";
 import ProductView from "@/components/ProductView";
-import { products } from '@/data/products';
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-    title: "Cosmetic Shop | Premium Beauty & Skincare Products Online",
-    description: "Discover a wide range of premium beauty and skincare products at our Cosmetic Shop. Shop for makeup, skincare, haircare, and more with fast delivery and expert advice.",
-    keywords: "cosmetic shop, beauty products, skincare, makeup, skincare products, premium cosmetics, online beauty store, skincare online, makeup online, beauty essentials",
-    robots: "index, follow",
-    viewport: "width=device-width, initial-scale=1",
-};
 
 
+
+export interface Product {
+    id: number;
+    slug: string;
+    name: string;
+    price: number;
+    rating: number;
+    review: number;
+    description: string;
+    longDescription: string;
+    benefits: string[];
+    specifications: Record<string, string>;
+    ingredients: string;
+    images: string[];
+    category: string;
+    breadcrumbs: string[];
+    metaDescription: string;
+    reviews: Review[];
+  }
+  
+  export interface Review {
+    id: number;
+    user: string;
+    rating: number;
+    date: string;
+    title: string;
+    comment: string;
+    verified: boolean;
+    helpful: number;
+  }
 
 export default async function Page({
     params,
@@ -18,6 +41,9 @@ export default async function Page({
     params: Promise<{ slug: string }>
 }) {
     const { slug } = await params
+
+    
+      const [products, setProducts] = useState<Product[]>([]);
     // Find product by slug
     const product = products.find((p) => p.slug === slug);
     if (!product) {
