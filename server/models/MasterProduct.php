@@ -218,7 +218,7 @@ class Product
             'print_name', 'section_id', 'department_id', 'category_id', 'brand_id', 
             'measurement', 'reorder_level', 'lead_days', 'cost_price', 'selling_price', 
             'minimum_price', 'wholesale_price', 'price_2', 'item_type', 'item_location', 
-            'image_path', 'created_by', 'created_at', 'active_status', 'generic_id', 
+            'image_path', 'hover_image', 'created_by', 'created_at', 'active_status', 'generic_id', 
             'supplier_list', 'size_id', 'color_id', 'product_description', 'recipe_type', 
             'barcode', 'expiry_good', 'location_list', 'opening_stock', 'rating', 'review',
             'long_description', 'benefits', 'specifications', 'category', 'meta_description', 'reviews',
@@ -258,6 +258,7 @@ class Product
             $data['item_type'],
             $data['item_location'],
             $data['image_path'],
+            $data['hover_image'] ?? null, // Added hover_image (with NULL default)
             $data['created_by'],
             $data['created_at'],
             $data['active_status'] ?? 1,
@@ -309,7 +310,8 @@ class Product
             `price_2` = ?, 
             `item_type` = ?, 
             `item_location` = ?, 
-            `image_path` = ?, 
+            `image_path` = ?,
+            `hover_image` = ?, 
             `created_by` = ?, 
             `created_at` = ?, 
             `active_status` = ?, 
@@ -359,6 +361,7 @@ class Product
             $data['item_type'],
             $data['item_location'],
             $data['image_path'],
+            $data['hover_image'] ?? null, // Added hover_image field
             $data['created_by'],
             $data['created_at'],
             $data['active_status'],
@@ -506,4 +509,27 @@ class Product
 
         return $stmt->rowCount(); // Returns the number of rows affected
     }
+    
+    // Update hover image for a product
+    public function updateHoverImage($id, $hoverImagePath)
+    {
+        $stmt = $this->pdo->prepare("UPDATE `master_product` SET `hover_image` = ? WHERE `product_id` = ?");
+        $stmt->execute([$hoverImagePath, $id]);
+        return $stmt->rowCount(); // Returns the number of rows affected
+    }
+
+    public function searchProductsByCategoryString($searchTerm)
+{
+    // Clean the search term
+    $searchTerm = trim($searchTerm);
+    
+    // Search in the category field of the product table
+    $stmt = $this->pdo->prepare("SELECT * FROM `master_product` 
+                                WHERE `category` LIKE ? 
+                                AND `active_status` LIKE 1
+                                ORDER BY `product_id` ASC");
+    $stmt->execute(['%' . $searchTerm . '%']);
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }

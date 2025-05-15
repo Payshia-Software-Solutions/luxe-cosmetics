@@ -1,37 +1,61 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Star, Heart, ShoppingBag } from 'lucide-react';
+import React, { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Star, Heart, ShoppingBag } from "lucide-react";
 
-// Using your exact Product interface
+// Updated Product interface to match the new data structure
 export interface Product {
-  id: number;
-  slug: string;
-  name: string;
-  price: number;
-  rating: number;
-  review: number;
-  description: string;
-  longDescription: string;
-  benefits: string[];
-  specifications: Record<string, string>;
-  ingredients: string;
-  images: string[];
-  category: string;
-  breadcrumbs: string[];
-  metaDescription: string;
-  reviews: Review[];
-}
 
-export interface Review {
-  id: number;
-  user: string;
-  rating: number;
-  date: string;
-  title: string;
-  comment: string;
-  verified: boolean;
-  helpful: number;
+  product_id: number;
+  product_code: string;
+  product_name: string;
+
+  slug: string;
+  display_name: string;
+  name_si: string;
+  name_ti: string;
+  print_name: string;
+  section_id: number;
+  department_id: number;
+  category_id: number;
+  brand_id: number;
+  measurement: string;
+  reorder_level: number;
+  lead_days: number;
+  cost_price: number;
+  selling_price: number;
+  minimum_price: number;
+  wholesale_price: number;
+  price_2: number;
+  item_type: string;
+  item_location: string;
+  image_path: string;
+  created_by: string;
+  created_at: string;
+  active_status: number;
+  generic_id: string | null;
+  supplier_list: string;
+  size_id: number;
+  color_id: number | null;
+  product_description: string;
+  how_to_use: string | null;
+  recipe_type: string;
+  barcode: string;
+  expiry_good: number;
+  location_list: string;
+  opening_stock: number;
+  special_promo: number;
+  special_promo_type: string;
+  special_promo_message: string | null;
+  rating: string;
+  review: number;
+  long_description: string;
+  benefits: string;
+  specifications: string;
+  category: string;
+  meta_description: string | null;
+  reviews: string | null;
+  hover_image: string | null;
 }
 
 interface ProductCardProps {
@@ -41,21 +65,56 @@ interface ProductCardProps {
   isInWishlist: boolean;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ 
-  product, 
-  onAddToCart, 
-  onToggleWishlist, 
-  isInWishlist 
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  onAddToCart,
+  onToggleWishlist,
+  isInWishlist,
 }) => {
-  const { specifications } = product;
-  const skinType = specifications['Skin Type'] || 'All Skin Types';
   const [isHovering, setIsHovering] = useState(false);
-  
+
+  // Parse specifications from JSON string
+  const specificationsObj = JSON.parse(product.specifications || "{}");
+  const skinType = specificationsObj.skin_type || "All Skin Types";
+
+  // Parse benefits from string to array
+  const benefitsArray = product.benefits ? product.benefits.split(",") : [];
+
+  // Create image paths array - main image and hover image if available
+  const images = [
+    `assets/images/products/${product.image_path}`, // Assuming images are in this directory
+  ];
+
+  if (product.hover_image) {
+    images.push(`assets/images/products/${product.hover_image}`);
+  }
+
   // Only show hover image if there are at least 2 images
-  const hasHoverImage = product.images.length >= 2;
-  
+  // const hasHoverImage = images.length >= 2;
+
+  // Helper function to determine brand from brand_id
+  const getBrandName = (brandId: number) => {
+    // This would ideally be a lookup to a brands table
+    // For now using a simple switch case
+    switch (brandId) {
+      case 1:
+        return "CeraVe";
+      case 2:
+        return "L'Oréal";
+      case 3:
+        return "Garnier";
+      default:
+        return "";
+    }
+  };
+
+  // Check if the product has a special promo
+  const hasPromo = product.special_promo > 0;
+
+  const imageBasePath = "/assets/product/";
+
   return (
-    <div 
+    <div
       className="group h-full"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
@@ -65,125 +124,134 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Fixed height image container */}
           <div className="relative w-full h-64">
             {/* Main image */}
-            <Image
-              src={product.images[0]}
-              alt={product.name}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                isHovering && hasHoverImage ? 'opacity-0' : 'opacity-100'
-              }`}
-              width={500}
-              height={500}
-              priority
-            />
-            
-            {/* Hover image (second image) */}
-            {hasHoverImage && (
+          
+            <div className="relative w-full h-64 overflow-hidden rounded-lg group">
               <Image
-                src={product.images[1]}
-                alt={`${product.name} - alternate view`}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                  isHovering ? 'opacity-100' : 'opacity-0'
-                }`}
+                src={`${imageBasePath}${product.image_path}`}
+                alt={product.product_name}
                 width={500}
                 height={500}
+                className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-300 opacity-100 group-hover:opacity-0"
               />
-            )}
-            
+              {product.hover_image && (
+                <Image
+                  src={`${imageBasePath}${product.hover_image}`}
+                  alt={`${product.product_name} hover`}
+                  width={500}
+                  height={500}
+                  className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-300 opacity-0 group-hover:opacity-100"
+                />
+              )}
+            </div>
+
             {/* Category badge */}
             <div className="absolute top-2 left-2">
               <span className="px-2 py-1 text-xs font-bold uppercase rounded bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-200">
                 {product.category}
               </span>
             </div>
-            
+
             {/* Wishlist button */}
-            <button 
+            <button
               onClick={(e) => {
                 e.preventDefault();
-                onToggleWishlist(product.id);
+                onToggleWishlist(product.product_id);
               }}
               className="absolute top-2 right-2 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm transition-all hover:scale-110"
-              aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+              aria-label={
+                isInWishlist ? "Remove from wishlist" : "Add to wishlist"
+              }
             >
-              <Heart 
-                className={`h-5 w-5 ${isInWishlist ? 'text-pink-600 fill-pink-600' : 'text-gray-600 dark:text-gray-300'}`} 
+              <Heart
+                className={`h-5 w-5 ${
+                  isInWishlist
+                    ? "text-pink-600 fill-pink-600"
+                    : "text-gray-600 dark:text-gray-300"
+                }`}
               />
             </button>
-            
+
             {/* Image indicator dots */}
-            {product.images.length > 1 && (
+            {images.length > 1 && (
               <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
-                {product.images.slice(0, 2).map((_, index) => (
-                  <span 
+                {images.slice(0, 2).map((_, index) => (
+                  <span
                     key={index}
                     className={`h-2 w-2 rounded-full ${
-                      (index === 0 && !isHovering) || (index === 1 && isHovering)
-                        ? 'bg-white' 
-                        : 'bg-white/50'
+                      (index === 0 && !isHovering) ||
+                      (index === 1 && isHovering)
+                        ? "bg-white"
+                        : "bg-white/50"
                     }`}
                   />
                 ))}
               </div>
             )}
+
+            {/* Special promo tag if applicable */}
+            {hasPromo && (
+              <div className="absolute bottom-2 left-2">
+                <span className="px-2 py-1 text-xs font-bold uppercase rounded bg-red-100 text-red-700">
+                  {product.special_promo_type === "percentage"
+                    ? `${product.special_promo}% OFF`
+                    : `${product.special_promo} OFF`}
+                </span>
+              </div>
+            )}
           </div>
-          
+
           {/* Content area with fixed heights */}
           <div className="p-4 flex flex-col flex-grow">
             {/* Brand area - fixed height */}
             <div className="h-6">
-              {product.slug.includes('cerave') && (
-                <p className="text-sm font-medium text-pink-600 dark:text-pink-400 uppercase">CeraVe</p>
-              )}
-              {product.slug.includes('loreal') && (
-                <p className="text-sm font-medium text-pink-600 dark:text-pink-400 uppercase">L&apos;Oréal</p>
-              )}
-              {product.slug.includes('garnier') && (
-                <p className="text-sm font-medium text-pink-600 dark:text-pink-400 uppercase">Garnier</p>
-              )}
+              <p className="text-sm font-medium text-pink-600 dark:text-pink-400 uppercase">
+                {getBrandName(product.brand_id)}
+              </p>
             </div>
-            
+
             {/* Product name - fixed height */}
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2 line-clamp-1 h-7">
-              {product.name}
+              {product.display_name || product.product_name}
             </h3>
-            
+
             {/* Rating - fixed height */}
             <div className="flex items-center mb-2 h-5">
               <Star className="h-4 w-4 text-yellow-400 fill-current" />
               <span className="ml-1 text-sm text-gray-600 dark:text-gray-300">
-                {product.rating} ({product.review})
+                {parseFloat(product.rating).toFixed(1)} ({product.review})
               </span>
             </div>
-            
+
             {/* Badges - fixed height */}
             <div className="flex flex-wrap gap-1 mb-2 h-6 overflow-hidden">
               <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
                 {skinType}
               </span>
-              
-              {product.benefits && product.benefits.length > 0 && (
+
+              {benefitsArray.length > 0 && (
                 <span className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full">
-                  {product.benefits[0]}
+                  {benefitsArray[0]}
+                </span>
+              )}
+
+              {product.measurement && (
+                <span className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full">
+                  {product.measurement}
                 </span>
               )}
             </div>
-            
-            {/* Description - fixed height with line clamp */}
-            {/* <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 h-10">
-              {product.description}
-            </p>
-             */}
+
             {/* Push the price and button to the bottom */}
             <div className="mt-auto">
               <div className="flex items-center justify-between">
                 <span className="text-xl font-bold text-gray-900 dark:text-white">
-                  ${product.price.toFixed(2)}
+                  ${product.selling_price.toFixed(2)}
                 </span>
-                
-                <button 
+
+                <button
                   onClick={(e) => {
                     e.preventDefault();
-                    onAddToCart(product.id);
+                    onAddToCart(product.product_id);
                   }}
                   className="flex items-center gap-1 bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
                 >

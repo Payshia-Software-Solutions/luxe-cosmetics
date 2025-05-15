@@ -1,204 +1,218 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import ProductCard from "../common/ProductCard";
 import SideBar from "./SideBar";
 import { motion } from "framer-motion";
-import axios from "axios";
 
-interface Product {
-  id: number;
-   slug: string;
-   name: string;
-   price: number;
-   rating: number;
-   review: number;
-   description: string;
-   longDescription: string;
-   benefits: string[];
-   specifications: Record<string, string>;
-   ingredients: string;
-   images: string[];
-   category: string;
-   breadcrumbs: string[];
-   metaDescription: string;
-   reviews: Review[];
+import { Product } from "@/types";
+import { ShoppingBag } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify"; 
+import "react-toastify/dist/ReactToastify.css";
+import { useCart } from "../CartContext"; // Import the cart context
+
+interface Filters {
+  priceRange?: [number, number];
+  categories?: string[];
+  brands?: string[];
+  ratings?: number[];
+  onSale?: boolean;
+  sort?: string;
 }
-
-export interface Review {
- id: number;
- user: string;
- rating: number;
- date: string;
- title: string;
- comment: string;
- verified: boolean;
- helpful: number;
-}
-
 
 const Shop: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [filterActive, setFilterActive] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<Filters>({
+    categories: [],
+    brands: [],
+    ratings: [],
+    onSale: false,
+    priceRange: [0, 300],
+    sort: ""
+  });
+  const [isSearching, setIsSearching] = useState(false);
+  const [isSorting, setIsSorting] = useState(false);
+  const prevSortRef = useRef<string | undefined>("");
+  
 
-    // Fetch products using axios
-    useEffect(() => {
-      const fetchProducts = async () => {
-        try {
-          setLoading(true);
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/products`
-          );
+  const {  addToCart, openCart, getCartCount } = useCart();
+
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('http://localhost/luxe-cosmetics/server/products');
+        
   
-          console.log("API Response:", response.data);
-  
-          // Process and validate the products data
-          let productsData = response.data;
-  
-          // Handle different response formats
-          if (!Array.isArray(productsData)) {
-            if (productsData?.products) {
-              productsData = productsData.products;
-            } else if (productsData?.data) {
-              productsData = productsData.data;
-            } else if (productsData?.results) {
-              productsData = productsData.results;
-            } else if (productsData?.product_id) {
-              // Single product object
-              productsData = [productsData];
-            } else {
-              throw new Error("Unexpected response format");
-            }
-          }
-          
-          // Validate we have an array
-          if (!Array.isArray(productsData)) {
-            throw new Error("Could not extract products array from response");
-          }
-  
-          // Map API field names to expected Product interface field names
-          const validProducts: Product[] = productsData
-            .filter((product) => {
-              // Basic validation - ensure it has minimum required properties
-              return (
-                product &&
-                typeof product === "object" &&
-                (product.id || product.product_id) &&
-                (product.name || product.product_name || product.display_name)
-              );
-            })
-            .map((product) => {
-              // Process images
-              const images = [];
-              console.log(
-                `Processing images for product ${
-                  product.id || product.product_id
-                }:`,
-                product
-              );
-  
-              // Check for image_path (your actual database column name)
-              if (product.image_path) {
-                const imageUrl = product.image_path.startsWith("/")
-                  ? product.image_path
-                  : `/assets/product/${product.image_path}`;
-                console.log("Using image_path with path:", imageUrl);
-                images.push(imageUrl);
-              }
-              // Still keep these checks as fallbacks
-              else if (product.image_url) {
-                const imageUrl = product.image_url.startsWith("/")
-                  ? product.image_url
-                  : `/assets/product/${product.image_url}`;
-                console.log("Using image_url with path:", imageUrl);
-                images.push(imageUrl);
-              } else if (
-                product.images &&
-                Array.isArray(product.images) &&
-                product.images.length > 0
-              ) {
-                const processedImages = product.images.map((img: string) => {
-                  const fullPath = img.startsWith("/")
-                    ? img
-                    : `/assets/product/${img}`;
-                  return fullPath;
-                });
-                console.log("Final processed images array:", processedImages);
-                images.push(...processedImages);
-              } else {
-                // Add placeholder image if no images are available
-                console.log("No images found, using placeholder");
-                images.push("/placeholder-product.jpg");
-              }
-  
-              // If there's only one image, duplicate it to enable hover effect
-              if (images.length === 1) {
-                console.log("Only one image found, duplicating for hover effect");
-                images.push(images[0]);
-              }
-  
-              console.log("Final images array for product:", images);
-  
-              // Ensure all required properties exist with defaults if needed
-              return {
-                id: product.id || product.product_id?.toString(),
-                slug:
-                  product.slug ||
-                  (product.product_name || product.name || "")
-                    .toLowerCase()
-                    .replace(/\s+/g, "-"),
-                name:
-                  product.name || product.product_name || product.display_name,
-                price: Number(product.price || product.selling_price || 0),
-                rating: Number(product.rating || product.average_rating || 5),
-                review: Number(
-                  product.review_count || product.reviews_count || 0
-                ),
-                description:
-                  product.description || product.short_description || "",
-                longDescription:
-                  product.long_description || product.description || "",
-                benefits: Array.isArray(product.benefits) ? product.benefits : [],
-                specifications: product.specifications || {},
-                ingredients: product.ingredients || "",
-                images: images,
-                category: product.category || "Beauty",
-                breadcrumbs: Array.isArray(product.breadcrumbs)
-                  ? product.breadcrumbs
-                  : [],
-                metaDescription: product.meta_description || "",
-                reviews: Array.isArray(product.reviews) ? product.reviews : [],
-              };
-            });
-  
-          console.log("Processed Products:", validProducts);
-          setProducts(validProducts);
-          setFilteredProducts(validProducts);
-          setError(null);
-        } catch (err) {
-          console.error("Error fetching products:", err);
-          setError("Failed to load products. Please try again later.");
-          // Initialize empty array to prevent undefined errors
-          setProducts([]);
-        } finally {
-          setLoading(false);
+        if (response.data && response.data.success && Array.isArray(response.data.data)) {
+          setProducts(response.data.data);
+        } else if (Array.isArray(response.data)) {
+
+          setProducts(response.data);
+        } else {
+          setError('Invalid data format received from server');
+          console.error('Invalid data format:', response.data);
         }
-      };
-  
-      fetchProducts();
-    }, []);
+      } catch (err) {
+        setError('Failed to fetch products. Please try again later.');
+        console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
- 
+    fetchProducts();
+  }, []);
 
-  const handleAddToCart = (productId:number) => {
-    console.log(`Add to cart: ${productId}`);
+
+  useEffect(() => {
+
+    if (prevSortRef.current !== filters.sort) {
+   
+      setIsSorting(true);
+      
+
+      const timer = setTimeout(() => {
+        setIsSorting(false);
+      }, 800); 
+      
+    
+      prevSortRef.current = filters.sort;
+      
+      return () => clearTimeout(timer);
+    }
+  }, [filters.sort]);
+
+
+  useEffect(() => {
+    const applyAllFilters = async () => {
+      try {
+        setIsSearching(true);
+        let results: Product[] = [];
+        
+        if (filters.categories && filters.categories.length > 0) {
+
+          const categoryPromises = filters.categories.map((category: string | number | boolean) => 
+            axios.get(`http://localhost/luxe-cosmetics/server/products/search/category?term=${encodeURIComponent(category)}`)
+          );
+          
+   
+          const responses = await Promise.all(categoryPromises);
+          
+
+          const categoryResults = responses.flatMap((response: { data: { success: any; data: any; }; }) => {
+   
+            if (response.data && response.data.success && Array.isArray(response.data.data)) {
+              return response.data.data;
+            } else if (Array.isArray(response.data)) {
+              return response.data;
+            }
+            return [];
+          });
+          
+          results = Array.from(
+            new Map((categoryResults as Product[]).map((item: Product) => [item.product_id, item])).values()
+          );
+        } else {
+         
+          results = [...products];
+        }
+        
+    
+        if (filters.priceRange) {
+          results = results.filter(product => 
+            product.selling_price >= filters.priceRange![0] && 
+            product.selling_price <= filters.priceRange![1]
+          );
+        }
+        
+        // Apply brand filter
+        if (filters.brands && filters.brands.length > 0) {
+          results = results.filter(product => 
+            filters.brands!.some((brand: any) => product.brand_id.toString() === brand || product.product_name.includes(brand))
+          );
+        }
+        
+        // Apply rating filter
+        if (filters.ratings && filters.ratings.length > 0) {
+          results = results.filter(product => {
+            const productRating = parseFloat(product.rating.toString());
+            return filters.ratings!.some((rating: number) => productRating >= rating);
+          });
+        }
+        
+        // Apply sale filter
+        if (filters.onSale) {
+          results = results.filter(product => product.special_promo === 1);
+        }
+        
+        // Step 3: Apply sorting (IMPORTANT: Sorting happens last)
+        if (filters.sort) {
+          switch (filters.sort) {
+            case 'price_asc':
+              results.sort((a, b) => a.selling_price - b.selling_price);
+              break;
+            case 'price_desc':
+              results.sort((a, b) => b.selling_price - a.selling_price);
+              break;
+            case 'newest':
+              results.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+              break;
+            case 'oldest':
+              results.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+              break;
+            default:
+              // No sorting
+              break;
+          }
+        }
+        
+        // Finally, update filtered products
+        setFilteredProducts(results);
+      } catch (err) {
+        console.error('Error applying filters:', err);
+        setError('Failed to apply filters. Please try again.');
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    // Apply all filters whenever any filter changes
+    applyAllFilters();
+  }, [filters, products]);
+
+  // Updated handleAddToCart function using the CartContext
+  const handleAddToCart = (productId: number) => {
+    const productToAdd = filteredProducts.find(product => product.product_id === productId);
+
+    if (!productToAdd) return;
+
+    const newCartItem = {
+      id: productId.toString(),
+      name: productToAdd.display_name || productToAdd.product_name,
+      price: productToAdd.selling_price,
+      quantity: 1,
+      image: `/assets/product/${productToAdd.image_path}`,
+    };
+
+    // Add to cart using context function
+    addToCart(newCartItem);
+    
+    // Open cart
+    openCart();
+
+    // Show success toast notification
+    toast.success(`${productToAdd.display_name || productToAdd.product_name} added to cart!`);
   };
 
-  const handleToggleWishlist = (productId:number) => {
+  const handleToggleWishlist = (productId: number) => {
     setWishlist((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
@@ -208,6 +222,25 @@ const Shop: React.FC = () => {
 
   const toggleFilters = () => {
     setFilterActive(!filterActive);
+  };
+
+  const handleFilterChange = (filterType: string, value: any) => {
+    if (filterType === 'resetAll') {
+      setFilters({
+        categories: [],
+        brands: [],
+        ratings: [],
+        onSale: false,
+        priceRange: [0, 300],
+        sort: ""
+      });
+      return;
+    }
+    
+    setFilters((prev: any) => ({
+      ...prev,
+      [filterType]: value
+    }));
   };
 
   // Staggered animation for product cards
@@ -226,8 +259,98 @@ const Shop: React.FC = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.1 }
+      transition: { duration: 0.3 }
     }
+  };
+  
+  // Sort animation variants
+  const sortVariants = {
+    initial: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    animate: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20
+      }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      transition: {
+        duration: 0.2
+      }
+    }
+  };
+  
+  // Product reordering animation variants
+  const reorderVariants = {
+    initial: { scale: 0.95, opacity: 0.8 },
+    animate: { 
+      scale: 1, 
+      opacity: 1,
+      transition: { 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 25 
+      } 
+    }
+  };
+
+  // Sort indicator component
+  const SortIndicator = () => {
+    if (!filters.sort) return null;
+    
+    const getSortIcon = () => {
+      switch (filters.sort) {
+        case 'price_asc':
+          return '↑';
+        case 'price_desc':
+          return '↓';
+        case 'newest':
+          return '★';
+        case 'oldest':
+          return '☆';
+        default:
+          return '•';
+      }
+    };
+    
+    const getSortLabel = () => {
+      switch (filters.sort) {
+        case 'price_asc':
+          return 'Price: Low to High';
+        case 'price_desc':
+          return 'Price: High to Low';
+        case 'newest':
+          return 'Newest First';
+        case 'oldest':
+          return 'Oldest First';
+        default:
+          return 'Sorted';
+      }
+    };
+    
+    return (
+      <motion.div
+        key={filters.sort} // This key ensures animation plays when sort changes
+        initial={{ opacity: 0, scale: 0.8, x: -10 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 500, 
+          damping: 25 
+        }}
+        className="inline-flex items-center bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-sm font-medium"
+      >
+        <span className="mr-1">{getSortIcon()}</span>
+        {getSortLabel()}
+      </motion.div>
+    );
   };
 
   if (loading) {
@@ -280,6 +403,17 @@ const Shop: React.FC = () => {
         </p>
       </motion.div>
 
+      {/* Cart button - Using CartContext functions and cart count */}
+      <div className="flex justify-end mb-6">
+        <button
+          onClick={openCart}
+          className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-full transition-all duration-200 shadow-md"
+        >
+          <ShoppingBag className="h-5 w-5" />
+          <span>Cart ({getCartCount()})</span>
+        </button>
+      </div>
+
       {/* Mobile Filter Toggle */}
       <div className="lg:hidden mb-6">
         <button
@@ -303,16 +437,64 @@ const Shop: React.FC = () => {
         >
           <div className="bg-white p-6 rounded-lg shadow-md sticky top-24">
             <h2 className="text-xl font-semibold mb-6 text-gray-800">Filters</h2>
-            <SideBar />
+            <SideBar 
+              onFilterChange={handleFilterChange}
+              activeFilters={filters}
+            />
           </div>
         </motion.div>
 
         {/* Product Grid */}
         <div className="lg:col-span-9">
-          {filteredProducts.length === 0 ? (
+          {/* Showing filter and sort status */}
+          <div className="mb-6 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              {filters.categories && filters.categories.length > 0 && (
+                <span className="text-sm text-gray-600">
+                  Showing results for: 
+                  <span className="font-medium ml-1">
+                    {filters.categories.join(', ')}
+                  </span>
+                </span>
+              )}
+              
+              {/* Sort indicator with animation */}
+              {filters.sort && <SortIndicator />}
+            </div>
+            <div className="flex space-x-4">
+              {filters.categories && filters.categories.length > 0 && (
+                <button 
+                  onClick={() => handleFilterChange('categories', [])}
+                  className="text-[12px] font-bold py-2 px-4  bg-rose-100 rounded-full text-rose-500 hover:text-rose-700 transition-colors"
+                >
+                  Clear Category Filter
+                </button>
+              )}
+              {filters.sort && (
+                <button 
+                  onClick={() => handleFilterChange('sort', '')}
+                  className="text-[12px] font-bold py-2 px-4   bg-rose-100 rounded-full text-rose-500 hover:text-rose-700 transition-colors"
+                >
+                  Clear Sort
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Loading state */}
+          {(loading || isSearching) ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <h3 className="text-lg font-medium text-gray-900">Error</h3>
+              <p className="mt-2 text-sm text-gray-500">{error}</p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-900">No products found</h3>
-              <p className="mt-2 text-sm text-gray-500">Try adjusting your filter to find what you&apos;re looking for.</p>
+              <p className="mt-2 text-sm text-gray-500">Try adjusting your filters to find what you&apos;re looking for.</p>
             </div>
           ) : (
             <motion.div 
@@ -320,14 +502,38 @@ const Shop: React.FC = () => {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
+              key={filters.sort} // This key change triggers re-render animation on sort change
+              transition={{
+                ...containerVariants.visible.transition,
+                // Add special animation properties when sorting
+                ...(isSorting && {
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 15
+                })
+              }}
             >
-              {filteredProducts.map((product) => (
-                <motion.div key={product.id} variants={itemVariants}>
+              {filteredProducts.map((product, index) => (
+                <motion.div 
+                  key={`product-${product.product_id || index}`} 
+                  variants={itemVariants}
+                  // Only apply layout animation when sorting
+                  {...(isSorting && { layout: true })}
+                  transition={{
+                    ...itemVariants.visible.transition,
+                    // Add special transitions for individual items when sorting
+                    ...(isSorting && {
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 25
+                    })
+                  }}
+                >
                   <ProductCard
                     product={product}
                     onAddToCart={handleAddToCart}
                     onToggleWishlist={handleToggleWishlist}
-                    isInWishlist={wishlist.includes(product.id)}
+                    isInWishlist={wishlist.includes(product.product_id)}
                   />
                 </motion.div>
               ))}
@@ -335,6 +541,11 @@ const Shop: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Cart component is conditionally rendered by the CartContext, no need to include it here */}
+      
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 };
