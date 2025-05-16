@@ -1,6 +1,7 @@
 import React from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { Italiana } from "next/font/google";
+import { SectionHeaderProps } from "@/types/SectionHeaderProps";
 
 // Define custom font styles
 const italiana = Italiana({
@@ -8,12 +9,6 @@ const italiana = Italiana({
   subsets: ["latin"],
 });
 
-interface SectionHeaderProps {
-  title: string;
-  isExpanded: boolean;
-  count?: number;
-  onToggle?: () => void;
-}
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({ title, isExpanded, count, onToggle }) => {
   return (

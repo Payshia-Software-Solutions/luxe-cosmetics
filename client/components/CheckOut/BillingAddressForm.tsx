@@ -1,23 +1,7 @@
 "use client";
 import React, { useState, ChangeEvent } from "react";
-
-// Define interfaces for our component
-interface AddressData {
-  firstName: string;
-  lastName: string;
-  address: string;
-  apartment: string; // Add this
-  city: string;
-  state?: string;
-  country?: string;
-  postalCode: string;
-  phone?: string;
-}
-interface BillingAddressFormProps {
-  shippingAddress: AddressData;
-  setBillingAddress: (address: AddressData) => void;
-  setSameAddressStatus: (status: number) => void;
-}
+import { AddressData } from "@/types/AddressData";
+import { BillingAddressFormProps } from "@/types/BillingAddressFormProps";
 
 export default function BillingAddressForm({
   shippingAddress,

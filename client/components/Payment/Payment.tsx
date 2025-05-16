@@ -1,24 +1,7 @@
 "use client";
 import React from "react";
 import axios from "axios";
-
-// Define the interface for the payment details
-interface PaymentDetails {
-  order_id: string;
-  items: string;
-  currency: string;
-  amount: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  country: string;
-  return_url: string;
-  cancel_url: string;
-  notify_url: string;
-}
+import { PaymentDetails } from "@/types/PaymentDetails";
 
 const Payment: React.FC = () => {
   const handlePayment = async (): Promise<void> => {

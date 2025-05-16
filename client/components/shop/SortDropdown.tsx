@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaSort, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { Italiana } from "next/font/google";
+import { SortDropdownProps } from "@/types/SortDropdownProps";
 
 // Define custom font styles
 const italiana = Italiana({
@@ -8,10 +9,6 @@ const italiana = Italiana({
   subsets: ["latin"],
 });
 
-interface SortDropdownProps {
-  onChange: (sortOption: string) => void;
-  currentSort: string;
-}
 
 const SortDropdown: React.FC<SortDropdownProps> = ({ onChange, currentSort }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,9 +49,8 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ onChange, currentSort }) =>
               <li key={option.value}>
                 <button
                   onClick={() => handleSelect(option.value)}
-                  className={`block w-full text-left px-4 py-2 text-sm hover:bg-rose-50 ${
-                    currentSort === option.value ? "bg-rose-50 text-rose-600" : "text-gray-700"
-                  }`}
+                  className={`block w-full text-left px-4 py-2 text-sm hover:bg-rose-50 ${currentSort === option.value ? "bg-rose-50 text-rose-600" : "text-gray-700"
+                    }`}
                 >
                   {option.label}
                 </button>
