@@ -1,18 +1,7 @@
 "use client";
 
 import React, { useState, ChangeEvent } from "react";
-
-interface ContactDetails {
-  email: string;
-  subscribe: boolean;
-  [key: string]: string | boolean | number | null | undefined;
-}
-
-
-
-interface ContactFormProps {
-  setContactDetails: React.Dispatch<React.SetStateAction<ContactDetails>>;
-}
+import { ContactFormProps } from "@/types/ContactFormProps";
 
 const ContactForm: React.FC<ContactFormProps> = ({ setContactDetails }) => {
   const [email, setEmail] = useState<string>("");

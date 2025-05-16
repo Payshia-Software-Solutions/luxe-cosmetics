@@ -1,11 +1,5 @@
 import React from "react";
-
-interface PriceFilterProps {
-  min: number;
-  max: number;
-  value: [number, number];
-  onChange?: (value: [number, number]) => void;
-}
+import { PriceFilterProps } from "@/types/PriceFilterProps";
 
 const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, value, onChange }) => {
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,36 +28,36 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, value, onChange }) 
         </div>
       </div>
       <div className="relative h-2 bg-gray-200 rounded-full my-6">
-        <div 
+        <div
           className="absolute h-2 bg-gradient-to-r from-rose-300 to-rose-500 rounded-full"
           style={{
             left: `${((value[0] - min) / (max - min)) * 100}%`,
             right: `${100 - ((value[1] - min) / (max - min)) * 100}%`,
           }}
         ></div>
-        <div 
+        <div
           className="absolute h-5 w-5 bg-white border-2 border-rose-500 rounded-full -mt-1.5 shadow-md cursor-pointer hover:scale-110 transition-transform"
           style={{ left: `calc(${((value[0] - min) / (max - min)) * 100}% - 10px)` }}
         ></div>
-        <div 
+        <div
           className="absolute h-5 w-5 bg-white border-2 border-rose-500 rounded-full -mt-1.5 shadow-md cursor-pointer hover:scale-110 transition-transform"
           style={{ left: `calc(${((value[1] - min) / (max - min)) * 100}% - 10px)` }}
         ></div>
       </div>
       <div className="flex gap-4 relative">
-        <input 
-          type="range" 
-          min={min} 
-          max={max} 
-          value={value[0]} 
+        <input
+          type="range"
+          min={min}
+          max={max}
+          value={value[0]}
           onChange={handleMinChange}
           className="w-full absolute opacity-0 cursor-pointer z-10 h-2"
         />
-        <input 
-          type="range" 
-          min={min} 
-          max={max} 
-          value={value[1]} 
+        <input
+          type="range"
+          min={min}
+          max={max}
+          value={value[1]}
           onChange={handleMaxChange}
           className="w-full absolute opacity-0 cursor-pointer z-10 h-2"
         />

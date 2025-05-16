@@ -2,68 +2,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, Heart, ShoppingBag } from "lucide-react";
-
-// Updated Product interface to match the new data structure
-export interface Product {
-
-  product_id: number;
-  product_code: string;
-  product_name: string;
-
-  slug: string;
-  display_name: string;
-  name_si: string;
-  name_ti: string;
-  print_name: string;
-  section_id: number;
-  department_id: number;
-  category_id: number;
-  brand_id: number;
-  measurement: string;
-  reorder_level: number;
-  lead_days: number;
-  cost_price: number;
-  selling_price: number;
-  minimum_price: number;
-  wholesale_price: number;
-  price_2: number;
-  item_type: string;
-  item_location: string;
-  image_path: string;
-  created_by: string;
-  created_at: string;
-  active_status: number;
-  generic_id: string | null;
-  supplier_list: string;
-  size_id: number;
-  color_id: number | null;
-  product_description: string;
-  how_to_use: string | null;
-  recipe_type: string;
-  barcode: string;
-  expiry_good: number;
-  location_list: string;
-  opening_stock: number;
-  special_promo: number;
-  special_promo_type: string;
-  special_promo_message: string | null;
-  rating: string;
-  review: number;
-  long_description: string;
-  benefits: string;
-  specifications: string;
-  category: string;
-  meta_description: string | null;
-  reviews: string | null;
-  hover_image: string | null;
-}
-
-interface ProductCardProps {
-  product: Product;
-  onAddToCart: (productId: number) => void;
-  onToggleWishlist: (productId: number) => void;
-  isInWishlist: boolean;
-}
+import { ProductCardProps } from "@/types/ProductCardProps";
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
@@ -124,7 +63,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Fixed height image container */}
           <div className="relative w-full h-64">
             {/* Main image */}
-          
+
             <div className="relative w-full h-64 overflow-hidden rounded-lg group">
               <Image
                 src={`${imageBasePath}${product.image_path}`}
@@ -163,11 +102,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
               }
             >
               <Heart
-                className={`h-5 w-5 ${
-                  isInWishlist
-                    ? "text-pink-600 fill-pink-600"
-                    : "text-gray-600 dark:text-gray-300"
-                }`}
+                className={`h-5 w-5 ${isInWishlist
+                  ? "text-pink-600 fill-pink-600"
+                  : "text-gray-600 dark:text-gray-300"
+                  }`}
               />
             </button>
 
@@ -177,12 +115,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {images.slice(0, 2).map((_, index) => (
                   <span
                     key={index}
-                    className={`h-2 w-2 rounded-full ${
-                      (index === 0 && !isHovering) ||
+                    className={`h-2 w-2 rounded-full ${(index === 0 && !isHovering) ||
                       (index === 1 && isHovering)
-                        ? "bg-white"
-                        : "bg-white/50"
-                    }`}
+                      ? "bg-white"
+                      : "bg-white/50"
+                      }`}
                   />
                 ))}
               </div>

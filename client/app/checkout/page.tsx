@@ -11,47 +11,10 @@ import { useCart } from "@/components/CartContext"; // Import the useCart hook
 import config from "@/config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-interface ContactDetails {
-  email: string;
-  subscribe: boolean;
-}
-
-interface Address {
-  firstName: string;
-  lastName: string;
-  address: string;
-  apartment: string;
-  city: string;
-  state?: string;
-  country?: string;
-  postalCode: string;
-  phone?: string;
-}
-
-// Define a proper CartItem interface (this fixes the lint error)
-interface CartItem {
-  id: number;
-  product_id?: number;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
-  // Add any other properties your cart items have
-}
-
-interface OrderData {
-  items: CartItem[]; // Now using the proper type instead of any[]
-  totalAmount: number;
-  discountAmount: number;
-  shippingFee: number;
-  promoCode: string | number;
-  paymentMethod: string;
-  contactDetails: ContactDetails;
-  shippingAddress: Address;
-  billingAddress: Address;
-  sameAddressStatus: number;
-}
+import { ContactDetails } from "@/types/ContactDetails";
+import { Address } from "@/types/Address";
+import { CartItem } from "@/types/CartItem";
+import { OrderData } from "@/types/OrderData"; // Import the OrderData type
 
 const CheckoutPage: React.FC = () => {
   // Use the cart context instead of local state for cart items
@@ -65,7 +28,7 @@ const CheckoutPage: React.FC = () => {
   const [billingAddress, setBillingAddress] = useState<Address>({} as Address);
   const [finalAmount, setFinalPayAmount] = useState<number>(0);
   const [discountAmount, setDiscountAmount] = useState<number>(0);
-  const [shippingFee, setShippingFee] = useState<number>(0);
+  const [shippingFee] = useState<number>(0);
   const [sameAddressStatus, setSameAddressStatus] = useState<number>(1);
   const [contactDetails, setContactDetails] = useState<ContactDetails>({
     email: "",
@@ -306,11 +269,10 @@ const CheckoutPage: React.FC = () => {
               <button
                 onClick={handlePayment}
                 disabled={processing || cartItems.length === 0}
-                className={`w-full px-6 py-3 text-white rounded-lg text-center font-semibold ${
-                  processing || cartItems.length === 0
-                    ? "bg-gray-400"
-                    : "bg-black hover:bg-gray-800"
-                }`}
+                className={`w-full px-6 py-3 text-white rounded-lg text-center font-semibold ${processing || cartItems.length === 0
+                  ? "bg-gray-400"
+                  : "bg-black hover:bg-gray-800"
+                  }`}
               >
                 {processing ? "Processing..." : "Pay now"}
               </button>

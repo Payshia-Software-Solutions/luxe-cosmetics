@@ -2,11 +2,9 @@ import React from 'react';
 import { Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-
 import { products } from '@/data/products';
-interface CategoryViewProps {
-  Category: string;
-}
+import { CategoryViewProps } from '@/types/CategoryViewProps';
+
 export default function CategoryGrid({ Category }: CategoryViewProps) {
   return (
     <section className="py-16 bg-white dark:bg-[#1e1e1e] transition-colors">
