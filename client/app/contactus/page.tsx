@@ -63,9 +63,10 @@ function ContactUsPage() {
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto shadow-lg rounded-lg overflow-hidden mt-6 mb-6 bg-[#fff0e9]">
         {/* Left Column */}
         <div className="bg-pink-600 text-white p-8 md:p-12 md:w-1/2">
-          <h2 className="text-3xl md:text-4xl font-bold mb-2">Let's chat.</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-2">Let&#39;s chat.</h2>
           <h3 className="text-3xl md:text-4xl font-bold mb-4">Tell me about your project.</h3>
-          <p className="mb-8">Let's create something together</p>
+          <p className="mb-8">Let&#39;s create something together</p>
+
 
           <div className="space-y-6">
             <div className="bg-white text-[#302d2e] rounded-md p-4 flex items-center">

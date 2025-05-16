@@ -3,36 +3,42 @@ import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { GiLipstick, GiFaceToFace, GiEyeTarget, GiFragrance } from "react-icons/gi";
 import { FaRegHeart } from "react-icons/fa";
-import { JSX } from "react";
 // Import our components
 import PriceFilter from "./PriceFilter";
 import SectionHeader from "./SectionHeader";
 import Checkbox from "./Checkbox";
 import ActiveFilters from "./ActiveFilters";
 import SortDropdown from "./SortDropdown";
+<<<<<<< Updated upstream
 
 
 
 
-   interface FilterState {
-    priceRange?: [number, number];
-    categories?: string[];
-    brands?: string[];
-    ratings?: number[];
-    onSale?: boolean;
-    sort?: string;
-  }
-  
-   interface Category {
-    icon: JSX.Element;
-    label: string;
-    count: number;
-  }
+interface FilterState {
+  priceRange?: [number, number];
+  categories?: string[];
+  brands?: string[];
+  ratings?: number[];
+  onSale?: boolean;
+  sort?: string;
+}
+
+interface Category {
+  icon: JSX.Element;
+  label: string;
+  count: number;
+}
+
+type FilterValue = string | number | boolean | undefined | null | [number, number];
 
 interface SideBarProps {
-  onFilterChange: (filterType: string, value: any) => void;
+  onFilterChange: (filterType: string, value: FilterValue) => void;
   activeFilters: FilterState;
 }
+=======
+import { Category } from "@/types/Category";
+import { SideBarProps } from "@/types/SideBarProps";
+>>>>>>> Stashed changes
 
 const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
   const [expandedSections, setExpandedSections] = useState({
@@ -53,9 +59,6 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
   ];
 
 
-
-
-
   const brands = ['Fenty Beauty', 'Glossier', 'Charlotte Tilbury', 'Rare Beauty', 'Dior'];
 
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -70,7 +73,7 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
     const newCategories = currentCategories.includes(category)
       ? currentCategories.filter((c: string) => c !== category)
       : [...currentCategories, category];
-    
+
     onFilterChange('categories', newCategories);
   };
 
@@ -79,7 +82,7 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
     const newBrands = currentBrands.includes(brand)
       ? currentBrands.filter((b: string) => b !== brand)
       : [...currentBrands, brand];
-    
+
     onFilterChange('brands', newBrands);
   };
 
@@ -88,7 +91,7 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
     const newRatings = currentRatings.includes(rating)
       ? currentRatings.filter((r: number) => r !== rating)
       : [...currentRatings, rating];
-    
+
     onFilterChange('ratings', newRatings);
   };
 
@@ -99,7 +102,7 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
   const handlePriceChange = (value: [number, number]) => {
     onFilterChange('priceRange', value);
   };
-  
+
   const handleSortChange = (sortValue: string) => {
     onFilterChange('sort', sortValue);
   };
@@ -109,34 +112,34 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
       onFilterChange('resetAll', null);
       return;
     }
-    
+
     if (type === 'priceRange') {
       onFilterChange('priceRange', undefined);
       return;
     }
-    
+
     if (type === 'onSale') {
       onFilterChange('onSale', false);
       return;
     }
-    
+
     if (type === 'sort') {
       onFilterChange('sort', undefined);
       return;
     }
-    
+
     if (type === 'category' && value) {
       const newCategories = (activeFilters.categories || []).filter((c: string | number) => c !== value);
       onFilterChange('categories', newCategories);
       return;
     }
-    
+
     if (type === 'brand' && value) {
       const newBrands = (activeFilters.brands || []).filter((b: string | number) => b !== value);
       onFilterChange('brands', newBrands);
       return;
     }
-    
+
     if (type === 'rating' && value) {
       const newRatings = (activeFilters.ratings || []).filter((r: string | number) => r !== value);
       onFilterChange('ratings', newRatings);
@@ -149,34 +152,34 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
       <div className="space-y-6">
         {/* Sort Section */}
         <div>
-          <SectionHeader 
-            title="Sort Products" 
-            isExpanded={expandedSections.sort} 
+          <SectionHeader
+            title="Sort Products"
+            isExpanded={expandedSections.sort}
             onToggle={() => toggleSection('sort')}
           />
           {expandedSections.sort && (
             <div className="mt-4">
-              <SortDropdown 
+              <SortDropdown
                 onChange={handleSortChange}
                 currentSort={activeFilters.sort || ""}
               />
             </div>
           )}
         </div>
-        
+
         {/* Categories Section */}
         <div>
-          <SectionHeader 
-            title="Categories" 
-            isExpanded={expandedSections.categories} 
+          <SectionHeader
+            title="Categories"
+            isExpanded={expandedSections.categories}
             onToggle={() => toggleSection('categories')}
           />
           {expandedSections.categories && (
             <div className="space-y-1 mt-2">
               {categories.map((category) => (
-                <Checkbox 
-                  key={category.label} 
-                  id={`category-${category.label}`} 
+                <Checkbox
+                  key={category.label}
+                  id={`category-${category.label}`}
                   label={
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500">{category.icon}</span>
@@ -191,37 +194,37 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
             </div>
           )}
         </div>
-        
+
         {/* Price Range Section */}
         <div>
-          <SectionHeader 
-            title="Price Range" 
+          <SectionHeader
+            title="Price Range"
             isExpanded={expandedSections.priceRange}
             onToggle={() => toggleSection('priceRange')}
           />
           {expandedSections.priceRange && (
-            <PriceFilter 
-              min={0} 
-              max={300} 
+            <PriceFilter
+              min={0}
+              max={300}
               value={activeFilters.priceRange || [30, 200]}
               onChange={handlePriceChange}
             />
           )}
         </div>
-        
+
         {/* Brands Section */}
         <div>
-          <SectionHeader 
-            title="Brands" 
+          <SectionHeader
+            title="Brands"
             isExpanded={expandedSections.brands}
             onToggle={() => toggleSection('brands')}
           />
           {expandedSections.brands && (
             <div className="space-y-1 mt-2">
               {brands.map((brand) => (
-                <Checkbox 
-                  key={brand} 
-                  id={`brand-${brand}`} 
+                <Checkbox
+                  key={brand}
+                  id={`brand-${brand}`}
                   label={brand}
                   checked={(activeFilters.brands || []).includes(brand)}
                   onChange={() => handleBrandChange(brand)}
@@ -233,17 +236,17 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
 
         {/* Rating Section */}
         <div>
-          <SectionHeader 
-            title="Rating" 
+          <SectionHeader
+            title="Rating"
             isExpanded={expandedSections.rating}
             onToggle={() => toggleSection('rating')}
           />
           {expandedSections.rating && (
             <div className="space-y-1 mt-2">
               {[5, 4, 3, 2, 1].map((rating) => (
-                <Checkbox 
-                  key={rating} 
-                  id={`rating-${rating}`} 
+                <Checkbox
+                  key={rating}
+                  id={`rating-${rating}`}
                   label={
                     <div className="flex items-center">
                       <span>Rated {rating}+</span>
@@ -264,26 +267,26 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
 
         {/* Sale Section */}
         <div>
-          <SectionHeader 
-            title="Sale" 
+          <SectionHeader
+            title="Sale"
             isExpanded={expandedSections.sale}
             onToggle={() => toggleSection('sale')}
           />
           {expandedSections.sale && (
             <div className="mt-2">
-              <Checkbox 
-                id="sale" 
-                label="On Sale" 
+              <Checkbox
+                id="sale"
+                label="On Sale"
                 checked={activeFilters.onSale}
                 onChange={handleSaleChange}
               />
             </div>
           )}
         </div>
-        
+
         {/* Active Filters */}
-        <ActiveFilters 
-          activeFilters={activeFilters} 
+        <ActiveFilters
+          activeFilters={activeFilters}
           onRemoveFilter={handleRemoveFilter}
         />
       </div>

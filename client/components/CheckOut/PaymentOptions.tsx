@@ -1,10 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-
-// Define interface for component props
-interface PaymentOptionsProps {
-  setSelectedPaymentMethod: (method: string) => void;
-}
+import { PaymentOptionsProps } from "@/types/PaymentOptionsProps";
 
 // Define type for payment methods
 type PaymentMethod = "card" | "cod";
@@ -29,9 +25,8 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
       <div className="space-y-4">
         {/* Card Payment Option */}
         <div
-          className={`border rounded-md ${
-            selectedMethod === "card" ? "border-indigo-500" : "border-gray-300"
-          }`}
+          className={`border rounded-md ${selectedMethod === "card" ? "border-indigo-500" : "border-gray-300"
+            }`}
         >
           <label
             className="flex items-center p-4 cursor-pointer"
@@ -138,9 +133,8 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
 
         {/* Cash on Delivery Option */}
         <div
-          className={`border rounded-md ${
-            selectedMethod === "cod" ? "border-indigo-500" : "border-gray-300"
-          }`}
+          className={`border rounded-md ${selectedMethod === "cod" ? "border-indigo-500" : "border-gray-300"
+            }`}
         >
           <label
             className="flex items-center p-4 cursor-pointer"
