@@ -40,7 +40,8 @@ export const products: Product[] = [
     longDescription: `
       Transform your skincare routine with our Natural Glow Serum, a revolutionary formula designed to enhance your skin's natural radiance while providing deep nourishment and protection.
 
-      This lightweight yet powerful serum combines the latest in skincare technology with natural ingredients to deliver visible results. The fast-absorbing formula penetrates deeply into the skin, working at a cellular level to improve texture, tone, and overall skin health. Perfect for all skin types, this serum can be used both morning and night as part of your daily skincare routine. Its non-comedogenic formula ensures it won't clog pores while delivering essential nutrients to your skin.
+      This lightweight yet powerful serum combines the latest in skincare technology with natural ingredients to deliver visible results. The fast-absorbing formula penetrates deeply into the skin, working at a cellular level to improve texture, tone, and overall skin health.
+      Perfect for all skin types, this serum can be used both morning and night as part of your daily skincare routine. Its non-comedogenic formula ensures it won't clog pores while delivering essential nutrients to your skin.
     `,
     benefits: [
       'Brightens and evens skin tone',
