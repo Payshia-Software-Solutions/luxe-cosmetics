@@ -30,7 +30,7 @@ export interface Review {
 
 export const products: Product[] = [
   {
-    id: '1',
+    id: 1,
     slug: 'natural-glow-serum',
     name: 'Natural Glow Serum',
     price: 49.99,
