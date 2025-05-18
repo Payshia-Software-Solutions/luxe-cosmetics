@@ -9,36 +9,8 @@ import SectionHeader from "./SectionHeader";
 import Checkbox from "./Checkbox";
 import ActiveFilters from "./ActiveFilters";
 import SortDropdown from "./SortDropdown";
-<<<<<<< Updated upstream
-
-
-
-
-interface FilterState {
-  priceRange?: [number, number];
-  categories?: string[];
-  brands?: string[];
-  ratings?: number[];
-  onSale?: boolean;
-  sort?: string;
-}
-
-interface Category {
-  icon: JSX.Element;
-  label: string;
-  count: number;
-}
-
-type FilterValue = string | number | boolean | undefined | null | [number, number];
-
-interface SideBarProps {
-  onFilterChange: (filterType: string, value: FilterValue) => void;
-  activeFilters: FilterState;
-}
-=======
 import { Category } from "@/types/Category";
 import { SideBarProps } from "@/types/SideBarProps";
->>>>>>> Stashed changes
 
 const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
   const [expandedSections, setExpandedSections] = useState({
