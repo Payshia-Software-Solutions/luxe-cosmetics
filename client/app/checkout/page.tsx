@@ -16,6 +16,9 @@ import { Address } from "@/types/Address";
 import { CartItem } from "@/types/CartItem";
 import { OrderData } from "@/types/OrderData"; // Import the OrderData type
 
+// Import the ContactForm type directly to ensure compatibility
+import type { ContactDetails as ContactFormContactDetails } from "@/types/ContactFormContactDetails";
+
 const CheckoutPage: React.FC = () => {
   // Use the cart context instead of local state for cart items
   const { cartItems, clearCart, getTotalAmount } = useCart();
@@ -30,10 +33,13 @@ const CheckoutPage: React.FC = () => {
   const [discountAmount, setDiscountAmount] = useState<number>(0);
   const [shippingFee] = useState<number>(0);
   const [sameAddressStatus, setSameAddressStatus] = useState<number>(1);
-  const [contactDetails, setContactDetails] = useState<ContactDetails>({
+  
+  // Change the type to match what ContactForm expects
+  const [contactDetails, setContactDetails] = useState<ContactFormContactDetails>({
     email: "",
     subscribe: false,
-  });
+  } as ContactFormContactDetails);
+  
   const [promoCode, setPromoCode] = useState<string | number>(0);
   const [processing, setProcessing] = useState<boolean>(false);
 
@@ -137,7 +143,7 @@ const CheckoutPage: React.FC = () => {
       shippingFee: shippingFee,
       promoCode: promoCode,
       paymentMethod: selectedPaymentMethod,
-      contactDetails: contactDetails,
+      contactDetails: contactDetails as unknown as ContactDetails, // Cast to expected type for API
       shippingAddress: deliveryAddress,
       billingAddress:
         sameAddressStatus === 1 ? deliveryAddress : billingAddress,
