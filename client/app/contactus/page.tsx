@@ -1,12 +1,24 @@
-
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
+interface FormData {
+  full_name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+}
+
+interface StatusMessage {
+  type: 'success' | 'error';
+  text: string;
+}
+
 function ContactUsPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     full_name: '',
     email: '',
     phone: '',
@@ -14,17 +26,17 @@ function ContactUsPage() {
     message: '',
   });
 
-  const [loading, setLoading] = useState(false);
-  const [statusMessage, setStatusMessage] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(null);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Basic validation
@@ -47,7 +59,7 @@ function ContactUsPage() {
           message: '',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       setStatusMessage({
         type: 'error',
         text: error.response?.data?.error || 'Something went wrong. Please try again.',

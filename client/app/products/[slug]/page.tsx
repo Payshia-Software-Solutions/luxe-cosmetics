@@ -3,9 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import ProductView from "@/components/ProductView";
 import { ProductData } from "@/types/ProductData";
-// import { ProductSpecifications } from "@/types/ProductSpecifications";
-// import { ProductReview } from "@/types/ProductReview";
 import { FormattedProduct } from '@/types/FormattedProduct';
+import { ProductSpecifications } from "@/types/ProductSpecifications";
 
 // Uncomment this block if you plan to export metadata
 /*
@@ -32,23 +31,6 @@ type ReviewType = {
     verified?: boolean;
     helpful?: number;
 };
-
-// Product prop shape expected by ProductView
-interface FormattedProduct {
-    id: number;
-    name: string;
-    slug: string;
-    category: string;
-    price: number;
-    rating: number;
-    reviews: ReviewType[];
-    description: string;
-    longDescription: string;
-    benefits: string[];
-    specifications: Record<string, unknown>;
-    images: string[];
-    breadcrumbs: string[];
-}
 
 // Normalize image path
 const getValidImagePath = (imagePath: string): string => {
@@ -142,15 +124,16 @@ export default function Page({
     }
 
     // Parse specifications safely
-    let parsedSpecifications: Record<string, unknown> = {};
+    let parsedSpecifications: ProductSpecifications = {};
     if (typeof product.specifications === 'string') {
         try {
-            parsedSpecifications = JSON.parse(product.specifications);
+            parsedSpecifications = JSON.parse(product.specifications) as ProductSpecifications;
         } catch (e) {
             console.error('Error parsing specifications JSON:', e);
         }
-    } else {
-        parsedSpecifications = product.specifications;
+    } else if (product.specifications) {
+        // Ensure type casting to ProductSpecifications
+        parsedSpecifications = product.specifications as unknown as ProductSpecifications;
     }
 
     // Format product object for ProductView
