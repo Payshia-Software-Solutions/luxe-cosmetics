@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import {  User, Sun, Moon, Search } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { User, Sun, Moon, Search } from "lucide-react";
 
-import CartButton from './CartButton';
+import CartButton from "./CartButton";
 
-import { useTheme } from 'next-themes';
-import Cart from './Cart';
-import Link from 'next/link';
+import { useTheme } from "next-themes";
+import Cart from "./Cart";
+import Link from "next/link";
 
 export default function Navbar() {
   const { theme, setTheme, systemTheme } = useTheme();
@@ -30,9 +30,9 @@ export default function Navbar() {
       setScrolling(window.scrollY > 0);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -40,7 +40,11 @@ export default function Navbar() {
     setShowCart(!showCart);
   };
 
-  const currentTheme = mounted ? (theme === 'system' ? systemTheme : theme) : 'light';
+  const currentTheme = mounted
+    ? theme === "system"
+      ? systemTheme
+      : theme
+    : "light";
 
   return (
     <>
@@ -54,28 +58,38 @@ export default function Navbar() {
       {/* Navbar */}
       <nav
         className={`fixed w-full bg-white dark:bg-[#1e1e1e] z-50 transition-all duration-300 ease-in-out ${
-          scrolling ? 'shadow-lg' : 'shadow-none'
+          scrolling ? "shadow-lg" : "shadow-none"
         }`}
       >
         <div className="max-w-7xl mx-auto ">
           <div className="flex justify-between items-center h-16">
-            
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/">
-                <h1 className="text-2xl font-bold uppercase text-pink-600 dark:text-pink-400">paris beauty</h1>
+                <h1 className="text-2xl font-bold uppercase text-pink-600 dark:text-pink-400">
+                  paris beauty
+                </h1>
               </Link>
             </div>
 
             {/* Navigation Links */}
             <div className="hidden md:flex space-x-6 ml-10">
-              <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition">
+              <Link
+                href="/about"
+                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition"
+              >
                 About Us
               </Link>
-              <Link href="/shop" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition">
+              <Link
+                href="/shop"
+                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition"
+              >
                 Shop
               </Link>
-              <Link href="/contactus" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition">
+              <Link
+                href="/contactus"
+                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition"
+              >
                 Contact Us
               </Link>
             </div>
@@ -96,10 +110,12 @@ export default function Navbar() {
             <div className="flex items-center space-x-4">
               {/* Theme Switch */}
               <button
-                onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
+                onClick={() =>
+                  setTheme(currentTheme === "dark" ? "light" : "dark")
+                }
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                {currentTheme === 'dark' ? (
+                {currentTheme === "dark" ? (
                   <Sun className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                 ) : (
                   <Moon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
@@ -112,14 +128,16 @@ export default function Navbar() {
               </button>
 
               {/* Cart Icon */}
-              <button
-                onClick={handleCartToggle}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              >
-               <CartButton/>
-              </button>
-            </div>
 
+              <div
+                className="some-wrapper-class"
+                onClick={handleCartToggle}
+                role="button"
+                tabIndex={0}
+              >
+                <CartButton />{" "}
+              </div>
+            </div>
           </div>
         </div>
       </nav>

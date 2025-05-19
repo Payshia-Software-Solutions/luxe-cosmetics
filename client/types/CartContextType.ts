@@ -1,14 +1,15 @@
-import { CartItem } from "@/components/CartContext";
+import { CartItem } from '@/types/CartContextCartItem';
+
 export interface CartContextType {
-    cartItems: CartItem[];
-    addToCart: (item: CartItem) => void;
-    removeFromCart: (id: number) => void;
-    updateQuantity: (id: number, delta: number) => void;
-    clearCart: () => void;
-    isCartOpen: boolean;
-    toggleCart: () => void;
-    openCart: () => void;
-    closeCart: () => void;
-    getCartCount: () => number;
-    getTotalAmount: () => number;
+  cartItems: CartItem[];
+  addToCart: (itemToAdd: CartItem) => void;
+  removeFromCart: (id: number) => void;  // Using number for ID
+  updateQuantity: (id: number, delta: number) => void;  // Using number for ID
+  clearCart: () => void;
+  isCartOpen: boolean;
+  toggleCart: () => void;
+  openCart: () => void;
+  closeCart: () => void;
+  getCartCount: () => number;
+  getTotalAmount: () => number;
 }

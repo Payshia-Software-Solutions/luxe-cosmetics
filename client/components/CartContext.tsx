@@ -45,12 +45,12 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   };
 
-  // Remove item from cart
+  // Remove item from cart - changed to use number ID
   const removeFromCart = (id: number) => {
     setCartItems(prevItems => prevItems.filter(item => item.id !== id));
   };
 
-  // Update item quantity
+  // Update item quantity - changed to use number ID
   const updateQuantity = (id: number, delta: number) => {
     setCartItems(prevItems =>
       prevItems.map(item =>

@@ -1,5 +1,6 @@
-import { FilterState } from "@/types/FilterState";
+import { Filters } from "@/types/Filters";
+
 export interface SideBarProps {
-    onFilterChange: (filterType: string, value: any) => void;
-    activeFilters: FilterState;
+    onFilterChange: (filterType: keyof Filters | "resetAll", value: string[] | boolean | [number, number] | string) => void;
+    activeFilters: Filters;
 }

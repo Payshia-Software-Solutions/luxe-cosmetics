@@ -7,7 +7,9 @@ import SideBar from "./SideBar";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { Product } from "@/types";
+// import { Product } from "@/types";
+import { Product } from "@/types/product";
+
 import { ShoppingBag } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -94,7 +96,7 @@ const Shop: React.FC = () => {
                 `${
                   process.env.NEXT_PUBLIC_API_URL
                 }/products/search/category?term=${encodeURIComponent(category)}`
-              ) //    `${process.env.NEXT_PUBLIC_API_URL}/products`
+              ) 
           );
 
           const responses: { data: { success: boolean; data: Product[] } }[] =
@@ -213,13 +215,12 @@ const Shop: React.FC = () => {
     if (!productToAdd) return;
 
     const newCartItem = {
-      id: productId.toString(),
+      id: productId, // Keep as number, don't convert to string
       name: productToAdd.display_name || productToAdd.product_name,
       price: productToAdd.selling_price,
       quantity: 1,
       image: `/assets/product/${productToAdd.image_path}`,
     };
-
     // Add to cart using context function
     addToCart(newCartItem);
 
@@ -244,27 +245,27 @@ const Shop: React.FC = () => {
     setFilterActive(!filterActive);
   };
 
-  const handleFilterChange = (
-    filterType: keyof Filters | "resetAll",
-    value: string[] | boolean | [number, number] | string
-  ) => {
-    if (filterType === "resetAll") {
-      setFilters({
-        categories: [],
-        brands: [],
-        ratings: [],
-        onSale: false,
-        priceRange: [0, 300],
-        sort: "",
-      });
-      return;
-    }
+// Change this function:
+const handleFilterChange = (filterType: string, value: string | number | boolean | string[] | number[] | [number, number]) => {
+  if (filterType === "resetAll") {
+    setFilters({
+      categories: [],
+      brands: [],
+      ratings: [],
+      onSale: false,
+      priceRange: [0, 300],
+      sort: "",
+    });
+    return;
+  }
 
-    setFilters((prev) => ({
-      ...prev,
-      [filterType]: value,
-    }));
-  };
+  // Type assertion to satisfy TypeScript
+  // This ensures filterType is treated as a key of Filters
+  setFilters((prev) => ({
+    ...prev,
+    [filterType]: value,
+  }));
+};
 
   // Staggered animation for product cards
   const containerVariants = {
@@ -423,8 +424,8 @@ const Shop: React.FC = () => {
           </svg>
         </button>
       </div>
-        <div>
-           <nav className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
+      <div>
+        <nav className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
           <Link href="/" className="hover:text-pink-600">
             Home
           </Link>
@@ -433,10 +434,8 @@ const Shop: React.FC = () => {
           <Link href="/shop" className="hover:text-pink-600">
             Shop
           </Link>
-         
-        
         </nav>
-        </div>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Sidebar - hidden on mobile unless toggled */}
         <motion.div

@@ -2,22 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import ProductView from "@/components/ProductView";
-import { ProductData } from "@/types/ProductData";
-import { FormattedProduct } from '@/types/FormattedProduct';
+import { Product } from "@/types/product";
 import { ProductSpecifications } from "@/types/ProductSpecifications";
-
-// Uncomment this block if you plan to export metadata
-/*
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: "Cosmetic Shop | Premium Beauty & Skincare Products Online",
-  description: "Discover a wide range of premium beauty and skincare products at our Cosmetic Shop. Shop for makeup, skincare, haircare, and more with fast delivery and expert advice.",
-  keywords: "cosmetic shop, beauty products, skincare, makeup, skincare products, premium cosmetics, online beauty store, skincare online, makeup online, beauty essentials",
-  robots: "index, follow",
-  viewport: "width=device-width, initial-scale=1",
-};
-*/
 
 // Type for review object
 type ReviewType = {
@@ -55,7 +41,7 @@ export default function Page({
     const resolvedParams = React.use(params);
     const { slug } = resolvedParams;
 
-    const [product, setProduct] = useState<ProductData | null>(null);
+    const [product, setProduct] = useState<Product | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -69,7 +55,7 @@ export default function Page({
                     throw new Error('Failed to fetch product data');
                 }
 
-                const data: ProductData = await response.json();
+                const data: Product = await response.json();
                 setProduct(data);
                 setIsLoading(false);
             } catch (err: unknown) {
@@ -115,57 +101,47 @@ export default function Page({
         );
     }
 
-    // Parse reviews safely
-    let parsedReviews: ReviewType[] = [];
-    try {
-        parsedReviews = product.reviews ? JSON.parse(product.reviews) as ReviewType[] : [];
-    } catch (e) {
-        console.error('Error parsing reviews JSON:', e);
-    }
-
-    // Parse specifications safely
-    let parsedSpecifications: ProductSpecifications = {};
-    if (typeof product.specifications === 'string') {
-        try {
-            parsedSpecifications = JSON.parse(product.specifications) as ProductSpecifications;
-        } catch (e) {
-            console.error('Error parsing specifications JSON:', e);
-        }
-    } else if (product.specifications) {
-        // Ensure type casting to ProductSpecifications
-        parsedSpecifications = product.specifications as unknown as ProductSpecifications;
-    }
-
-    // Format product object for ProductView
-    const formattedProduct: FormattedProduct = {
-        id: product.product_id,
-        name: product.product_name,
-        slug: product.slug,
-        category: product.category || '',
-        price: product.selling_price,
-        rating: parseFloat(product.rating) || 0,
-        reviews: parsedReviews.map((review: ReviewType, index: number) => ({
-            id: index + 1,
-            ...review,
-            date: review.timestamp || new Date().toISOString().split('T')[0],
-            verified: review.verified !== undefined ? review.verified : true,
-            helpful: review.helpful || 0,
-            title: review.title || "Review"
-        })),
-        description: product.product_description || '',
-        longDescription: product.long_description || '',
-        benefits: product.benefits
-            ? product.benefits.split(',').map((benefit: string) => benefit.trim())
-            : [],
-        specifications: parsedSpecifications,
+    // Enhance product with parsed data for the view
+    // We're keeping the original Product type but adding computed properties
+    const enhancedProduct = {
+        ...product,
+        // Add parsed reviews to the product
+        parsedReviews: (() => {
+            try {
+                return product.reviews ? JSON.parse(product.reviews) as ReviewType[] : [];
+            } catch (e) {
+                console.error('Error parsing reviews JSON:', e);
+                return [];
+            }
+        })(),
+        // Add parsed specifications to the product
+        parsedSpecifications: (() => {
+            if (typeof product.specifications === 'string') {
+                try {
+                    return JSON.parse(product.specifications) as ProductSpecifications;
+                } catch (e) {
+                    console.error('Error parsing specifications JSON:', e);
+                    return {};
+                }
+            } else if (product.specifications) {
+                return product.specifications as unknown as ProductSpecifications;
+            }
+            return {};
+        })(),
+        // Add formatted images array
         images: [
             getValidImagePath(product.image_path),
-            getValidImagePath(product.hover_image) || getValidImagePath(product.image_path),
+            getValidImagePath(product.hover_image || ''),
             '/images/placeholder1.jpg',
             '/images/placeholder2.jpg',
         ].filter(Boolean),
+        // Add benefits array
+        benefitsArray: product.benefits
+            ? product.benefits.split(',').map((benefit: string) => benefit.trim())
+            : [],
+        // Add breadcrumbs
         breadcrumbs: ['Home', product.category || 'Products', product.product_name]
     };
 
-    return <ProductView product={formattedProduct} />;
+    return <ProductView product={enhancedProduct} />;
 }

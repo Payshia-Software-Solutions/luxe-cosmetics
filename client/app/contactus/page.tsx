@@ -17,6 +17,17 @@ interface StatusMessage {
   text: string;
 }
 
+// Define a more specific error type
+interface ApiError {
+  response?: {
+    data?: {
+      error?: string;
+    };
+    status?: number;
+  };
+  message: string;
+}
+
 function ContactUsPage() {
   const [formData, setFormData] = useState<FormData>({
     full_name: '',
@@ -47,7 +58,7 @@ function ContactUsPage() {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost/luxe-cosmetics/server/contact-us', formData);
+      const response = await axios.post( `${process.env.NEXT_PUBLIC_API_URL}/contact-us`, formData);   
 
       if (response.status === 201) {
         setStatusMessage({ type: 'success', text: 'Message sent successfully!' });
@@ -59,10 +70,13 @@ function ContactUsPage() {
           message: '',
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      // Type assertion to use our custom error type
+      const apiError = error as ApiError;
+      
       setStatusMessage({
         type: 'error',
-        text: error.response?.data?.error || 'Something went wrong. Please try again.',
+        text: apiError.response?.data?.error || 'Something went wrong. Please try again.',
       });
     } finally {
       setLoading(false);

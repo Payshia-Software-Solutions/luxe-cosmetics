@@ -9,7 +9,7 @@ const CartRow: React.FC<CartRowProps> = ({ item, onQuantityChange, onRemove }) =
       {/* Product Image */}
       <div className="flex-shrink-0 w-20 h-20 relative rounded-md overflow-hidden">
         <Image
-          src={item.image}
+          src={item.image || "/placeholder.png"}
           alt={item.name}
           layout="fill"
           objectFit="cover"

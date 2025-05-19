@@ -41,7 +41,7 @@ const Cart: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <CartRow 
                 key={item.id} 
                 item={item} 
-                onQuantityChange={(id, delta) => updateQuantity(id, delta)} 
+                onQuantityChange={(id, delta) => updateQuantity(Number(id), delta)} 
                 onRemove={removeFromCart} 
               />
             ))

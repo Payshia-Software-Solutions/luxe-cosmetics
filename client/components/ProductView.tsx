@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { products } from "@/data/products";
+import { Product } from "@/types/product";
 import Link from "next/link";
 import Image from "next/image";
 import RelatedProducts from "./RelatedProducts";

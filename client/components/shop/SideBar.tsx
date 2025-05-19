@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { FaStar } from "react-icons/fa";
+
 import { GiLipstick, GiFaceToFace, GiEyeTarget, GiFragrance } from "react-icons/gi";
 import { FaRegHeart } from "react-icons/fa";
 // Import our components
@@ -17,7 +17,6 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
     categories: true,
     priceRange: true,
     brands: true,
-    rating: true,
     sale: true,
     sort: true
   });
@@ -58,14 +57,7 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
     onFilterChange('brands', newBrands);
   };
 
-  const handleRatingChange = (rating: number) => {
-    const currentRatings = activeFilters.ratings || [];
-    const newRatings = currentRatings.includes(rating)
-      ? currentRatings.filter((r: number) => r !== rating)
-      : [...currentRatings, rating];
-
-    onFilterChange('ratings', newRatings);
-  };
+  // Rating filter functionality has been removed
 
   const handleSaleChange = () => {
     onFilterChange('onSale', !activeFilters.onSale);
@@ -81,12 +73,14 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
 
   const handleRemoveFilter = (type: string, value?: string | number) => {
     if (type === 'all') {
-      onFilterChange('resetAll', null);
+      // Use empty array instead of null for resetAll
+      onFilterChange('resetAll', []);
       return;
     }
 
     if (type === 'priceRange') {
-      onFilterChange('priceRange', undefined);
+      // Use default price range instead of undefined
+      onFilterChange('priceRange', [0, 300]);
       return;
     }
 
@@ -96,7 +90,8 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
     }
 
     if (type === 'sort') {
-      onFilterChange('sort', undefined);
+      // Use empty string instead of undefined
+      onFilterChange('sort', "");
       return;
     }
 
@@ -113,8 +108,7 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
     }
 
     if (type === 'rating' && value) {
-      const newRatings = (activeFilters.ratings || []).filter((r: string | number) => r !== value);
-      onFilterChange('ratings', newRatings);
+      // Rating filter functionality has been removed
       return;
     }
   };
@@ -206,36 +200,7 @@ const SideBar: React.FC<SideBarProps> = ({ onFilterChange, activeFilters }) => {
           )}
         </div>
 
-        {/* Rating Section */}
-        <div>
-          <SectionHeader
-            title="Rating"
-            isExpanded={expandedSections.rating}
-            onToggle={() => toggleSection('rating')}
-          />
-          {expandedSections.rating && (
-            <div className="space-y-1 mt-2">
-              {[5, 4, 3, 2, 1].map((rating) => (
-                <Checkbox
-                  key={rating}
-                  id={`rating-${rating}`}
-                  label={
-                    <div className="flex items-center">
-                      <span>Rated {rating}+</span>
-                      <div className="ml-2 flex">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <FaStar key={i} size={12} className={i < rating ? "text-amber-400" : "text-gray-300"} />
-                        ))}
-                      </div>
-                    </div>
-                  }
-                  checked={(activeFilters.ratings || []).includes(rating)}
-                  onChange={() => handleRatingChange(rating)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Rating Section - Removed */}
 
         {/* Sale Section */}
         <div>
