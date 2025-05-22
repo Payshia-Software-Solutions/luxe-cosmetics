@@ -7,11 +7,11 @@ $user = 'root';
 $pass = "";
 $charset = 'utf8mb4';
 
-// $host = '91.204.209.19';
-// $db   = 'payshiac_kdu_test';
-// $user = 'payshiac';
-// $pass = "1999tr@thilina";
-// $charset = 'utf8mb4';
+$host = '91.204.209.19';
+$db   = 'parisbea_paris_beauty';
+$user = 'parisbea';
+$pass = "3eylgtdd!KN6";
+$charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [

@@ -29,7 +29,7 @@ export default function FeaturedProducts() {
       try {
         setLoading(true);
         const response = await axios.get(
-          "http://localhost/luxe-cosmetics/server/products"
+          `${process.env.NEXT_PUBLIC_API_URL}/products`
         );
 
         let productsData = response.data;
