@@ -13,7 +13,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 import ProductCard from "./common/ProductCard";
 import { useCart } from "./CartContext";
-import { Product } from "@/types/product";
+import { Product } from "@/types/product"; // Adjust the import path as necessary
+
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -28,7 +29,7 @@ export default function FeaturedProducts() {
       try {
         setLoading(true);
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/products`
+          "http://localhost/luxe-cosmetics/server/products"
         );
 
         let productsData = response.data;
@@ -47,23 +48,23 @@ export default function FeaturedProducts() {
           }
         }
 
-        if (!Array.isArray(productsData)) {
-          throw new Error("Could not extract products array from response");
-        }
-
-        const validProducts = productsData.filter(
-          (product): product is Product =>
-            typeof product === "object" &&
-            product !== null &&
-            "product_id" in product &&
-            ("product_name" in product || "display_name" in product)
+        // Type guard to ensure we're working with Product objects
+        const validProducts = (productsData as unknown[]).filter(
+          (product): product is Product => {
+            return (
+              typeof product === "object" &&
+              product !== null &&
+              "product_id" in product &&
+              ("product_name" in product || "display_name" in product)
+            );
+          }
+        );
 
         setProducts(validProducts);
         setError(null);
-      } catch (err: unknown) {
-        const message =
-          err instanceof Error ? err.message : "Unknown error occurred";
-        setError("Failed to load products. " + message);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load products. Please try again later.");
         setProducts([]);
       } finally {
         setLoading(false);
@@ -74,7 +75,9 @@ export default function FeaturedProducts() {
   }, []);
 
   const handleAddToCart = (productId: number) => {
-
+    const productToAdd = products.find(
+      (product) => product.product_id === productId
+    );
     if (!productToAdd) return;
 
     const newCartItem = {
@@ -87,7 +90,9 @@ export default function FeaturedProducts() {
 
     addToCart(newCartItem);
     openCart();
-
+    toast.success(
+      `${productToAdd.display_name || productToAdd.product_name} added to cart!`
+    );
   };
 
   const handleToggleWishlist = (productId: number) => {
@@ -165,7 +170,9 @@ export default function FeaturedProducts() {
             className="py-12"
           >
             {products.map((product) => (
-
+              <SwiperSlide 
+              className="mb-8"
+              key={product.product_id}>
                 <ProductCard
                   product={product}
                   onAddToCart={handleAddToCart}
@@ -181,6 +188,7 @@ export default function FeaturedProducts() {
           </div>
         )}
       </div>
+
       <ToastContainer />
     </section>
   );

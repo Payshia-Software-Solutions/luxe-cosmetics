@@ -11,13 +11,9 @@ import { useCart } from "@/components/CartContext"; // Import the useCart hook
 import config from "@/config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ContactDetails } from "@/types/ContactDetails";
-import { Address } from "@/types/Address";
-import { CartItem } from "@/types/CartItem";
-import { OrderData } from "@/types/OrderData"; // Import the OrderData type
 
-// Import the ContactForm type directly to ensure compatibility
-import type { ContactDetails as ContactFormContactDetails } from "@/types/ContactFormContactDetails";
+import { Address,  OrderData, ContactDetails } from "@/types/Checkout";
+import { CartItem } from "@/types/CartItem"; // Adjust the import path as necessary
 
 const CheckoutPage: React.FC = () => {
   // Use the cart context instead of local state for cart items
@@ -33,13 +29,10 @@ const CheckoutPage: React.FC = () => {
   const [discountAmount, setDiscountAmount] = useState<number>(0);
   const [shippingFee] = useState<number>(0);
   const [sameAddressStatus, setSameAddressStatus] = useState<number>(1);
-  
-  // Change the type to match what ContactForm expects
-  const [contactDetails, setContactDetails] = useState<ContactFormContactDetails>({
+  const [contactDetails, setContactDetails] = useState<ContactDetails>({
     email: "",
     subscribe: false,
-  } as ContactFormContactDetails);
-  
+  });
   const [promoCode, setPromoCode] = useState<string | number>(0);
   const [processing, setProcessing] = useState<boolean>(false);
 
@@ -143,7 +136,7 @@ const CheckoutPage: React.FC = () => {
       shippingFee: shippingFee,
       promoCode: promoCode,
       paymentMethod: selectedPaymentMethod,
-      contactDetails: contactDetails as unknown as ContactDetails, // Cast to expected type for API
+      contactDetails: contactDetails,
       shippingAddress: deliveryAddress,
       billingAddress:
         sameAddressStatus === 1 ? deliveryAddress : billingAddress,
@@ -275,10 +268,11 @@ const CheckoutPage: React.FC = () => {
               <button
                 onClick={handlePayment}
                 disabled={processing || cartItems.length === 0}
-                className={`w-full px-6 py-3 text-white rounded-lg text-center font-semibold ${processing || cartItems.length === 0
-                  ? "bg-gray-400"
-                  : "bg-black hover:bg-gray-800"
-                  }`}
+                className={`w-full px-6 py-3 text-white rounded-lg text-center font-semibold ${
+                  processing || cartItems.length === 0
+                    ? "bg-gray-400"
+                    : "bg-black hover:bg-gray-800"
+                }`}
               >
                 {processing ? "Processing..." : "Pay now"}
               </button>

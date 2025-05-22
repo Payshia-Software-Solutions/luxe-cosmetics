@@ -1,5 +1,4 @@
 export interface Product {
-
   product_id: number;
   product_code: string;
   product_name: string;
@@ -51,7 +50,6 @@ export interface Product {
   hover_image: string | null;
 }
 
-
 export interface ProductCardProps {
   product: Product;
   onAddToCart: (productId: number) => void;
@@ -59,3 +57,57 @@ export interface ProductCardProps {
   isInWishlist: boolean;
 }
 
+
+export interface ProductViewProps {
+  product: Product;
+}
+
+export interface CartItems {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
+
+export interface CartItem extends Product {
+  quantity: number;
+}
+
+export type Theme = 'light' | 'dark';
+
+
+export interface ProductCategoryViewProps {
+  categoryName: string;
+  searchTerm?: string;
+  initialData?: any;
+}
+
+
+export interface Review {
+  id: number;
+  user: string;
+  rating: number;
+  date: string;
+  title: string;
+  comment: string;
+  verified: boolean;
+  helpful: number;
+}
+
+
+export interface TrendingProductCardProps {
+  product: Product;
+  onToggleWishlist?: (productId: number) => void;
+  isInWishlist?: boolean;
+  salesCount?: number;
+}
+
+
+
+export interface TrendingProductCardProps {
+  product: Product;
+  onToggleWishlist?: (productId: number) => void;
+  isInWishlist?: boolean;
+  salesCount?: number;
+}

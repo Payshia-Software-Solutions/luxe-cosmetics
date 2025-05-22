@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState, ChangeEvent } from "react";
-import { ContactFormProps } from "@/types/ContactFormProps";
+import { ContactDetails } from "@/types/Checkout"; // Adjust the import path as necessary
+
+
+
+interface ContactFormProps {
+  setContactDetails: React.Dispatch<React.SetStateAction<ContactDetails>>;
+}
 
 const ContactForm: React.FC<ContactFormProps> = ({ setContactDetails }) => {
   const [email, setEmail] = useState<string>("");

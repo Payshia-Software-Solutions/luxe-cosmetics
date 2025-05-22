@@ -2,11 +2,9 @@
 import React, { useState, useEffect } from "react";
 import config from "@/config";
 import Image from "next/image";
-import { PromoCodeData } from "@/types/PromoCodeData";
-import { ApplicableProductData } from "@/types/ApplicableProductData";
-import { OrderSummaryProps } from "@/types/OrderSummaryProps";
 
-// Declare fbq for Facebook Pixel tracking
+import { PromoCodeData, ApplicableProductData,OrderSummaryProps } from "@/types/Checkout"; // Adjust the import path as necessary
+
 declare global {
   interface Window {
     dataLayer: Record<string, unknown>[];

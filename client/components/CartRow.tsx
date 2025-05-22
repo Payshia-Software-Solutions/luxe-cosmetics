@@ -1,15 +1,18 @@
 import React from 'react';
 import Image from 'next/image';
 import { Trash2, Plus, Minus } from 'lucide-react';
-import { CartRowProps } from '@/types/CartRowProps';
+import { CartRowProps } from '@/types/Sidebar'; // Adjust the import path as necessary
 
 const CartRow: React.FC<CartRowProps> = ({ item, onQuantityChange, onRemove }) => {
+  // Fallback image URL - replace with your actual fallback image
+  const fallbackImage = '/images/placeholder.jpg';
+
   return (
     <div className="flex space-x-4">
       {/* Product Image */}
       <div className="flex-shrink-0 w-20 h-20 relative rounded-md overflow-hidden">
         <Image
-          src={item.image}
+          src={item.image || fallbackImage}
           alt={item.name}
           layout="fill"
           objectFit="cover"

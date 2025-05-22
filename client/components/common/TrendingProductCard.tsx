@@ -1,44 +1,64 @@
-import React, { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Star, Heart, Eye, Clock, Flame } from 'lucide-react';
-import { TrendingProductCardProps } from '@/types/TrendingProductCardProps';
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Star, Heart, Eye, Clock, Flame,  Zap } from "lucide-react";
+import { TrendingProductCardProps } from "@/types/product"; // Adjust the import path as necessary
 
 const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
   product,
   onToggleWishlist,
   isInWishlist = false,
-  salesCount = Math.floor(Math.random() * 1000) + 1
+  salesCount = Math.floor(Math.random() * 1000) + 1,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
-  const hasMultipleImages = product.images.length > 1;
 
-  // Calculate discount percentage (just for demo)
-  const discountPercent = 15;
-  const originalPrice = product.price * (100 / (100 - discountPercent));
+  // Create image array from product data
+  const images = [
+    `/assets/product/${product.image_path}`,
+    ...(product.hover_image ? [`/assets/product/${product.hover_image}`] : []),
+  ];
+  const hasMultipleImages = images.length > 1;
+
+  // Calculate discount using special promo or price comparison
+  const discountPercent =
+    product.special_promo === 1
+      ? Math.round(
+          ((product.price_2 - product.selling_price) / product.price_2) * 100
+        )
+      : Math.round(
+          ((product.wholesale_price - product.selling_price) /
+            product.wholesale_price) *
+            100
+        );
+
+  const originalPrice =
+    product.special_promo === 1 ? product.price_2 : product.wholesale_price;
+  const currentPrice = product.selling_price;
+  const rating = parseFloat(product.rating);
 
   return (
     <div
-      className="mb-12 group relative rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+      className="group relative bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 dark:border-gray-800 hover:border-pink-200 dark:hover:border-pink-800 hover:-translate-y-2"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      {/* Trending indicator ribbon */}
-      <div className="absolute left-0 top-4 z-10">
-        <div className="bg-gradient-to-r from-pink-600 to-purple-600 text-white py-1 px-4 rounded-r-full shadow-md flex items-center gap-1">
-          <Flame className="h-4 w-4" />
-          <span className="font-medium text-sm">Trending</span>
+      {/* Trending indicator with modern gradient */}
+      <div className="absolute left-0 top-6 z-20">
+        <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white py-1.5 px-4 rounded-r-2xl shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
+          <Zap className="h-4 w-4 animate-pulse" />
+          <span className="font-semibold text-sm tracking-wide">TRENDING</span>
         </div>
       </div>
 
-      {/* Image container */}
-      <div className="aspect-w-1 aspect-h-1 relative overflow-hidden">
+      {/* Image container with modern aspect ratio */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
         {/* Main image */}
         <Image
-          src={product.images[0]}
-          alt={product.name}
-          className={`w-full h-80 object-cover transform transition-all duration-500 ${isHovering && hasMultipleImages ? 'opacity-0' : 'opacity-100'
-            } group-hover:scale-105`}
+          src={images[0]}
+          alt={product.display_name}
+          className={`w-full h-72 object-cover transform transition-all duration-700 ${
+            isHovering && hasMultipleImages ? "opacity-0 scale-110" : "opacity-100 scale-100"
+          } group-hover:scale-105`}
           width={1000}
           height={1000}
           priority
@@ -47,114 +67,143 @@ const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
         {/* Second image on hover */}
         {hasMultipleImages && (
           <Image
-            src={product.images[1]}
-            alt={`${product.name} - alternate view`}
-            className={`absolute inset-0 w-full h-80 object-cover transform transition-opacity duration-500 ${isHovering ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
-              }`}
+            src={images[1]}
+            alt={`${product.display_name} - alternate view`}
+            className={`absolute inset-0 w-full h-72 object-cover transform transition-all duration-700 ${
+              isHovering ? "opacity-100 scale-105" : "opacity-0 scale-100"
+            }`}
             width={1000}
             height={1000}
           />
         )}
 
-        {/* Sales counter badge */}
-        <div className="absolute top-4 right-4 bg-pink-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-md flex items-center gap-1">
-          <Flame className="h-4 w-4" />
-          <span>{salesCount} sold</span>
+        {/* Modern sales counter with glass effect */}
+        <div className="absolute top-6 right-6 bg-white/20 backdrop-blur-md border border-white/30 text-white px-3 py-1.5 rounded-2xl text-sm font-medium shadow-lg flex items-center gap-1.5">
+          <Flame className="h-4 w-4 text-orange-400" />
+          <span className="text-white drop-shadow-sm">{salesCount} sold</span>
         </div>
 
-        {/* Limited time indicator */}
-        <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium shadow-md flex items-center gap-1">
-          <Clock className="h-4 w-4" />
-          <span>Limited time</span>
-        </div>
+        {/* Limited time offer with modern styling */}
+        {product.special_promo === 1 && (
+          <div className="absolute bottom-6 left-6 bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-sm font-medium shadow-lg flex items-center gap-2 border border-white/20">
+            <Clock className="h-4 w-4 text-yellow-400" />
+            <span>{product.special_promo_message || "Limited time offer"}</span>
+          </div>
+        )}
 
-        {/* Wishlist button */}
+        {/* Modern wishlist button */}
         {onToggleWishlist && (
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onToggleWishlist(product.id);
+              onToggleWishlist(product.product_id);
             }}
-            className="absolute top-14 right-4 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition-all hover:bg-white hover:scale-110"
-            aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+            className="absolute top-16 right-6 p-2.5 rounded-2xl bg-white/90 backdrop-blur-sm shadow-lg transition-all hover:bg-white hover:scale-110 hover:shadow-xl border border-white/50 group/heart"
+            aria-label={
+              isInWishlist ? "Remove from wishlist" : "Add to wishlist"
+            }
           >
             <Heart
-              className={`h-5 w-5 ${isInWishlist ? 'text-pink-600 fill-pink-600' : 'text-gray-700'}`}
+              className={`h-5 w-5 transition-all ${
+                isInWishlist 
+                  ? "text-pink-500 fill-pink-500 scale-110" 
+                  : "text-gray-600 group-hover/heart:text-pink-500 group-hover/heart:scale-110"
+              }`}
             />
           </button>
         )}
 
-        {/* Image indicator dots */}
+        {/* Modern image indicators */}
         {hasMultipleImages && (
-          <div className="absolute bottom-4 right-4 flex gap-1">
-            {product.images.slice(0, 2).map((_, index) => (
+          <div className="absolute bottom-6 right-6 flex gap-2">
+            {images.slice(0, 2).map((_, index) => (
               <span
                 key={index}
-                className={`h-2 w-2 rounded-full transition-all ${(index === 0 && !isHovering) || (index === 1 && isHovering)
-                  ? 'bg-white scale-110'
-                  : 'bg-white/50'
-                  }`}
+                className={`h-2 w-2 rounded-full transition-all duration-300 ${
+                  (index === 0 && !isHovering) || (index === 1 && isHovering)
+                    ? "bg-white scale-125 shadow-lg"
+                    : "bg-white/40 hover:bg-white/60"
+                }`}
               />
             ))}
           </div>
         )}
+
+        {/* Gradient overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
       </div>
 
-      {/* Content area */}
-      <div className="p-6 bg-white dark:bg-[#1c3c34]">
-        {/* Category and Name */}
-        <div className="mb-2">
-          <p className="text-sm text-pink-600 dark:text-pink-400 font-medium mb-1">
+      {/* Content area with modern spacing */}
+      <div className="p-6 space-y-4">
+        {/* Category badge with modern design */}
+        <div className="flex items-center justify-between">
+          <span className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950 dark:to-purple-950 text-pink-700 dark:text-pink-300 font-medium text-xs tracking-wide border border-pink-200 dark:border-pink-800">
             {product.category}
-          </p>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white line-clamp-1">
-            {product.name}
-          </h3>
+          </span>
+          
+          {/* Discount badge */}
+          {discountPercent > 0 && (
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold text-xs tracking-wide shadow-lg">
+              -{discountPercent}%
+            </span>
+          )}
         </div>
 
-        {/* Rating and Review Count */}
-        <div className="flex items-center mb-3">
-          <div className="flex">
+        {/* Product name with modern typography */}
+        <h3 className="font-bold text-lg text-gray-900 dark:text-white leading-tight line-clamp-2 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+          {product.display_name}
+        </h3>
+
+        {/* Rating with modern stars */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`h-5 w-5 ${i < Math.floor(product.rating)
-                  ? 'text-yellow-400 fill-current'
-                  : 'text-gray-300 dark:text-gray-600'
-                  }`}
+                className={`h-4 w-4 ${
+                  i < Math.floor(rating)
+                    ? "text-yellow-400 fill-yellow-400"
+                    : "text-gray-300 dark:text-gray-600"
+                }`}
               />
             ))}
           </div>
-          <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">
-            ({product.review})
+          <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+            {rating.toFixed(1)} ({product.review})
           </span>
         </div>
 
-        {/* Short description */}
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
-          {product.description}
+        {/* Description with better line height */}
+        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
+          {product.product_description}
         </p>
 
-        {/* Price and Actions */}
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">
-              {new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR' }).format(product.price)}
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
-                {new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR' }).format(originalPrice)}
+        {/* Price section with modern layout */}
+        <div className="flex items-end justify-between pt-2">
+          <div className="space-y-1">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                {new Intl.NumberFormat("en-LK", {
+                  style: "currency",
+                  currency: "LKR",
+                }).format(currentPrice)}
               </span>
-              <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                {discountPercent}% OFF
-              </span>
+              {discountPercent > 0 && (
+                <span className="text-sm text-gray-500 dark:text-gray-400 line-through font-medium">
+                  {new Intl.NumberFormat("en-LK", {
+                    style: "currency",
+                    currency: "LKR",
+                  }).format(originalPrice)}
+                </span>
+              )}
             </div>
           </div>
 
+          {/* Modern action buttons */}
           <div className="flex gap-2">
             <Link href={`/products/${product.slug}`}>
-              <button className="bg-pink-600 hover:bg-pink-700 text-white px-5 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1">
-                <Eye className="h-4 w-4" />
+              <button className="group/btn bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all hover:shadow-lg hover:scale-105 flex items-center gap-1.5">
+                <Eye className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
                 <span>View</span>
               </button>
             </Link>
@@ -162,8 +211,11 @@ const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
         </div>
       </div>
 
-      {/* Animation pulse effect for trending products */}
-      <div className="absolute inset-0 bg-gradient-to-r from-pink-500/30 to-purple-500/30 rounded-2xl group-hover:opacity-0 opacity-0 group-hover:animate-pulse pointer-events-none" />
+      {/* Modern hover effect overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-pink-500/0 via-purple-500/0 to-indigo-500/0 group-hover:from-pink-500/5 group-hover:via-purple-500/5 group-hover:to-indigo-500/5 rounded-3xl transition-all duration-500 pointer-events-none" />
+      
+      {/* Subtle border glow on hover */}
+      <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-gradient-to-r group-hover:from-pink-300 group-hover:via-purple-300 group-hover:to-indigo-300 transition-all duration-500 pointer-events-none" />
     </div>
   );
 };
