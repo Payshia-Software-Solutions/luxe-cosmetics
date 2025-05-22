@@ -20,8 +20,7 @@ export default function FeaturedProducts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<number[]>([]);
-  
-  // Use cart functions only (removed unused cartItems)
+
   const { addToCart, openCart, getCartCount } = useCart();
 
   useEffect(() => {
@@ -52,20 +51,18 @@ export default function FeaturedProducts() {
           throw new Error("Could not extract products array from response");
         }
 
-        const validProducts = productsData.filter((product): product is Product => {
-          return (
+        const validProducts = productsData.filter(
+          (product): product is Product =>
             typeof product === "object" &&
             product !== null &&
             "product_id" in product &&
             ("product_name" in product || "display_name" in product)
-          );
-        });
-        
+
         setProducts(validProducts);
         setError(null);
       } catch (err: unknown) {
-        // Properly use error to prevent ESLint warning
-        const message = err instanceof Error ? err.message : "Unknown error occurred";
+        const message =
+          err instanceof Error ? err.message : "Unknown error occurred";
         setError("Failed to load products. " + message);
         setProducts([]);
       } finally {
@@ -77,7 +74,7 @@ export default function FeaturedProducts() {
   }, []);
 
   const handleAddToCart = (productId: number) => {
-    const productToAdd = products.find(product => product.product_id === productId);
+
     if (!productToAdd) return;
 
     const newCartItem = {
@@ -90,7 +87,7 @@ export default function FeaturedProducts() {
 
     addToCart(newCartItem);
     openCart();
-    toast.success(`${productToAdd.display_name || productToAdd.product_name} added to cart!`);
+
   };
 
   const handleToggleWishlist = (productId: number) => {
@@ -168,9 +165,7 @@ export default function FeaturedProducts() {
             className="py-12"
           >
             {products.map((product) => (
-              <SwiperSlide
-                className="mb-8"
-                key={product.product_id}>
+
                 <ProductCard
                   product={product}
                   onAddToCart={handleAddToCart}
@@ -186,7 +181,6 @@ export default function FeaturedProducts() {
           </div>
         )}
       </div>
-
       <ToastContainer />
     </section>
   );

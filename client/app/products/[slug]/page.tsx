@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import ProductView from "@/components/ProductView";
+
 import { ProductData } from "@/types/ProductData";
 import { FormattedProduct } from '@/types/FormattedProduct';
+
 import { ProductSpecifications } from "@/types/ProductSpecifications";
 
 // Uncomment this block if you plan to export metadata
@@ -36,6 +38,7 @@ type ReviewType = {
 const getValidImagePath = (imagePath: string): string => {
     if (!imagePath) return '/images/placeholder.jpg';
 
+
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
         return imagePath;
     }
@@ -55,6 +58,7 @@ export default function Page({
     const resolvedParams = React.use(params);
     const { slug } = resolvedParams;
 
+
     const [product, setProduct] = useState<ProductData | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -62,15 +66,16 @@ export default function Page({
     useEffect(() => {
         const fetchProductData = async () => {
             try {
-                setIsLoading(true);
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/get-by-slug/${slug}`);
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch product data');
                 }
-
                 const data: ProductData = await response.json();
                 setProduct(data);
+
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An unknown error occurred');
+            } finally {
                 setIsLoading(false);
             } catch (err: unknown) {
                 // Safe narrowing for unknown error
@@ -84,9 +89,7 @@ export default function Page({
             }
         };
 
-        if (slug) {
-            fetchProductData();
-        }
+        if (slug) fetchProductData();
     }, [slug]);
 
     if (isLoading) {
@@ -115,6 +118,8 @@ export default function Page({
         );
     }
 
+    // Parse specifications
+
     // Parse reviews safely
     let parsedReviews: ReviewType[] = [];
     try {
@@ -129,14 +134,22 @@ export default function Page({
         try {
             parsedSpecifications = JSON.parse(product.specifications) as ProductSpecifications;
         } catch (e) {
-            console.error('Error parsing specifications JSON:', e);
+            console.error("Failed to parse specifications:", e);
         }
     } else if (product.specifications) {
         // Ensure type casting to ProductSpecifications
         parsedSpecifications = product.specifications as unknown as ProductSpecifications;
     }
 
-    // Format product object for ProductView
+    // Parse reviews
+    let parsedReviews: ProductReview[] = [];
+    try {
+        parsedReviews = product.reviews ? JSON.parse(product.reviews) : [];
+    } catch (e) {
+        console.error("Failed to parse reviews:", e);
+    }
+
+    // Format product for ProductView
     const formattedProduct: FormattedProduct = {
         id: product.product_id,
         name: product.product_name,
@@ -144,26 +157,31 @@ export default function Page({
         category: product.category || '',
         price: product.selling_price,
         rating: parseFloat(product.rating) || 0,
+        reviews: parsedReviews.map((review, index) => ({
+            id: review.id || index + 1,
+            user: review.user,
+            rating: review.rating,
+            title: review.title || "Review",
+            comment: review.comment,
         reviews: parsedReviews.map((review: ReviewType, index: number) => ({
             id: index + 1,
             ...review,
             date: review.timestamp || new Date().toISOString().split('T')[0],
-            verified: review.verified !== undefined ? review.verified : true,
-            helpful: review.helpful || 0,
-            title: review.title || "Review"
+            verified: review.verified ?? true,
+            helpful: review.helpful ?? 0
         })),
         description: product.product_description || '',
         longDescription: product.long_description || '',
         benefits: product.benefits
-            ? product.benefits.split(',').map((benefit: string) => benefit.trim())
+            ? product.benefits.split(',').map(b => b.trim())
             : [],
         specifications: parsedSpecifications,
         images: [
             getValidImagePath(product.image_path),
-            getValidImagePath(product.hover_image) || getValidImagePath(product.image_path),
+            getValidImagePath(product.hover_image),
             '/images/placeholder1.jpg',
-            '/images/placeholder2.jpg',
-        ].filter(Boolean),
+            '/images/placeholder2.jpg'
+        ],
         breadcrumbs: ['Home', product.category || 'Products', product.product_name]
     };
 
