@@ -3,22 +3,61 @@
 import React, { useEffect, useState } from 'react';
 import ProductView from "@/components/ProductView";
 
-// Types
 import { ProductData } from "@/types/ProductData";
-import { ProductSpecifications } from "@/types/ProductSpecifications";
-import { ProductReview } from "@/types/ProductReview";
 import { FormattedProduct } from '@/types/FormattedProduct';
+
+import { ProductSpecifications } from "@/types/ProductSpecifications";
+
+// Uncomment this block if you plan to export metadata
+/*
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Cosmetic Shop | Premium Beauty & Skincare Products Online",
+  description: "Discover a wide range of premium beauty and skincare products at our Cosmetic Shop. Shop for makeup, skincare, haircare, and more with fast delivery and expert advice.",
+  keywords: "cosmetic shop, beauty products, skincare, makeup, skincare products, premium cosmetics, online beauty store, skincare online, makeup online, beauty essentials",
+  robots: "index, follow",
+  viewport: "width=device-width, initial-scale=1",
+};
+*/
+
+// Type for review object
+type ReviewType = {
+    id?: number;
+    user: string;
+    rating: number;
+    title?: string;
+    comment: string;
+    date?: string;
+    timestamp?: string;
+    verified?: boolean;
+    helpful?: number;
+};
 
 // Normalize image path
 const getValidImagePath = (imagePath: string): string => {
     if (!imagePath) return '/images/placeholder.jpg';
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath;
-    if (imagePath.startsWith('/')) return imagePath;
+
+
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        return imagePath;
+    }
+
+    if (imagePath.startsWith('/')) {
+        return imagePath;
+    }
+
     return `/${imagePath}`;
 };
 
-export default function Page({ params }: { params: { slug: string } }) {
-    const { slug } = params;
+export default function Page({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}) {
+    const resolvedParams = React.use(params);
+    const { slug } = resolvedParams;
+
 
     const [product, setProduct] = useState<ProductData | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -27,15 +66,25 @@ export default function Page({ params }: { params: { slug: string } }) {
     useEffect(() => {
         const fetchProductData = async () => {
             try {
-                const response = await fetch(`http://localhost/luxe-cosmetics/server/products/get-by-slug/${slug}`);
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch product data');
                 }
                 const data: ProductData = await response.json();
                 setProduct(data);
+
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An unknown error occurred');
             } finally {
+                setIsLoading(false);
+            } catch (err: unknown) {
+                // Safe narrowing for unknown error
+                if (err instanceof Error) {
+                    console.error('Error fetching product:', err);
+                    setError(err.message);
+                } else {
+                    setError('An unknown error occurred');
+                }
                 setIsLoading(false);
             }
         };
@@ -70,15 +119,26 @@ export default function Page({ params }: { params: { slug: string } }) {
     }
 
     // Parse specifications
+
+    // Parse reviews safely
+    let parsedReviews: ReviewType[] = [];
+    try {
+        parsedReviews = product.reviews ? JSON.parse(product.reviews) as ReviewType[] : [];
+    } catch (e) {
+        console.error('Error parsing reviews JSON:', e);
+    }
+
+    // Parse specifications safely
     let parsedSpecifications: ProductSpecifications = {};
     if (typeof product.specifications === 'string') {
         try {
-            parsedSpecifications = JSON.parse(product.specifications);
+            parsedSpecifications = JSON.parse(product.specifications) as ProductSpecifications;
         } catch (e) {
             console.error("Failed to parse specifications:", e);
         }
-    } else {
-        parsedSpecifications = product.specifications;
+    } else if (product.specifications) {
+        // Ensure type casting to ProductSpecifications
+        parsedSpecifications = product.specifications as unknown as ProductSpecifications;
     }
 
     // Parse reviews
@@ -103,6 +163,9 @@ export default function Page({ params }: { params: { slug: string } }) {
             rating: review.rating,
             title: review.title || "Review",
             comment: review.comment,
+        reviews: parsedReviews.map((review: ReviewType, index: number) => ({
+            id: index + 1,
+            ...review,
             date: review.timestamp || new Date().toISOString().split('T')[0],
             verified: review.verified ?? true,
             helpful: review.helpful ?? 0

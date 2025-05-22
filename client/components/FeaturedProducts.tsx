@@ -57,7 +57,6 @@ export default function FeaturedProducts() {
             product !== null &&
             "product_id" in product &&
             ("product_name" in product || "display_name" in product)
-        );
 
         setProducts(validProducts);
         setError(null);
@@ -75,9 +74,7 @@ export default function FeaturedProducts() {
   }, []);
 
   const handleAddToCart = (productId: number) => {
-    const productToAdd = products.find(
-      (product) => product.product_id === productId
-    );
+
     if (!productToAdd) return;
 
     const newCartItem = {
@@ -90,9 +87,7 @@ export default function FeaturedProducts() {
 
     addToCart(newCartItem);
     openCart();
-    toast.success(
-      `${productToAdd.display_name || productToAdd.product_name} added to cart!`
-    );
+
   };
 
   const handleToggleWishlist = (productId: number) => {
@@ -170,7 +165,7 @@ export default function FeaturedProducts() {
             className="py-12"
           >
             {products.map((product) => (
-              <SwiperSlide className="mb-8" key={product.product_id}>
+
                 <ProductCard
                   product={product}
                   onAddToCart={handleAddToCart}

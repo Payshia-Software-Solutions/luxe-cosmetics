@@ -5,7 +5,8 @@ import axios from "axios";
 import ProductCard from "../common/ProductCard";
 import SideBar from "./SideBar";
 import { motion } from "framer-motion";
-
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { Product } from "@/types";
 import { ShoppingBag } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
@@ -26,35 +27,37 @@ const Shop: React.FC = () => {
     ratings: [],
     onSale: false,
     priceRange: [0, 300],
-    sort: ""
+    sort: "",
   });
   const [isSearching, setIsSearching] = useState(false);
   const [isSorting, setIsSorting] = useState(false);
   const prevSortRef = useRef<string | undefined>("");
 
-
   const { addToCart, openCart, getCartCount } = useCart();
-
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost/luxe-cosmetics/server/products');
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/products`
+        );
 
-
-        if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        if (
+          response.data &&
+          response.data.success &&
+          Array.isArray(response.data.data)
+        ) {
           setProducts(response.data.data);
         } else if (Array.isArray(response.data)) {
-
           setProducts(response.data);
         } else {
-          setError('Invalid data format received from server');
-          console.error('Invalid data format:', response.data);
+          setError("Invalid data format received from server");
+          console.error("Invalid data format:", response.data);
         }
       } catch (err) {
-        setError('Failed to fetch products. Please try again later.');
-        console.error('Error fetching products:', err);
+        setError("Failed to fetch products. Please try again later.");
+        console.error("Error fetching products:", err);
       } finally {
         setLoading(false);
       }
@@ -63,25 +66,19 @@ const Shop: React.FC = () => {
     fetchProducts();
   }, []);
 
-
   useEffect(() => {
-
     if (prevSortRef.current !== filters.sort) {
-
       setIsSorting(true);
-
 
       const timer = setTimeout(() => {
         setIsSorting(false);
       }, 800);
-
 
       prevSortRef.current = filters.sort;
 
       return () => clearTimeout(timer);
     }
   }, [filters.sort]);
-
 
   useEffect(() => {
     const applyAllFilters = async () => {
@@ -90,97 +87,102 @@ const Shop: React.FC = () => {
         let results: Product[] = [];
 
         if (filters.categories && filters.categories.length > 0) {
-
-<<<<<<< Updated upstream
-          const categoryPromises = filters.categories.map((category: string) =>
-            axios.get<{ success: boolean; data: Product[] }>(`http://localhost/luxe-cosmetics/server/products/search/category?term=${encodeURIComponent(category)}`)
-          );
-
-
-
-          const responses = await Promise.all(categoryPromises);
-
-
-          const categoryResults = responses.flatMap((response) => {
-            const resData = response.data as { success: boolean; data: Product[] };
-            if (resData.success && Array.isArray(resData.data)) {
-              return resData.data;
-=======
           type CategoryFilter = string | number | boolean;
-          const categoryPromises = filters.categories.map((category: CategoryFilter) =>
-            axios.get(`http://localhost/luxe-cosmetics/server/products/search/category?term=${encodeURIComponent(category)}`)
+          const categoryPromises = filters.categories.map(
+            (category: CategoryFilter) =>
+              axios.get(
+                `${
+                  process.env.NEXT_PUBLIC_API_URL
+                }/products/search/category?term=${encodeURIComponent(category)}`
+              ) //    `${process.env.NEXT_PUBLIC_API_URL}/products`
           );
 
+          const responses: { data: { success: boolean; data: Product[] } }[] =
+            await Promise.all(categoryPromises);
 
-          const responses: { data: { success: boolean; data: Product[] } }[] = await Promise.all(categoryPromises);
-
-
-
-          const categoryResults = responses.flatMap((response: { data: { success: boolean; data: Product[] } }) => {
-
-            if (response.data && response.data.success && Array.isArray(response.data.data)) {
-              return response.data.data;
-            } else if (Array.isArray(response.data)) {
-              return response.data;
->>>>>>> Stashed changes
+          const categoryResults = responses.flatMap(
+            (response: { data: { success: boolean; data: Product[] } }) => {
+              if (
+                response.data &&
+                response.data.success &&
+                Array.isArray(response.data.data)
+              ) {
+                return response.data.data;
+              } else if (Array.isArray(response.data)) {
+                return response.data;
+              }
+              return [];
             }
-            return [];
-          });
+          );
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
           results = Array.from(
-            new Map((categoryResults as Product[]).map((item: Product) => [item.product_id, item])).values()
+            new Map(
+              (categoryResults as Product[]).map((item: Product) => [
+                item.product_id,
+                item,
+              ])
+            ).values()
           );
         } else {
-
           results = [...products];
         }
 
-
         if (filters.priceRange) {
-          results = results.filter(product =>
-            product.selling_price >= filters.priceRange![0] &&
-            product.selling_price <= filters.priceRange![1]
+          results = results.filter(
+            (product) =>
+              product.selling_price >= filters.priceRange![0] &&
+              product.selling_price <= filters.priceRange![1]
           );
         }
 
         // Apply brand filter
         if (filters.brands && filters.brands.length > 0) {
-          results = results.filter(product =>
-            filters.brands!.some((brand: string) => product.brand_id.toString() === brand || product.product_name.includes(brand))
+          results = results.filter((product) =>
+            filters.brands!.some(
+              (brand: string) =>
+                product.brand_id.toString() === brand ||
+                product.product_name.includes(brand)
+            )
           );
         }
 
         // Apply rating filter
         if (filters.ratings && filters.ratings.length > 0) {
-          results = results.filter(product => {
+          results = results.filter((product) => {
             const productRating = parseFloat(product.rating.toString());
-            return filters.ratings!.some((rating: number) => productRating >= rating);
+            return filters.ratings!.some(
+              (rating: number) => productRating >= rating
+            );
           });
         }
 
         // Apply sale filter
         if (filters.onSale) {
-          results = results.filter(product => product.special_promo === 1);
+          results = results.filter((product) => product.special_promo === 1);
         }
 
         // Step 3: Apply sorting (IMPORTANT: Sorting happens last)
         if (filters.sort) {
           switch (filters.sort) {
-            case 'price_asc':
+            case "price_asc":
               results.sort((a, b) => a.selling_price - b.selling_price);
               break;
-            case 'price_desc':
+            case "price_desc":
               results.sort((a, b) => b.selling_price - a.selling_price);
               break;
-            case 'newest':
-              results.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            case "newest":
+              results.sort(
+                (a, b) =>
+                  new Date(b.created_at).getTime() -
+                  new Date(a.created_at).getTime()
+              );
               break;
-            case 'oldest':
-              results.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+            case "oldest":
+              results.sort(
+                (a, b) =>
+                  new Date(a.created_at).getTime() -
+                  new Date(b.created_at).getTime()
+              );
               break;
             default:
               // No sorting
@@ -191,8 +193,8 @@ const Shop: React.FC = () => {
         // Finally, update filtered products
         setFilteredProducts(results);
       } catch (err) {
-        console.error('Error applying filters:', err);
-        setError('Failed to apply filters. Please try again.');
+        console.error("Error applying filters:", err);
+        setError("Failed to apply filters. Please try again.");
       } finally {
         setIsSearching(false);
       }
@@ -204,7 +206,9 @@ const Shop: React.FC = () => {
 
   // Updated handleAddToCart function using the CartContext
   const handleAddToCart = (productId: number) => {
-    const productToAdd = filteredProducts.find(product => product.product_id === productId);
+    const productToAdd = filteredProducts.find(
+      (product) => product.product_id === productId
+    );
 
     if (!productToAdd) return;
 
@@ -223,7 +227,9 @@ const Shop: React.FC = () => {
     openCart();
 
     // Show success toast notification
-    toast.success(`${productToAdd.display_name || productToAdd.product_name} added to cart!`);
+    toast.success(
+      `${productToAdd.display_name || productToAdd.product_name} added to cart!`
+    );
   };
 
   const handleToggleWishlist = (productId: number) => {
@@ -238,36 +244,27 @@ const Shop: React.FC = () => {
     setFilterActive(!filterActive);
   };
 
-<<<<<<< Updated upstream
-  const handleFilterChange = <K extends keyof Filters>(filterType: K, value: Filters[K]) => {
-=======
   const handleFilterChange = (
-    filterType: keyof Filters | 'resetAll',
+    filterType: keyof Filters | "resetAll",
     value: string[] | boolean | [number, number] | string
   ) => {
->>>>>>> Stashed changes
-    if (filterType === 'resetAll') {
+    if (filterType === "resetAll") {
       setFilters({
         categories: [],
         brands: [],
         ratings: [],
         onSale: false,
         priceRange: [0, 300],
-        sort: ""
+        sort: "",
       });
       return;
     }
 
-<<<<<<< Updated upstream
-    setFilters((prev: Filters) => ({
-=======
     setFilters((prev) => ({
->>>>>>> Stashed changes
       ...prev,
-      [filterType]: value
+      [filterType]: value,
     }));
   };
-
 
   // Staggered animation for product cards
   const containerVariants = {
@@ -275,9 +272,9 @@ const Shop: React.FC = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
@@ -285,82 +282,40 @@ const Shop: React.FC = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.3 }
-    }
+      transition: { duration: 0.3 },
+    },
   };
-<<<<<<< Updated upstream
-=======
 
-  // Sort animation variants
-  // const sortVariants = {
-  //   initial: {
-  //     opacity: 0,
-  //     scale: 0.8,
-  //   },
-  //   animate: {
-  //     opacity: 1,
-  //     scale: 1,
-  //     transition: {
-  //       type: "spring",
-  //       stiffness: 260,
-  //       damping: 20
-  //     }
-  //   },
-  //   exit: {
-  //     opacity: 0,
-  //     scale: 0.8,
-  //     transition: {
-  //       duration: 0.2
-  //     }
-  //   }
-  // };
-
-  // Product reordering animation variants
-  // const reorderVariants = {
-  //   initial: { scale: 0.95, opacity: 0.8 },
-  //   animate: {
-  //     scale: 1,
-  //     opacity: 1,
-  //     transition: {
-  //       type: "spring",
-  //       stiffness: 300,
-  //       damping: 25
-  //     }
-  //   }
-  // };
->>>>>>> Stashed changes
-
-  // Sort indicator component
   const SortIndicator = () => {
     if (!filters.sort) return null;
 
     const getSortIcon = () => {
       switch (filters.sort) {
-        case 'price_asc':
-          return '↑';
-        case 'price_desc':
-          return '↓';
-        case 'newest':
-          return '★';
-        case 'oldest':
-          return '☆';
+        case "price_asc":
+          return "↑";
+        case "price_desc":
+          return "↓";
+        case "newest":
+          return "★";
+        case "oldest":
+          return "☆";
         default:
-          return '•';
+          return "•";
       }
     };
 
     const getSortLabel = () => {
       switch (filters.sort) {
-        case 'price_asc':
-          return 'Price: Low to High';
-        case 'price_desc':
-          return 'Price: High to Low';
-        case 'newest':
-          return 'Newest First';
-        case 'oldest':
-          return 'Oldest First';
+        case "price_asc":
+          return "Price: Low to High";
+        case "price_desc":
+          return "Price: High to Low";
+        case "newest":
+          return "Newest First";
+        case "oldest":
+          return "Oldest First";
         default:
-          return 'Sorted';
+          return "Sorted";
       }
     };
 
@@ -372,7 +327,7 @@ const Shop: React.FC = () => {
         transition={{
           type: "spring",
           stiffness: 500,
-          damping: 25
+          damping: 25,
         }}
         className="inline-flex items-center bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-sm font-medium"
       >
@@ -412,9 +367,7 @@ const Shop: React.FC = () => {
     );
   }
 
-
   return (
-
     <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
       <motion.div
@@ -428,7 +381,8 @@ const Shop: React.FC = () => {
           <span className="block text-rose-500">Perfect Beauty</span>
         </h1>
         <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-          Explore our curated collection of premium cosmetics for your self-care routine&apos;s essentials.
+          Explore our curated collection of premium cosmetics for your self-care
+          routine&apos;s essentials.
         </p>
       </motion.div>
 
@@ -449,23 +403,54 @@ const Shop: React.FC = () => {
           onClick={toggleFilters}
           className="flex items-center justify-center w-full px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
         >
-          <span className="mr-2">{filterActive ? "Hide Filters" : "Show Filters"}</span>
-          <svg className={`w-5 h-5 transform transition-transform duration-200 ${filterActive ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <span className="mr-2">
+            {filterActive ? "Hide Filters" : "Show Filters"}
+          </span>
+          <svg
+            className={`w-5 h-5 transform transition-transform duration-200 ${
+              filterActive ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
       </div>
+        <div>
+           <nav className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
+          <Link href="/" className="hover:text-pink-600">
+            Home
+          </Link>
+          <ChevronRight className="h-4 w-4" />
 
+          <Link href="/shop" className="hover:text-pink-600">
+            Shop
+          </Link>
+         
+        
+        </nav>
+        </div>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Sidebar - hidden on mobile unless toggled */}
         <motion.div
-          className={`lg:col-span-3 ${filterActive ? 'block' : 'hidden lg:block'}`}
+          className={`lg:col-span-3 ${
+            filterActive ? "block" : "hidden lg:block"
+          }`}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
           <div className="bg-white p-6 rounded-lg shadow-md sticky top-24">
-            <h2 className="text-xl font-semibold mb-6 text-gray-800">Filters</h2>
+            <h2 className="text-xl font-semibold mb-6 text-gray-800">
+              Filters
+            </h2>
             <SideBar
               onFilterChange={handleFilterChange}
               activeFilters={filters}
@@ -482,7 +467,7 @@ const Shop: React.FC = () => {
                 <span className="text-sm text-gray-600">
                   Showing results for:
                   <span className="font-medium ml-1">
-                    {filters.categories.join(', ')}
+                    {filters.categories.join(", ")}
                   </span>
                 </span>
               )}
@@ -493,7 +478,7 @@ const Shop: React.FC = () => {
             <div className="flex space-x-4">
               {filters.categories && filters.categories.length > 0 && (
                 <button
-                  onClick={() => handleFilterChange('categories', [])}
+                  onClick={() => handleFilterChange("categories", [])}
                   className="text-[12px] font-bold py-2 px-4  bg-rose-100 rounded-full text-rose-500 hover:text-rose-700 transition-colors"
                 >
                   Clear Category Filter
@@ -501,7 +486,7 @@ const Shop: React.FC = () => {
               )}
               {filters.sort && (
                 <button
-                  onClick={() => handleFilterChange('sort', '')}
+                  onClick={() => handleFilterChange("sort", "")}
                   className="text-[12px] font-bold py-2 px-4   bg-rose-100 rounded-full text-rose-500 hover:text-rose-700 transition-colors"
                 >
                   Clear Sort
@@ -511,7 +496,7 @@ const Shop: React.FC = () => {
           </div>
 
           {/* Loading state */}
-          {(loading || isSearching) ? (
+          {loading || isSearching ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"></div>
             </div>
@@ -522,24 +507,32 @@ const Shop: React.FC = () => {
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-12">
-              <h3 className="text-lg font-medium text-gray-900">No products found</h3>
-              <p className="mt-2 text-sm text-gray-500">Try adjusting your filters to find what you&apos;re looking for.</p>
+              <h3 className="text-lg font-medium text-gray-900">
+                No products found
+              </h3>
+              <p className="mt-2 text-sm text-gray-500">
+                Try adjusting your filters to find what you&apos;re looking for.
+              </p>
             </div>
           ) : (
+            // Find this section in the Shop component:
+
+            // Find this section in the Shop component:
+
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              key={filters.sort} // This key change triggers re-render animation on sort change
+              key={filters.sort}
               transition={{
                 ...containerVariants.visible.transition,
                 // Add special animation properties when sorting
                 ...(isSorting && {
                   type: "spring",
                   stiffness: 200,
-                  damping: 15
-                })
+                  damping: 15,
+                }),
               }}
             >
               {filteredProducts.map((product, index) => (
@@ -554,8 +547,8 @@ const Shop: React.FC = () => {
                     ...(isSorting && {
                       type: "spring",
                       stiffness: 300,
-                      damping: 25
-                    })
+                      damping: 25,
+                    }),
                   }}
                 >
                   <ProductCard
@@ -571,9 +564,6 @@ const Shop: React.FC = () => {
         </div>
       </div>
 
-      {/* Cart component is conditionally rendered by the CartContext, no need to include it here */}
-
-      {/* Toast Container */}
       <ToastContainer />
     </div>
   );
