@@ -20,14 +20,8 @@ export default function FeaturedProducts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<number[]>([]);
-<<<<<<< Updated upstream
-  const { addToCart, openCart, getCartCount } = useCart();
 
-=======
-
-  // Use cart functions only (removed unused cartItems)
   const { addToCart, openCart, getCartCount } = useCart();
->>>>>>> Stashed changes
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -53,45 +47,24 @@ export default function FeaturedProducts() {
           }
         }
 
-<<<<<<< Updated upstream
-        // Type guard to ensure we're working with Product objects
-        const validProducts = (productsData as unknown[]).filter(
-          (product): product is Product => {
-=======
         if (!Array.isArray(productsData)) {
           throw new Error("Could not extract products array from response");
         }
 
-        const validProducts = productsData.filter((product): product is Product => {
-          return (
+        const validProducts = productsData.filter(
+          (product): product is Product =>
             typeof product === "object" &&
             product !== null &&
             "product_id" in product &&
             ("product_name" in product || "display_name" in product)
-          );
-        });
->>>>>>> Stashed changes
-
-            return (
-              typeof product === "object" &&
-              product !== null &&
-              "product_id" in product &&
-              ("product_name" in product || "display_name" in product)
-            );
-          }
         );
+
         setProducts(validProducts);
         setError(null);
-<<<<<<< Updated upstream
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load products. Please try again later.");
-=======
       } catch (err: unknown) {
-        // Properly use error to prevent ESLint warning
-        const message = err instanceof Error ? err.message : "Unknown error occurred";
+        const message =
+          err instanceof Error ? err.message : "Unknown error occurred";
         setError("Failed to load products. " + message);
->>>>>>> Stashed changes
         setProducts([]);
       } finally {
         setLoading(false);
@@ -102,13 +75,9 @@ export default function FeaturedProducts() {
   }, []);
 
   const handleAddToCart = (productId: number) => {
-<<<<<<< Updated upstream
     const productToAdd = products.find(
       (product) => product.product_id === productId
     );
-=======
-    const productToAdd = products.find(product => product.product_id === productId);
->>>>>>> Stashed changes
     if (!productToAdd) return;
 
     const newCartItem = {
@@ -121,17 +90,12 @@ export default function FeaturedProducts() {
 
     addToCart(newCartItem);
     openCart();
-<<<<<<< Updated upstream
     toast.success(
       `${productToAdd.display_name || productToAdd.product_name} added to cart!`
     );
-=======
-    toast.success(`${productToAdd.display_name || productToAdd.product_name} added to cart!`);
->>>>>>> Stashed changes
   };
 
   const handleToggleWishlist = (productId: number) => {
-
     setWishlist((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
@@ -206,12 +170,8 @@ export default function FeaturedProducts() {
             className="py-12"
           >
             {products.map((product) => (
-
-              <SwiperSlide
-                className="mb-8"
-                key={product.product_id}>
+              <SwiperSlide className="mb-8" key={product.product_id}>
                 <ProductCard
-
                   product={product}
                   onAddToCart={handleAddToCart}
                   onToggleWishlist={handleToggleWishlist}
@@ -226,7 +186,6 @@ export default function FeaturedProducts() {
           </div>
         )}
       </div>
-
       <ToastContainer />
     </section>
   );
