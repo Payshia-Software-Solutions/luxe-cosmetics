@@ -24,7 +24,7 @@ export default function Home() {
       <FeaturedProducts />
       <BrandGrid />
       <TrendingProducts />
-      <CategoryGrid Category="Serum" />
+      <CategoryGrid categoryName={''}  />
       <CTA />
 
 

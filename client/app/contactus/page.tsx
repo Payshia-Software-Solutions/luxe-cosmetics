@@ -47,7 +47,7 @@ function ContactUsPage() {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost/luxe-cosmetics/server/contact-us', formData);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/contact-us`, formData); 
 
       if (response.status === 201) {
         setStatusMessage({ type: 'success', text: 'Message sent successfully!' });
@@ -59,11 +59,18 @@ function ContactUsPage() {
           message: '',
         });
       }
-    } catch (error: any) {
-      setStatusMessage({
-        type: 'error',
-        text: error.response?.data?.error || 'Something went wrong. Please try again.',
-      });
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        setStatusMessage({
+          type: 'error',
+          text: error.response.data.error
+        });
+      } else {
+        setStatusMessage({
+          type: 'error',
+          text: 'Something went wrong. Please try again.'
+        });
+      }
     } finally {
       setLoading(false);
     }

@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import {  User, Sun, Moon, Search } from 'lucide-react';
-
-import CartButton from './CartButton';
-
+import React, { useState, useEffect, useCallback } from 'react';
+import { User, Sun, Moon, Search, ShoppingBag } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useCart } from './CartContext';
 import Cart from './Cart';
 import Link from 'next/link';
 
 export default function Navbar() {
   const { theme, setTheme, systemTheme } = useTheme();
+  const { getCartCount, toggleCart } = useCart();
   const [showCart, setShowCart] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolling, setScrolling] = useState(false);
@@ -20,23 +19,39 @@ export default function Navbar() {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setShowTopBar(false);
-      } else {
-        setShowTopBar(true);
-      }
-      setScrolling(window.scrollY > 0);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+  // Throttled scroll handler for better performance
+  const handleScroll = useCallback(() => {
+    const scrollY = window.scrollY;
+    
+    if (scrollY > 50) {
+      setShowTopBar(false);
+    } else {
+      setShowTopBar(true);
+    }
+    setScrolling(scrollY > 0);
   }, []);
 
+  useEffect(() => {
+    let ticking = false;
+    
+    const throttledHandleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', throttledHandleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', throttledHandleScroll);
+    };
+  }, [handleScroll]);
+
   const handleCartToggle = () => {
+    toggleCart(); // Use the toggleCart from context
     setShowCart(!showCart);
   };
 
@@ -44,38 +59,50 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Top Bar */}
-      {showTopBar && (
-        <div className="bg-black text-white text-center py-2 text-sm transition-opacity duration-300 ease-in-out">
-          <p>Free shipping on orders over $50! Limited time offer.</p>
-        </div>
-      )}
+      {/* Top Bar with better transition handling */}
+      <div 
+        className={`bg-black text-white text-center py-2 text-sm transition-all duration-300 ease-in-out transform ${
+          showTopBar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        }`}
+        style={{ 
+          position: showTopBar ? 'static' : 'absolute',
+          zIndex: 40,
+          width: '100%'
+        }}
+      >
+        <p>Free shipping on orders over $50! Limited time offer.</p>
+      </div>
 
-      {/* Navbar */}
+      {/* Navbar with dynamic top positioning */}
       <nav
         className={`fixed w-full bg-white dark:bg-[#1e1e1e] z-50 transition-all duration-300 ease-in-out ${
           scrolling ? 'shadow-lg' : 'shadow-none'
         }`}
+        style={{
+          top: showTopBar ? '40px' : '0px' // Adjust based on top bar height
+        }}
       >
-        <div className="max-w-7xl mx-auto ">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/">
-                <h1 className="text-2xl font-bold uppercase text-pink-600 dark:text-pink-400">paris beauty</h1>
+                <h1 className="text-2xl font-bold uppercase text-pink-600 dark:text-pink-400 cursor-pointer hover:text-pink-700 dark:hover:text-pink-300 transition-colors">
+                  paris beauty
+                </h1>
               </Link>
             </div>
 
             {/* Navigation Links */}
             <div className="hidden md:flex space-x-6 ml-10">
-              <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition">
+              <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors">
                 About Us
               </Link>
-              <Link href="/shop" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition">
+              <Link href="/shop" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors">
                 Shop
               </Link>
-              <Link href="/contactus" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition">
+              <Link href="/contactus" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors">
                 Contact Us
               </Link>
             </div>
@@ -86,7 +113,7 @@ export default function Navbar() {
                 <input
                   type="text"
                   placeholder="Search products..."
-                  className="w-96 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  className="w-96 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
                 />
                 <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
@@ -98,6 +125,7 @@ export default function Navbar() {
               <button
                 onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                aria-label="Toggle theme"
               >
                 {currentTheme === 'dark' ? (
                   <Sun className="h-6 w-6 text-gray-600 dark:text-gray-300" />
@@ -107,22 +135,37 @@ export default function Navbar() {
               </button>
 
               {/* User Icon */}
-              <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+              <button 
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                aria-label="User account"
+              >
                 <User className="h-6 w-6 text-gray-600 dark:text-gray-300" />
               </button>
 
-              {/* Cart Icon */}
+              {/* Integrated Cart Button */}
               <button
                 onClick={handleCartToggle}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center gap-2 text-gray-700 hover:text-pink-600 dark:text-gray-300 dark:hover:text-pink-500"
+                aria-label="Shopping cart"
               >
-               <CartButton/>
+                <span className="relative">
+                  <ShoppingBag className="h-6 w-6" />
+                  {getCartCount() > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                      {getCartCount()}
+                    </span>
+                  )}
+                </span>
+                <span className="hidden md:inline">Cart</span>
               </button>
             </div>
 
           </div>
         </div>
       </nav>
+
+      {/* Spacer to prevent content from being hidden under fixed navbar */}
+      <div className={`transition-all duration-300 ${showTopBar ? 'h-24' : 'h-16'}`}></div>
 
       {/* Cart Modal */}
       {showCart && <Cart onClose={() => setShowCart(false)} />}

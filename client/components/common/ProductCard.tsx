@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, Heart, ShoppingBag } from "lucide-react";
-import { ProductCardProps } from "@/types/ProductCardProps";
+import {  ProductCardProps } from "@/types/product"; // Import the interfaces from your product.ts file
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
@@ -51,16 +51,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div
-      className="group h-full w-full"
+      className="group h-full"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
       <Link href={`/products/${product.slug}`} className="h-full block">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl h-full flex flex-col">
-          {/* Responsive image container */}
-          <div className="relative w-full aspect-square">
+          {/* Fixed height image container */}
+          <div className="relative w-full h-40 sm:h-52 md:h-64">
             {/* Main image */}
-            <div className="relative w-full h-full overflow-hidden rounded-lg group">
+          
+            <div className="relative w-full h-full overflow-hidden rounded-t-lg group">
               <Image
                 src={`${imageBasePath}${product.image_path}`}
                 alt={product.product_name}
@@ -81,7 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
             {/* Category badge */}
             <div className="absolute top-2 left-2">
-              <span className="px-2 py-1 text-xs font-bold uppercase rounded bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-200">
+              <span className="px-2 py-0.5 text-[10px] sm:text-xs font-bold uppercase rounded bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-200">
                 {product.category}
               </span>
             </div>
@@ -92,7 +93,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 e.preventDefault();
                 onToggleWishlist(product.product_id);
               }}
-              className="absolute top-2 right-2 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm transition-all hover:scale-110"
+              className="absolute top-2 right-2 p-1.5 sm:p-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm transition-all hover:scale-110"
               aria-label={
                 isInWishlist ? "Remove from wishlist" : "Add to wishlist"
               }
@@ -126,7 +127,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {/* Special promo tag if applicable */}
             {hasPromo && (
               <div className="absolute bottom-2 left-2">
-                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs font-bold uppercase rounded bg-red-100 text-red-700">
+                <span className="px-2 py-0.5 text-[10px] sm:text-xs font-bold uppercase rounded bg-red-100 text-red-700">
                   {product.special_promo_type === "percentage"
                     ? `${product.special_promo}% OFF`
                     : `${product.special_promo} OFF`}
@@ -135,50 +136,51 @@ const ProductCard: React.FC<ProductCardProps> = ({
             )}
           </div>
 
-          {/* Content area with responsive spacing */}
+          {/* Content area with adjusted heights for mobile */}
           <div className="p-2 sm:p-3 md:p-4 flex flex-col flex-grow">
-            {/* Brand area */}
-            <p className="text-xs sm:text-sm font-medium text-pink-600 dark:text-pink-400 uppercase truncate">
-              {getBrandName(product.brand_id)}
-            </p>
+            {/* Brand area - fixed height */}
+            <div className="h-5 sm:h-6">
+              <p className="text-xs sm:text-sm font-medium text-pink-600 dark:text-pink-400 uppercase">
+                {getBrandName(product.brand_id)}
+              </p>
+            </div>
 
-            {/* Product name */}
-            <h3 className="text-sm sm:text-base md:text-lg font-medium text-gray-900 dark:text-white mb-1 sm:mb-2 line-clamp-2">
+            {/* Product name - fixed height */}
+            <h3 className="text-sm sm:text-base md:text-lg font-medium text-gray-900 dark:text-white mb-1 sm:mb-2 line-clamp-1 h-5 sm:h-7">
               {product.display_name || product.product_name}
             </h3>
 
-            {/* Rating */}
-            <div className="flex items-center mb-1 sm:mb-2">
+            {/* Rating - fixed height */}
+            <div className="flex items-center mb-1 sm:mb-2 h-4 sm:h-5">
               <Star className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-400 fill-current" />
               <span className="ml-1 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                 {parseFloat(product.rating).toFixed(1)} ({product.review})
               </span>
             </div>
 
-            {/* Badges - only show on larger screens or limit to 1 on small screens */}
-            <div className="hidden sm:flex flex-wrap gap-1 mb-2 overflow-hidden">
-              <span className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
+            {/* Badges - fixed height - hide on smallest screens */}
+            <div className="hidden sm:flex flex-wrap gap-1 mb-1 sm:mb-2 h-5 sm:h-6 overflow-hidden">
+              <span className="px-1.5 py-0.5 text-[10px] sm:text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
                 {skinType}
               </span>
 
               {benefitsArray.length > 0 && (
-                <span className="px-2 py-0.5 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full">
+                <span className="px-1.5 py-0.5 text-[10px] sm:text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full">
                   {benefitsArray[0]}
+                </span>
+              )}
+
+              {product.measurement && (
+                <span className="px-1.5 py-0.5 text-[10px] sm:text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full">
+                  {product.measurement}
                 </span>
               )}
             </div>
 
-            {/* Mobile badges - only show one badge on xs screen */}
-            <div className="flex sm:hidden mb-1">
-              <span className="px-1.5 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full truncate">
-                {skinType}
-              </span>
-            </div>
-
             {/* Push the price and button to the bottom */}
-            <div className="mt-auto pt-2">
+            <div className="mt-auto">
               <div className="flex items-center justify-between">
-                <span className="text-sm sm:text-base md:text-lg font-bold text-gray-900 dark:text-white">
+                <span className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white">
                   ${product.selling_price.toFixed(2)}
                 </span>
 
@@ -187,10 +189,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     e.preventDefault();
                     onAddToCart(product.product_id);
                   }}
-                  className="flex items-center gap-0.5 sm:gap-1 bg-pink-600 hover:bg-pink-700 text-white px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors"
+                  className="flex items-center justify-center gap-1 bg-pink-600 hover:bg-pink-700 text-white px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors"
                 >
-                  <ShoppingBag className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden xs:inline">Add</span>
+                  <ShoppingBag className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">Add to Cart</span>
                 </button>
               </div>

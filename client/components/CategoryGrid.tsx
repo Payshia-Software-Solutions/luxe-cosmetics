@@ -1,57 +1,103 @@
-import React from 'react';
-import { Star } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { products } from '@/data/products';
-import { CategoryViewProps } from '@/types/CategoryViewProps';
+"use client"
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import ProductCard from '@/components/common/ProductCard'; // Import your ProductCard component
+import { Product, ProductCategoryViewProps } from '@/types/product'; // Import the Product interface
 
-export default function CategoryGrid({ Category }: CategoryViewProps) {
+
+export default function ProductCategoryView({ searchTerm = 'serum', initialData = null }: ProductCategoryViewProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [wishlist, setWishlist] = useState<number[]>([]);
+
+  useEffect(() => {
+    // If we have initial data, use it
+    if (initialData) {
+      if (initialData.success && Array.isArray(initialData.data)) {
+        setProducts(initialData.data);
+      }
+      setLoading(false);
+      return;
+    }
+
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/search/category?term=${searchTerm}`); //         
+        
+        if (response.data && response.data.success && Array.isArray(response.data.data)) {
+          setProducts(response.data.data);
+        } else {
+          setProducts([]);
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [searchTerm, initialData]);
+
+  // Handle adding product to cart
+  const handleAddToCart = (productId: number) => {
+    console.log(`Added product ${productId} to cart`);
+    // Here you would implement your cart logic
+    // For example, dispatch to a cart context or store
+  };
+
+  // Handle toggling product in wishlist
+  const handleToggleWishlist = (productId: number) => {
+    setWishlist(prevWishlist => {
+      if (prevWishlist.includes(productId)) {
+        return prevWishlist.filter(id => id !== productId);
+      } else {
+        return [...prevWishlist, productId];
+      }
+    });
+  };
+
+  // Check if a product is in the wishlist
+  const isInWishlist = (productId: number) => wishlist.includes(productId);
+
   return (
     <section className="py-16 bg-white dark:bg-[#1e1e1e] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 mb-8">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b-2 pb-2">
-            {Category}
+            {searchTerm}
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-y-4 md:gap-x-8">
-          {products.map((product) => (
-            <Link key={product.id} href={`/products/${product.slug}`}>
-              <div className="bg-white dark:bg-[#1c3c34] rounded-lg shadow overflow-hidden transition-transform hover:shadow-lg mt-3">
-                <div className="aspect-w-1 aspect-h-1">
-                  <Image
-                    src={product.images[0]}
-                    alt={product.name}
-                    className="w-full h-48 object-cover"
-                    width={1000}
-                    height={1000}
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2  line-clamp-1">
-                    {product.name}
-                  </h3>
-                  <div className="flex items-center mb-2">
-                    <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                    <span className="ml-1 text-sm text-gray-600 dark:text-gray-300">
-                      {product.rating}
-                    </span>
-                  </div>
-                  <div className="flex flex-col md:flex-row items-center justify-between">
-                    <span className="text-xl font-bold text-gray-900 dark:text-white mb-2 md:mb-0">
-                      ${product.price}
-                    </span>
-                    <button className="bg-pink-600 hover:bg-pink-700 w-full md:w-auto text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
-                      Add to Cart
-                    </button>
-                  </div>
-
-                </div>
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-600"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center py-10">
+            <p className="text-red-500">{error}</p>
+          </div>
+        ) : products.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-gray-600 dark:text-gray-300">No products found for &quot;{searchTerm}&quot;.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <div key={product.product_id} className="h-full">
+                <ProductCard
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                  onToggleWishlist={handleToggleWishlist}
+                  isInWishlist={isInWishlist(product.product_id)}
+                />
               </div>
-            </Link>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,8 +1,9 @@
 "use client";
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { CartContextType } from '@/types/CartContextType';
-import { CartItem } from '@/types/CartContextCartItem';
+import { CartItem } from '@/types/CartItem'; // Adjust the import path as necessary
+import { CartContextType } from '@/types/CartContextType'; // Adjust the import path as necessary
+
 
 const CART_STORAGE_KEY = 'shopping-cart';
 
@@ -18,7 +19,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     return [];
   });
-
+  
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Save cart items to localStorage whenever they change
@@ -32,7 +33,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const addToCart = (itemToAdd: CartItem) => {
     setCartItems(prevItems => {
       const existingItemIndex = prevItems.findIndex(item => item.id === itemToAdd.id);
-
+      
       if (existingItemIndex >= 0) {
         // Item already exists, increase quantity
         const updatedItems = [...prevItems];
@@ -52,10 +53,10 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Update item quantity
   const updateQuantity = (id: number, delta: number) => {
-    setCartItems(prevItems =>
-      prevItems.map(item =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+    setCartItems(prevItems => 
+      prevItems.map(item => 
+        item.id === id 
+          ? { ...item, quantity: Math.max(1, item.quantity + delta) } 
           : item
       )
     );

@@ -5,14 +5,13 @@ import axios from "axios";
 import ProductCard from "../common/ProductCard";
 import SideBar from "./SideBar";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { ChevronRight } from "lucide-react";
-import { Product } from "@/types";
+
 import { ShoppingBag } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useCart } from "../CartContext"; // Import the cart context
-import { Filters } from "@/types/Filters";
+import { Filters } from "@/types/shop"; // Import the Filters type
+import { Product } from "@/types/product"; // Import the Product type
 
 const Shop: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -40,7 +39,9 @@ const Shop: React.FC = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/products`
+          `${process.env.NEXT_PUBLIC_API_URL}/products` 
+              
+         
         );
 
         if (
@@ -87,18 +88,16 @@ const Shop: React.FC = () => {
         let results: Product[] = [];
 
         if (filters.categories && filters.categories.length > 0) {
-          type CategoryFilter = string | number | boolean;
           const categoryPromises = filters.categories.map(
-            (category: CategoryFilter) =>
+            (category: string | number | boolean) =>
               axios.get(
-                `${
-                  process.env.NEXT_PUBLIC_API_URL
-                }/products/search/category?term=${encodeURIComponent(category)}`
-              ) //    `${process.env.NEXT_PUBLIC_API_URL}/products`
+                `${process.env.NEXT_PUBLIC_API_URL}/products/search/category?term=${encodeURIComponent(
+                  category
+                )}`
+              )
           );
 
-          const responses: { data: { success: boolean; data: Product[] } }[] =
-            await Promise.all(categoryPromises);
+          const responses = await Promise.all(categoryPromises);
 
           const categoryResults = responses.flatMap(
             (response: { data: { success: boolean; data: Product[] } }) => {
@@ -213,13 +212,12 @@ const Shop: React.FC = () => {
     if (!productToAdd) return;
 
     const newCartItem = {
-      id: productId.toString(),
+      id: productId, // Keep as number, don't convert to string
       name: productToAdd.display_name || productToAdd.product_name,
       price: productToAdd.selling_price,
       quantity: 1,
       image: `/assets/product/${productToAdd.image_path}`,
     };
-
     // Add to cart using context function
     addToCart(newCartItem);
 
@@ -244,10 +242,7 @@ const Shop: React.FC = () => {
     setFilterActive(!filterActive);
   };
 
-  const handleFilterChange = (
-    filterType: keyof Filters | "resetAll",
-    value: string[] | boolean | [number, number] | string
-  ) => {
+  const handleFilterChange = (filterType: string, value: unknown) => {
     if (filterType === "resetAll") {
       setFilters({
         categories: [],
@@ -260,7 +255,7 @@ const Shop: React.FC = () => {
       return;
     }
 
-    setFilters((prev) => ({
+    setFilters((prev: Filters) => ({
       ...prev,
       [filterType]: value,
     }));
@@ -286,6 +281,7 @@ const Shop: React.FC = () => {
     },
   };
 
+  // Sort indicator component
   const SortIndicator = () => {
     if (!filters.sort) return null;
 
@@ -336,36 +332,6 @@ const Shop: React.FC = () => {
       </motion.div>
     );
   };
-
-  if (loading) {
-    return (
-      <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b pb-2 mb-2">
-            Featured Products
-          </h2>
-          <div className="py-12 flex justify-center items-center">
-            <div className="animate-pulse text-lg">Loading products...</div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b pb-2 mb-2">
-            Featured Products
-          </h2>
-          <div className="py-12 text-center text-red-600 dark:text-red-400">
-            {error}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -423,20 +389,7 @@ const Shop: React.FC = () => {
           </svg>
         </button>
       </div>
-        <div>
-           <nav className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
-          <Link href="/" className="hover:text-pink-600">
-            Home
-          </Link>
-          <ChevronRight className="h-4 w-4" />
 
-          <Link href="/shop" className="hover:text-pink-600">
-            Shop
-          </Link>
-         
-        
-        </nav>
-        </div>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Sidebar - hidden on mobile unless toggled */}
         <motion.div
@@ -461,7 +414,7 @@ const Shop: React.FC = () => {
         {/* Product Grid */}
         <div className="lg:col-span-9">
           {/* Showing filter and sort status */}
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3">
             <div className="flex items-center space-x-2">
               {filters.categories && filters.categories.length > 0 && (
                 <span className="text-sm text-gray-600">
@@ -515,16 +468,12 @@ const Shop: React.FC = () => {
               </p>
             </div>
           ) : (
-            // Find this section in the Shop component:
-
-            // Find this section in the Shop component:
-
             <motion.div
-              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              key={filters.sort}
+              key={filters.sort} // This key change triggers re-render animation on sort change
               transition={{
                 ...containerVariants.visible.transition,
                 // Add special animation properties when sorting
@@ -564,6 +513,7 @@ const Shop: React.FC = () => {
         </div>
       </div>
 
+      {/* Toast Container */}
       <ToastContainer />
     </div>
   );

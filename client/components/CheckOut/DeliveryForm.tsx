@@ -1,7 +1,6 @@
 "use client";
 import { useState, ChangeEvent } from "react";
-import { DeliveryAddressData } from "@/types/DeliveryAddressData";
-import { DeliveryFormProps } from "@/types/DeliveryFormProps";
+import { DeliveryAddressData, DeliveryFormProps } from "@/types/Checkout"; // Adjust the import path as necessary
 
 export default function DeliveryForm({ setDeliveryAddress }: DeliveryFormProps) {
   const [formData, setFormData] = useState<DeliveryAddressData>({

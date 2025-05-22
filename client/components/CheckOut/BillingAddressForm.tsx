@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, ChangeEvent } from "react";
-import { AddressData } from "@/types/AddressData";
-import { BillingAddressFormProps } from "@/types/BillingAddressFormProps";
+import { AddressData,BillingAddressFormProps } from "@/types/Checkout"; // Adjust the import path as necessary
+
 
 export default function BillingAddressForm({
   shippingAddress,
