@@ -152,7 +152,7 @@ export default function FeaturedProducts() {
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={5}
-            slidesPerView={1.2}
+            slidesPerView={2.0}
             breakpoints={{
               640: { slidesPerView: 2.5 },
               1024: { slidesPerView: 3.5, spaceBetween: 15 },
@@ -166,10 +166,10 @@ export default function FeaturedProducts() {
               pauseOnMouseEnter: true,
             }}
             loop={products.length > 4}
-            className="py-12"
+            className="my-8"
           >
             {products.map((product) => (
-              <SwiperSlide className="mb-8" key={product.product_id}>
+            <SwiperSlide className="mb-" key={product.product_id}>
                 <ProductCard
                   product={product}
                   onAddToCart={handleAddToCart}
