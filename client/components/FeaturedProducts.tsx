@@ -4,14 +4,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import { ShoppingBag } from "lucide-react";
+// import { ShoppingBag } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "react-toastify/dist/ReactToastify.css";
 
-import ProductCard from "./common/ProductCard";
+import FeaturedProductCard from "./common/FeaturedProductCard";
 import { useCart } from "./CartContext";
 import { Product } from "@/types/product"; // Adjust the import path as necessary
 
@@ -21,7 +21,7 @@ export default function FeaturedProducts() {
   const [error, setError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<number[]>([]);
 
-  const { addToCart, openCart, getCartCount } = useCart();
+  const { addToCart, openCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -139,20 +139,20 @@ export default function FeaturedProducts() {
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-0">
             Featured Products
           </h2>
-          <button
+          {/* <button
             onClick={openCart}
             className="flex items-center text-sm md:text-xl gap-2 bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full"
           >
             <ShoppingBag className="h-5 w-5" />
             <span className="">Cart ({getCartCount()})</span>
-          </button>
+          </button> */}
         </div>
 
         {products.length > 0 ? (
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={5}
-            slidesPerView={2.0}
+            slidesPerView={1.2}
             breakpoints={{
               640: { slidesPerView: 2.5 },
               1024: { slidesPerView: 3.5, spaceBetween: 15 },
@@ -169,8 +169,8 @@ export default function FeaturedProducts() {
             className="my-8"
           >
             {products.map((product) => (
-            <SwiperSlide className="mb-" key={product.product_id}>
-                <ProductCard
+              <SwiperSlide className="mb-" key={product.product_id}>
+                <FeaturedProductCard
                   product={product}
                   onAddToCart={handleAddToCart}
                   onToggleWishlist={handleToggleWishlist}
