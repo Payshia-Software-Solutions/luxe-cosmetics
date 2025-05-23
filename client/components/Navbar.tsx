@@ -226,7 +226,7 @@ export default function Navbar(): JSX.Element {
       {/* Spacer to prevent content from being hidden under fixed navbar */}
       <div
         className={`transition-all duration-300 ${
-          showTopBar ? "h-24" : "h-16"
+          showTopBar ? "h-16" : "h-16"
         }`}
       ></div>
 
