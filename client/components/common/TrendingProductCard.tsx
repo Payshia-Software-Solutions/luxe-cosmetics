@@ -173,8 +173,8 @@ const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
           </span>
         </div>
 
-        {/* Description with better line height */}
-        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
+        {/* Description with single line display */}
+        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1 leading-relaxed truncate">
           {product.product_description}
         </p>
 
