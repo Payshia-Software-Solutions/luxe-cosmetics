@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { X, User, Search } from 'lucide-react';
-import Link from 'next/link';
+import React, { useEffect, useState } from "react";
+import { X, User, Search } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 interface MobileNavbarProps {
   isOpen: boolean;
@@ -36,24 +37,30 @@ export default function MobileNavbar({ isOpen, onClose }: MobileNavbarProps) {
   return (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className={`fixed inset-0 bg-black z-40 md:hidden transition-opacity duration-300 ease-in-out ${
-          isAnimating ? 'bg-opacity-50' : 'bg-opacity-0'
+          isAnimating ? "bg-opacity-50" : "bg-opacity-0"
         }`}
         onClick={handleClose}
       />
-      
-      {/* Mobile Menu */}
-      <div className={`fixed top-0 left-0 h-full w-80 bg-white dark:bg-[#1e1e1e] z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
-        isAnimating ? 'translate-x-0' : '-translate-x-full'
-      }`}>
-        
+
+      {/* Mobile Menu - Changed from left-0 to right-0 */}
+      <div
+        className={`fixed top-0 right-0 h-full w-80 bg-white dark:bg-[#1e1e1e] z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
+          isAnimating ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <Link href="/" onClick={handleClose}>
-            <h1 className="text-xl font-bold uppercase text-pink-600 dark:text-pink-400">
-              paris beauty
-            </h1>
+            <Image
+              src="/assets/content/LogoHorizontal-optimized.png"
+              alt="Company Logo"
+              width={96}
+              height={32}
+              className="w-24"
+              priority
+            />
           </Link>
           <button
             onClick={handleClose}
@@ -78,22 +85,22 @@ export default function MobileNavbar({ isOpen, onClose }: MobileNavbarProps) {
 
         {/* Navigation Links */}
         <div className="flex flex-col p-4 space-y-4">
-          <Link 
-            href="/about" 
+          <Link
+            href="/about"
             onClick={handleClose}
             className="flex items-center py-3 px-2 text-gray-700 dark:text-gray-300 hover:text-pink-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all"
           >
             About Us
           </Link>
-          <Link 
-            href="/shop" 
+          <Link
+            href="/shop"
             onClick={handleClose}
             className="flex items-center py-3 px-2 text-gray-700 dark:text-gray-300 hover:text-pink-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all"
           >
             Shop
           </Link>
-          <Link 
-            href="/contactus" 
+          <Link
+            href="/contactus"
             onClick={handleClose}
             className="flex items-center py-3 px-2 text-gray-700 dark:text-gray-300 hover:text-pink-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all"
           >
@@ -103,7 +110,7 @@ export default function MobileNavbar({ isOpen, onClose }: MobileNavbarProps) {
 
         {/* User Section */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
-          <button 
+          <button
             onClick={handleClose}
             className="flex items-center w-full py-3 px-2 text-gray-700 dark:text-gray-300 hover:text-pink-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all"
           >

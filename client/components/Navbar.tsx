@@ -7,6 +7,7 @@ import { useCart } from "./CartContext";
 import Cart from "./Cart";
 import MobileNavbar from "./MobileNavbar";
 import Link from "next/link";
+import Image from "next/image"; // Add this import
 
 export default function Navbar(): JSX.Element {
   const { theme, setTheme, systemTheme } = useTheme();
@@ -116,26 +117,17 @@ export default function Navbar(): JSX.Element {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Mobile Menu Button */}
-            {/* <div className="md:hidden flex items-center">
-              <button
-                onClick={handleMobileMenuToggle}
-                className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ${
-                  isToggling ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                disabled={isToggling}
-                aria-label="Toggle mobile menu"
-              >
-                <Menu className="h-6 w-6 text-gray-600 dark:text-gray-300" />
-              </button>
-            </div> */}
-
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/">
-                <h1 className="text-2xl font-bold uppercase text-pink-600 dark:text-pink-400 cursor-pointer hover:text-pink-700 dark:hover:text-pink-300 transition-colors">
-                  paris beauty
-                </h1>
+                <Image 
+                  src="/assets/content/LogoHorizontal-optimized.png"
+                  alt="Company Logo"
+                  width={96}
+                  height={32}
+                  className="w-24"
+                  priority 
+                />
               </Link>
             </div>
 
@@ -212,7 +204,6 @@ export default function Navbar(): JSX.Element {
                     </span>
                   )}
                 </span>
-                <span className="hidden md:inline">Cart</span>
               </button>
 
               <div className="md:hidden flex items-center">
