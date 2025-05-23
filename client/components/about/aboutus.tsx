@@ -72,7 +72,18 @@ const AboutUsPage: React.FC = () => {
             variants={fadeIn}
             className="text-6xl md:text-7xl font-bold text-pink-600 mb-4"
           >
-            LUXE
+            {/* PARIS BEAUTY */}
+
+
+                        <Image
+              src="/assets/content/LogoHorizontal-optimized.png"
+              alt="Company Logo"
+              width={96}
+              height={32}
+              className="w-24 flex justify-center mx-auto mb-4"
+              priority
+            />
+
           </motion.h1>
           <motion.p 
             variants={fadeIn}
