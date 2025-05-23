@@ -15,7 +15,6 @@ import ProductCard from "./common/ProductCard";
 import { useCart } from "./CartContext";
 import { Product } from "@/types/product"; // Adjust the import path as necessary
 
-
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -107,7 +106,7 @@ export default function FeaturedProducts() {
     return (
       <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b pb-2 mb-2">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b pb-2 mb-2">
             Featured Products
           </h2>
           <div className="py-12 flex justify-center items-center">
@@ -122,7 +121,7 @@ export default function FeaturedProducts() {
     return (
       <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b pb-2 mb-2">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b pb-2 mb-2">
             Featured Products
           </h2>
           <div className="py-12 text-center text-red-600 dark:text-red-400">
@@ -136,16 +135,16 @@ export default function FeaturedProducts() {
   return (
     <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center border-b pb-2 mb-2">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-2 mb-2">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-0">
             Featured Products
           </h2>
           <button
             onClick={openCart}
-            className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full"
+            className="flex items-center text-sm md:text-xl gap-2 bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full"
           >
             <ShoppingBag className="h-5 w-5" />
-            <span>Cart ({getCartCount()})</span>
+            <span className="">Cart ({getCartCount()})</span>
           </button>
         </div>
 
@@ -153,14 +152,14 @@ export default function FeaturedProducts() {
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={5}
-            slidesPerView={1.5}
+            slidesPerView={1.2}
             breakpoints={{
               640: { slidesPerView: 2.5 },
               1024: { slidesPerView: 3.5, spaceBetween: 15 },
               1280: { slidesPerView: 4.5, spaceBetween: 20 },
             }}
             navigation={false}
-            pagination={{ clickable: true }}
+            pagination={false}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
@@ -170,9 +169,7 @@ export default function FeaturedProducts() {
             className="py-12"
           >
             {products.map((product) => (
-              <SwiperSlide 
-              className="mb-8"
-              key={product.product_id}>
+              <SwiperSlide className="mb-8" key={product.product_id}>
                 <ProductCard
                   product={product}
                   onAddToCart={handleAddToCart}

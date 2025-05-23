@@ -3,10 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Loader2, AlertCircle } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+import { Autoplay, Navigation } from 'swiper/modules';
 
 import 'swiper/css';
-import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
 import TrendingProductCard from './common/TrendingProductCard';
@@ -138,16 +137,11 @@ export default function TrendingProducts() {
         </div>
 
         <Swiper
-          modules={[Autoplay, Pagination, Navigation]}
+          modules={[Autoplay, Navigation]}
           autoplay={{
             delay: 3000,
             disableOnInteraction: false,
             pauseOnMouseEnter: true,
-          }}
-          pagination={{ 
-            clickable: true,
-            bulletClass: 'swiper-pagination-bullet',
-            bulletActiveClass: 'swiper-pagination-bullet-active'
           }}
           navigation={false}
           spaceBetween={20}

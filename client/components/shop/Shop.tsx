@@ -3,10 +3,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ProductCard from "../common/ProductCard";
-import SideBar from "./SideBar";
-import { motion } from "framer-motion";
+import SideBar from "./MobSideBar";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag,  X, Filter } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useCart } from "../CartContext"; // Import the cart context
@@ -40,8 +40,6 @@ const Shop: React.FC = () => {
         setLoading(true);
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/products` 
-              
-         
         );
 
         if (
@@ -261,6 +259,41 @@ const Shop: React.FC = () => {
     }));
   };
 
+  // Close mobile sidebar when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const sidebar = document.getElementById('mobile-sidebar');
+      const toggleButton = document.getElementById('mobile-filter-toggle');
+      
+      if (
+        filterActive && 
+        sidebar && 
+        !sidebar.contains(target) && 
+        toggleButton && 
+        !toggleButton.contains(target) &&
+        window.innerWidth < 1024 // Only on mobile
+      ) {
+        setFilterActive(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [filterActive]);
+
+  // Close mobile sidebar on window resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setFilterActive(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Staggered animation for product cards
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -279,6 +312,37 @@ const Shop: React.FC = () => {
       y: 0,
       transition: { duration: 0.3 },
     },
+  };
+
+  // Mobile sidebar animation variants
+  const sidebarVariants = {
+    open: {
+      x: 0,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }
+    },
+    closed: {
+      x: "-100%",
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }
+    }
+  };
+
+  const overlayVariants = {
+    open: {
+      opacity: 1,
+      transition: { duration: 0.2 }
+    },
+    closed: {
+      opacity: 0,
+      transition: { duration: 0.2 }
+    }
   };
 
   // Sort indicator component
@@ -317,7 +381,7 @@ const Shop: React.FC = () => {
 
     return (
       <motion.div
-        key={filters.sort} // This key ensures animation plays when sort changes
+        key={filters.sort}
         initial={{ opacity: 0, scale: 0.8, x: -10 }}
         animate={{ opacity: 1, scale: 1, x: 0 }}
         transition={{
@@ -352,8 +416,22 @@ const Shop: React.FC = () => {
         </p>
       </motion.div>
 
-      {/* Cart button - Using CartContext functions and cart count */}
-      <div className="flex justify-end mb-6">
+      {/* Top Bar with Cart and Mobile Filter Toggle */}
+      <div className="flex justify-between items-center mb-6">
+        {/* Mobile Filter Toggle Button */}
+        <button
+          id="mobile-filter-toggle"
+          onClick={toggleFilters}
+          className="lg:hidden flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full transition-all duration-200 shadow-sm"
+        >
+          <Filter className="h-5 w-5" />
+          <span>Filters</span>
+        </button>
+
+        {/* Spacer for desktop */}
+        <div className="hidden lg:block"></div>
+
+        {/* Cart button */}
         <button
           onClick={openCart}
           className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-full transition-all duration-200 shadow-md"
@@ -363,39 +441,24 @@ const Shop: React.FC = () => {
         </button>
       </div>
 
-      {/* Mobile Filter Toggle */}
-      <div className="lg:hidden mb-6">
-        <button
-          onClick={toggleFilters}
-          className="flex items-center justify-center w-full px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
-        >
-          <span className="mr-2">
-            {filterActive ? "Hide Filters" : "Show Filters"}
-          </span>
-          <svg
-            className={`w-5 h-5 transform transition-transform duration-200 ${
-              filterActive ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
-      </div>
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {filterActive && (
+          <motion.div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            variants={overlayVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            onClick={() => setFilterActive(false)}
+          />
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        {/* Sidebar - hidden on mobile unless toggled */}
+        {/* Desktop Sidebar */}
         <motion.div
-          className={`lg:col-span-3 ${
-            filterActive ? "block" : "hidden lg:block"
-          }`}
+          className="hidden lg:block lg:col-span-3"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
@@ -410,6 +473,41 @@ const Shop: React.FC = () => {
             />
           </div>
         </motion.div>
+
+        {/* Mobile Sidebar */}
+        <AnimatePresence>
+          {filterActive && (
+            <motion.div
+              id="mobile-sidebar"
+              className="fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-white z-50 lg:hidden overflow-y-auto"
+              variants={sidebarVariants}
+              initial="closed"
+              animate="open"
+              exit="closed"
+            >
+              {/* Mobile Sidebar Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
+                <h2 className="text-xl font-semibold text-gray-800">
+                  Filters
+                </h2>
+                <button
+                  onClick={() => setFilterActive(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <X className="h-5 w-5 text-gray-600" />
+                </button>
+              </div>
+
+              {/* Mobile Sidebar Content */}
+              <div className="p-6">
+                <SideBar
+                  onFilterChange={handleFilterChange}
+                  activeFilters={filters}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Product Grid */}
         <div className="lg:col-span-9">
@@ -432,7 +530,7 @@ const Shop: React.FC = () => {
               {filters.categories && filters.categories.length > 0 && (
                 <button
                   onClick={() => handleFilterChange("categories", [])}
-                  className="text-[12px] font-bold py-2 px-4  bg-rose-100 rounded-full text-rose-500 hover:text-rose-700 transition-colors"
+                  className="text-[12px] font-bold py-2 px-4 bg-rose-100 rounded-full text-rose-500 hover:text-rose-700 transition-colors"
                 >
                   Clear Category Filter
                 </button>
@@ -440,7 +538,7 @@ const Shop: React.FC = () => {
               {filters.sort && (
                 <button
                   onClick={() => handleFilterChange("sort", "")}
-                  className="text-[12px] font-bold py-2 px-4   bg-rose-100 rounded-full text-rose-500 hover:text-rose-700 transition-colors"
+                  className="text-[12px] font-bold py-2 px-4 bg-rose-100 rounded-full text-rose-500 hover:text-rose-700 transition-colors"
                 >
                   Clear Sort
                 </button>
@@ -473,10 +571,9 @@ const Shop: React.FC = () => {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              key={filters.sort} // This key change triggers re-render animation on sort change
+              key={filters.sort}
               transition={{
                 ...containerVariants.visible.transition,
-                // Add special animation properties when sorting
                 ...(isSorting && {
                   type: "spring",
                   stiffness: 200,
@@ -488,11 +585,9 @@ const Shop: React.FC = () => {
                 <motion.div
                   key={`product-${product.product_id || index}`}
                   variants={itemVariants}
-                  // Only apply layout animation when sorting
                   {...(isSorting && { layout: true })}
                   transition={{
                     ...itemVariants.visible.transition,
-                    // Add special transitions for individual items when sorting
                     ...(isSorting && {
                       type: "spring",
                       stiffness: 300,
