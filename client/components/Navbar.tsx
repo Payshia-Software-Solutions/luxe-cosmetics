@@ -1,16 +1,19 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { User, Sun, Moon, Search, ShoppingBag } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { useCart } from './CartContext';
-import Cart from './Cart';
-import Link from 'next/link';
+import React, { useState, useEffect, useCallback, JSX } from "react";
+import { User, Sun, Moon, Search, ShoppingBag, Menu } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useCart } from "./CartContext";
+import Cart from "./Cart";
+import MobileNavbar from "./MobileNavbar";
+import Link from "next/link";
 
-export default function Navbar() {
+export default function Navbar(): JSX.Element {
   const { theme, setTheme, systemTheme } = useTheme();
   const { getCartCount, toggleCart } = useCart();
   const [showCart, setShowCart] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const [showTopBar, setShowTopBar] = useState(true);
@@ -22,7 +25,7 @@ export default function Navbar() {
   // Throttled scroll handler for better performance
   const handleScroll = useCallback(() => {
     const scrollY = window.scrollY;
-    
+
     if (scrollY > 50) {
       setShowTopBar(false);
     } else {
@@ -33,7 +36,7 @@ export default function Navbar() {
 
   useEffect(() => {
     let ticking = false;
-    
+
     const throttledHandleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
@@ -44,9 +47,9 @@ export default function Navbar() {
       }
     };
 
-    window.addEventListener('scroll', throttledHandleScroll, { passive: true });
+    window.addEventListener("scroll", throttledHandleScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', throttledHandleScroll);
+      window.removeEventListener("scroll", throttledHandleScroll);
     };
   }, [handleScroll]);
 
@@ -55,19 +58,48 @@ export default function Navbar() {
     setShowCart(!showCart);
   };
 
-  const currentTheme = mounted ? (theme === 'system' ? systemTheme : theme) : 'light';
+  const handleMobileMenuToggle = (): void => {
+    if (isToggling) return; // Prevent multiple rapid clicks
+
+    setIsToggling(true);
+    setShowMobileMenu(!showMobileMenu);
+
+    // Reset toggle state after animation completes
+    setTimeout(() => {
+      setIsToggling(false);
+    }, 300);
+  };
+
+  const closeMobileMenu = (): void => {
+    if (isToggling) return; // Prevent closing during animation
+
+    setIsToggling(true);
+    setShowMobileMenu(false);
+
+    setTimeout(() => {
+      setIsToggling(false);
+    }, 300);
+  };
+
+  const currentTheme = mounted
+    ? theme === "system"
+      ? systemTheme
+      : theme
+    : "light";
 
   return (
     <>
       {/* Top Bar with better transition handling */}
-      <div 
+      <div
         className={`bg-black text-white text-center py-2 text-sm transition-all duration-300 ease-in-out transform ${
-          showTopBar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+          showTopBar
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-full opacity-0"
         }`}
-        style={{ 
-          position: showTopBar ? 'static' : 'absolute',
+        style={{
+          position: showTopBar ? "static" : "absolute",
           zIndex: 40,
-          width: '100%'
+          width: "100%",
         }}
       >
         <p>Free shipping on orders over $50! Limited time offer.</p>
@@ -76,15 +108,28 @@ export default function Navbar() {
       {/* Navbar with dynamic top positioning */}
       <nav
         className={`fixed w-full bg-white dark:bg-[#1e1e1e] z-50 transition-all duration-300 ease-in-out ${
-          scrolling ? 'shadow-lg' : 'shadow-none'
+          scrolling ? "shadow-lg" : "shadow-none"
         }`}
         style={{
-          top: showTopBar ? '40px' : '0px' // Adjust based on top bar height
+          top: showTopBar ? "40px" : "0px", // Adjust based on top bar height
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            
+            {/* Mobile Menu Button */}
+            {/* <div className="md:hidden flex items-center">
+              <button
+                onClick={handleMobileMenuToggle}
+                className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ${
+                  isToggling ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isToggling}
+                aria-label="Toggle mobile menu"
+              >
+                <Menu className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+              </button>
+            </div> */}
+
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/">
@@ -94,20 +139,29 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Navigation Links */}
+            {/* Navigation Links - Hidden on mobile */}
             <div className="hidden md:flex space-x-6 ml-10">
-              <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors">
+              <Link
+                href="/about"
+                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors"
+              >
                 About Us
               </Link>
-              <Link href="/shop" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors">
+              <Link
+                href="/shop"
+                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors"
+              >
                 Shop
               </Link>
-              <Link href="/contactus" className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors">
+              <Link
+                href="/contactus"
+                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors"
+              >
                 Contact Us
               </Link>
             </div>
 
-            {/* Search Bar */}
+            {/* Search Bar - Hidden on mobile */}
             <div className="hidden md:block">
               <div className="relative">
                 <input
@@ -120,29 +174,31 @@ export default function Navbar() {
             </div>
 
             {/* Icons */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 md:space-x-4">
               {/* Theme Switch */}
               <button
-                onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
+                onClick={() =>
+                  setTheme(currentTheme === "dark" ? "light" : "dark")
+                }
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 aria-label="Toggle theme"
               >
-                {currentTheme === 'dark' ? (
+                {currentTheme === "dark" ? (
                   <Sun className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                 ) : (
                   <Moon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                 )}
               </button>
 
-              {/* User Icon */}
-              <button 
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              {/* User Icon - Hidden on mobile */}
+              <button
+                className="hidden md:flex p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 aria-label="User account"
               >
                 <User className="h-6 w-6 text-gray-600 dark:text-gray-300" />
               </button>
 
-              {/* Integrated Cart Button */}
+              {/* Cart Button */}
               <button
                 onClick={handleCartToggle}
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center gap-2 text-gray-700 hover:text-pink-600 dark:text-gray-300 dark:hover:text-pink-500"
@@ -158,14 +214,33 @@ export default function Navbar() {
                 </span>
                 <span className="hidden md:inline">Cart</span>
               </button>
-            </div>
 
+              <div className="md:hidden flex items-center">
+                <button
+                  onClick={handleMobileMenuToggle}
+                  className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ${
+                    isToggling ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  disabled={isToggling}
+                  aria-label="Toggle mobile menu"
+                >
+                  <Menu className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
 
       {/* Spacer to prevent content from being hidden under fixed navbar */}
-      <div className={`transition-all duration-300 ${showTopBar ? 'h-24' : 'h-16'}`}></div>
+      <div
+        className={`transition-all duration-300 ${
+          showTopBar ? "h-24" : "h-16"
+        }`}
+      ></div>
+
+      {/* Mobile Navigation Menu */}
+      <MobileNavbar isOpen={showMobileMenu} onClose={closeMobileMenu} />
 
       {/* Cart Modal */}
       {showCart && <Cart onClose={() => setShowCart(false)} />}

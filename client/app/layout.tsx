@@ -46,7 +46,7 @@ export default function RootLayout({
           {mounted && (
             <div className="min-h-screen">
               <Navbar />
-              <main className="pt-16">
+              <main className="">
                 {" "}
                {children}
               </main>
