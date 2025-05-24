@@ -106,7 +106,7 @@ export default function FeaturedProducts() {
     return (
       <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
             Featured Products
           </h2>
           <div className="py-12 flex justify-center items-center">
@@ -121,7 +121,7 @@ export default function FeaturedProducts() {
     return (
       <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
             Featured Products
           </h2>
           <div className="py-12 text-center text-red-600 dark:text-red-400">
@@ -133,10 +133,10 @@ export default function FeaturedProducts() {
   }
 
   return (
-    <section className="py-8 lg:p-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
+    <section className="py-4 lg:p-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white ">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white ">
             Featured Products
           </h2>
           {/* <button
@@ -152,7 +152,7 @@ export default function FeaturedProducts() {
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={5}
-            slidesPerView={1.5}
+            slidesPerView={1.2}
             breakpoints={{
               640: { slidesPerView: 2.5 },
               1024: { slidesPerView: 3.5, spaceBetween: 15 },
@@ -169,7 +169,7 @@ export default function FeaturedProducts() {
             className="my-8"
           >
             {products.map((product) => (
-              <SwiperSlide className="mb-" key={product.product_id}>
+              <SwiperSlide className="my-6" key={product.product_id}>
                 <FeaturedProductCard
                   product={product}
                   onAddToCart={handleAddToCart}
