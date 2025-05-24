@@ -155,12 +155,12 @@ const FeaturedProductCard: React.FC<ProductCardProps> = ({
             </div>
 
             {/* Rating - fixed height */}
-            {/* <div className="flex items-center mb-2 sm:mb-2 flex-shrink-0">
+            <div className="flex items-center mb-2 sm:mb-2 flex-shrink-0">
               <Star className="text-yellow-400 fill-current flex-shrink-0" />
               <span className="ml-1 text-sm sm:text-sm text-gray-600 dark:text-gray-300 truncate">
                 {parseFloat(product.rating).toFixed(1)} ({product.review})
               </span>
-            </div> */}
+            </div>
 
             {/* Badges - fixed height with overflow handling */}
             <BadgeContainer
