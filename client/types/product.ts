@@ -81,6 +81,7 @@ export interface ProductCategoryViewProps {
   categoryName: string;
   searchTerm?: string;
   initialData?: any;
+  toggleBgColor: number
 }
 
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, Heart, Eye, Clock, Flame,  Zap } from "lucide-react";
+import { Star, Heart, Eye, Clock, Flame, Zap } from "lucide-react";
 import { TrendingProductCardProps } from "@/types/product"; // Adjust the import path as necessary
 
 const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
@@ -38,7 +38,7 @@ const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
 
   return (
     <div
-      className="group relative bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 dark:border-gray-800 hover:border-pink-200 dark:hover:border-pink-800 hover:-translate-y-2"
+      className="group relative bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 dark:border-gray-800 hover:border-pink-200 dark:hover:border-pink-800 hover:-translate-y-2 my-8"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -57,7 +57,9 @@ const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
           src={images[0]}
           alt={product.display_name}
           className={`w-full h-72 object-cover transform transition-all duration-700 ${
-            isHovering && hasMultipleImages ? "opacity-0 scale-110" : "opacity-100 scale-100"
+            isHovering && hasMultipleImages
+              ? "opacity-0 scale-110"
+              : "opacity-100 scale-100"
           } group-hover:scale-105`}
           width={1000}
           height={1000}
@@ -105,8 +107,8 @@ const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
           >
             <Heart
               className={`h-5 w-5 transition-all ${
-                isInWishlist 
-                  ? "text-pink-500 fill-pink-500 scale-110" 
+                isInWishlist
+                  ? "text-pink-500 fill-pink-500 scale-110"
                   : "text-gray-600 group-hover/heart:text-pink-500 group-hover/heart:scale-110"
               }`}
             />
@@ -140,7 +142,7 @@ const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
           <span className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950 dark:to-purple-950 text-pink-700 dark:text-pink-300 font-medium text-xs tracking-wide border border-pink-200 dark:border-pink-800">
             {product.category}
           </span>
-          
+
           {/* Discount badge */}
           {discountPercent > 0 && (
             <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold text-xs tracking-wide shadow-lg">
@@ -213,7 +215,7 @@ const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
 
       {/* Modern hover effect overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-pink-500/0 via-purple-500/0 to-indigo-500/0 group-hover:from-pink-500/5 group-hover:via-purple-500/5 group-hover:to-indigo-500/5 rounded-3xl transition-all duration-500 pointer-events-none" />
-      
+
       {/* Subtle border glow on hover */}
       <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-gradient-to-r group-hover:from-pink-300 group-hover:via-purple-300 group-hover:to-indigo-300 transition-all duration-500 pointer-events-none" />
     </div>

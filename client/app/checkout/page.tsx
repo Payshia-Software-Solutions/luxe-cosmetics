@@ -12,7 +12,7 @@ import config from "@/config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { Address,  OrderData, ContactDetails } from "@/types/Checkout";
+import { Address, OrderData, ContactDetails } from "@/types/Checkout";
 import { CartItem } from "@/types/CartItem"; // Adjust the import path as necessary
 
 const CheckoutPage: React.FC = () => {
@@ -234,7 +234,7 @@ const CheckoutPage: React.FC = () => {
   };
 
   return (
-    <section className="pt-20 md:py-28">
+    <section className="">
       <div className="w-full container mx-auto">
         <div className="flex flex-col md:flex-row">
           {/* Left Column */}

@@ -6,6 +6,8 @@ import { useTheme } from "next-themes";
 import { useCart } from "./CartContext";
 import Cart from "./Cart";
 import MobileNavbar from "./MobileNavbar";
+import TopBar from "./TopBar";
+
 import Link from "next/link";
 import Image from "next/image"; // Add this import
 
@@ -91,20 +93,10 @@ export default function Navbar(): JSX.Element {
   return (
     <>
       {/* Top Bar with better transition handling */}
-      <div
-        className={`bg-black text-white text-center py-2 text-sm transition-all duration-300 ease-in-out transform ${
-          showTopBar
-            ? "translate-y-0 opacity-100"
-            : "-translate-y-full opacity-0"
-        }`}
-        style={{
-          position: showTopBar ? "static" : "absolute",
-          zIndex: 40,
-          width: "100%",
-        }}
-      >
-        <p>Free shipping on orders over $50! Limited time offer.</p>
-      </div>
+      <TopBar
+        showTopBar={showTopBar}
+        message="Get amaizing Discounts | Limited time offer."
+      />
 
       {/* Navbar with dynamic top positioning */}
       <nav
@@ -112,45 +104,53 @@ export default function Navbar(): JSX.Element {
           scrolling ? "shadow-lg" : "shadow-none"
         }`}
         style={{
-          top: showTopBar ? "40px" : "0px", // Adjust based on top bar height
+          top: showTopBar ? "36px" : "0px", // Adjust based on top bar height
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex-shrink-0 flex items-center">
-              <Link href="/">
-                <Image 
-                  src="/assets/content/LogoHorizontal-optimized.png"
-                  alt="Company Logo"
-                  width={96}
-                  height={32}
-                  className="w-24"
-                  priority 
-                />
-              </Link>
-            </div>
+            <div className="flex justify-center items-center">
+              {/* Logo */}
+              <div className="flex-shrink-0 flex items-center">
+                <Link href="/">
+                  <Image
+                    src="/assets/content/LogoHorizontal-optimized.png"
+                    alt="Company Logo"
+                    width={96}
+                    height={32}
+                    className="w-24"
+                    priority
+                  />
+                </Link>
+              </div>
 
-            {/* Navigation Links - Hidden on mobile */}
-            <div className="hidden md:flex space-x-6 ml-10">
-              <Link
-                href="/about"
-                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors"
-              >
-                About Us
-              </Link>
-              <Link
-                href="/shop"
-                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors"
-              >
-                Shop
-              </Link>
-              <Link
-                href="/contactus"
-                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors"
-              >
-                Contact Us
-              </Link>
+              {/* Navigation Links - Hidden on mobile */}
+              <div className="hidden md:flex space-x-6 ml-10">
+                <Link
+                  href="/"
+                  className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors"
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/about"
+                  className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors"
+                >
+                  About Us
+                </Link>
+                <Link
+                  href="/shop"
+                  className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors"
+                >
+                  Shop
+                </Link>
+                <Link
+                  href="/contact"
+                  className="text-gray-700 dark:text-gray-300 hover:text-pink-500 transition-colors"
+                >
+                  Contact Us
+                </Link>
+              </div>
             </div>
 
             {/* Search Bar - Hidden on mobile */}
@@ -172,7 +172,7 @@ export default function Navbar(): JSX.Element {
                 onClick={() =>
                   setTheme(currentTheme === "dark" ? "light" : "dark")
                 }
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
                 aria-label="Toggle theme"
               >
                 {currentTheme === "dark" ? (
@@ -184,7 +184,7 @@ export default function Navbar(): JSX.Element {
 
               {/* User Icon - Hidden on mobile */}
               <button
-                className="hidden md:flex p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="hidden md:flex p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
                 aria-label="User account"
               >
                 <User className="h-6 w-6 text-gray-600 dark:text-gray-300" />
@@ -193,7 +193,7 @@ export default function Navbar(): JSX.Element {
               {/* Cart Button */}
               <button
                 onClick={handleCartToggle}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center gap-2 text-gray-700 hover:text-pink-600 dark:text-gray-300 dark:hover:text-pink-500"
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center gap-2 text-gray-700 hover:text-pink-600 dark:text-gray-300 dark:hover:text-pink-500 cursor-pointer"
                 aria-label="Shopping cart"
               >
                 <span className="relative">

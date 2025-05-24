@@ -398,7 +398,7 @@ const Shop: React.FC = () => {
   };
 
   return (
-    <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
