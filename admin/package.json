@@ -1,30 +1,16 @@
 {
-  "name": "admin",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
   "dependencies": {
-    "lucide-react": "^0.484.0",
-    "next": "15.2.4",
-    "next-auth": "^4.24.11",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "recharts": "^2.15.1"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.2.4",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "chart.js": "^4.4.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "datatables.net-bs5": "^2.2.2",
+    "datatables.net-buttons": "^3.2.2",
+    "datatables.net-dt": "^2.2.2",
+    "jsbarcode": "^3.11.6",
+    "jsprintmanager": "^6.0.3",
+    "jszip": "^3.10.1",
+    "pdfmake": "^0.2.18",
+    "select2": "^4.1.0-rc.0",
+    "sweetalert2": "^11.10.0",
+    "tinymce": "^6.8.2"
   }
 }
