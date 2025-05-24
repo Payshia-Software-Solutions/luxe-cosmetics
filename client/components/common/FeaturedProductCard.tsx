@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, Heart, ShoppingBag } from "lucide-react";
-import {  ProductCardProps } from "@/types/product"; // Import the interfaces from your product.ts file
-import BadgeContainer from './BadgeContainer'
+import { ProductCardProps } from "@/types/product"; // Import the interfaces from your product.ts file
+import BadgeContainer from "./BadgeContainer";
 
 const FeaturedProductCard: React.FC<ProductCardProps> = ({
   product,
@@ -62,7 +62,7 @@ const FeaturedProductCard: React.FC<ProductCardProps> = ({
           {/* Fixed height image container */}
           <div className="relative w-full h-[270px] sm:h-[220px] md:h-[270px] flex-shrink-0">
             {/* Main image */}
-          
+
             <div className="relative w-full h-full overflow-hidden rounded-t-lg group">
               <Image
                 src={`${imageBasePath}${product.image_path}`}
@@ -147,24 +147,27 @@ const FeaturedProductCard: React.FC<ProductCardProps> = ({
               </p>
             </div>
 
+            {/* Badges - fixed height with overflow handling */}
+            <BadgeContainer
+              skinType={skinType}
+              benefitsArray={benefitsArray}
+              product={product}
+            />
+
             {/* Product name - fixed height with overflow handling */}
-            <div className="mb-2 flex-shrink-0">
-              <h3 className="text-base sm:text-lg md:text-lg font-bold text-gray-900 dark:text-white line-clamp-2 overflow-hidden min-h-[3rem] sm:min-h-[3rem]">
+            <div className="mb-2 flex-shrink-0 border-b pb-2">
+              <h3 className="text-base sm:text-lg md:text-lg font-bold text-gray-900 dark:text-white line-clamp-2 overflow-hidden min-h-[3rem]">
                 {product.display_name || product.product_name}
               </h3>
             </div>
 
-
             {/* Rating - fixed height */}
-            <div className="flex items-center mb-2 sm:mb-2 flex-shrink-0">
+            {/* <div className="flex items-center mb-2 sm:mb-2 flex-shrink-0">
               <Star className="text-yellow-400 fill-current flex-shrink-0" />
               <span className="ml-1 text-sm sm:text-sm text-gray-600 dark:text-gray-300 truncate">
                 {parseFloat(product.rating).toFixed(1)} ({product.review})
               </span>
-            </div>
-
-            {/* Badges - fixed height with overflow handling */}
-            <BadgeContainer skinType={skinType} benefitsArray={benefitsArray} product={product}  />
+            </div> */}
 
             {/* Price and button - pushed to bottom */}
             <div className=" pt-2 flex-shrink-0">
@@ -181,7 +184,7 @@ const FeaturedProductCard: React.FC<ProductCardProps> = ({
                   className="flex items-center justify-center gap-1 bg-pink-600 hover:bg-pink-700 text-white px-3 sm:px-3 md:px-4 py-2 sm:py-2 rounded-full text-sm sm:text-sm font-medium transition-colors whitespace-nowrap"
                 >
                   <ShoppingBag className="h-4 w-4 sm:h-4 sm:w-4 flex-shrink-0" />
-                  <span className="inline sm:inline">Add</span>
+                  <span className="inline sm:inline">Add to Cart</span>
                 </button>
               </div>
             </div>
