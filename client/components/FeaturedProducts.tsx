@@ -136,7 +136,7 @@ export default function FeaturedProducts() {
   }
 
   return (
-    <section className="py-4 lg:p-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
+    <section className="py-4 pt-12 lg:p-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <TitleHeader
           title="Featured Products"
