@@ -6,7 +6,7 @@ import ProductCard from "../common/ProductCard";
 import SideBar from "./MobSideBar";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { ShoppingBag,  X, Filter } from "lucide-react";
+import { ShoppingBag, X, Filter } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useCart } from "../CartContext"; // Import the cart context
@@ -39,7 +39,7 @@ const Shop: React.FC = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/products` 
+          `${process.env.NEXT_PUBLIC_API_URL}/products`
         );
 
         if (
@@ -89,9 +89,9 @@ const Shop: React.FC = () => {
           const categoryPromises = filters.categories.map(
             (category: string | number | boolean) =>
               axios.get(
-                `${process.env.NEXT_PUBLIC_API_URL}/products/search/category?term=${encodeURIComponent(
-                  category
-                )}`
+                `${
+                  process.env.NEXT_PUBLIC_API_URL
+                }/products/search/category?term=${encodeURIComponent(category)}`
               )
           );
 
@@ -263,14 +263,14 @@ const Shop: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      const sidebar = document.getElementById('mobile-sidebar');
-      const toggleButton = document.getElementById('mobile-filter-toggle');
-      
+      const sidebar = document.getElementById("mobile-sidebar");
+      const toggleButton = document.getElementById("mobile-filter-toggle");
+
       if (
-        filterActive && 
-        sidebar && 
-        !sidebar.contains(target) && 
-        toggleButton && 
+        filterActive &&
+        sidebar &&
+        !sidebar.contains(target) &&
+        toggleButton &&
         !toggleButton.contains(target) &&
         window.innerWidth < 1024 // Only on mobile
       ) {
@@ -278,8 +278,8 @@ const Shop: React.FC = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [filterActive]);
 
   // Close mobile sidebar on window resize to desktop
@@ -290,8 +290,8 @@ const Shop: React.FC = () => {
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Staggered animation for product cards
@@ -321,28 +321,28 @@ const Shop: React.FC = () => {
       transition: {
         type: "spring",
         stiffness: 300,
-        damping: 30
-      }
+        damping: 30,
+      },
     },
     closed: {
       x: "-100%",
       transition: {
         type: "spring",
         stiffness: 300,
-        damping: 30
-      }
-    }
+        damping: 30,
+      },
+    },
   };
 
   const overlayVariants = {
     open: {
       opacity: 1,
-      transition: { duration: 0.2 }
+      transition: { duration: 0.2 },
     },
     closed: {
       opacity: 0,
-      transition: { duration: 0.2 }
-    }
+      transition: { duration: 0.2 },
+    },
   };
 
   // Sort indicator component
@@ -407,7 +407,7 @@ const Shop: React.FC = () => {
         className="mb-12 text-center"
       >
         <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl mb-4">
-          <span className="block">Discover Your</span>
+          <span className="block dark:text-gray-400">Discover Your</span>
           <span className="block text-rose-500">Perfect Beauty</span>
         </h1>
         <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
@@ -417,7 +417,7 @@ const Shop: React.FC = () => {
       </motion.div>
 
       {/* Top Bar with Cart and Mobile Filter Toggle */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 ">
         {/* Mobile Filter Toggle Button */}
         <button
           id="mobile-filter-toggle"
@@ -463,8 +463,8 @@ const Shop: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="bg-white p-6 rounded-lg shadow-md sticky top-24">
-            <h2 className="text-xl font-semibold mb-6 text-gray-800">
+          <div className="bg-white dark:bg-[#161313] p-6 rounded-lg shadow-md sticky top-24">
+            <h2 className="text-xl font-semibold mb-6 text-gray-800 dark:text-gray-50">
               Filters
             </h2>
             <SideBar
@@ -487,9 +487,7 @@ const Shop: React.FC = () => {
             >
               {/* Mobile Sidebar Header */}
               <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
-                <h2 className="text-xl font-semibold text-gray-800">
-                  Filters
-                </h2>
+                <h2 className="text-xl font-semibold text-gray-800">Filters</h2>
                 <button
                   onClick={() => setFilterActive(false)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
