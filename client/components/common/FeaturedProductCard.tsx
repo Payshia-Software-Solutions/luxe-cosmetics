@@ -147,13 +147,6 @@ const FeaturedProductCard: React.FC<ProductCardProps> = ({
               </p>
             </div>
 
-            {/* Badges - fixed height with overflow handling */}
-            <BadgeContainer
-              skinType={skinType}
-              benefitsArray={benefitsArray}
-              product={product}
-            />
-
             {/* Product name - fixed height with overflow handling */}
             <div className="mb-2 flex-shrink-0 border-b pb-2">
               <h3 className="text-base sm:text-lg md:text-lg font-bold text-gray-900 dark:text-white line-clamp-2 overflow-hidden min-h-[3rem]">
@@ -168,6 +161,13 @@ const FeaturedProductCard: React.FC<ProductCardProps> = ({
                 {parseFloat(product.rating).toFixed(1)} ({product.review})
               </span>
             </div> */}
+
+            {/* Badges - fixed height with overflow handling */}
+            <BadgeContainer
+              skinType={skinType}
+              benefitsArray={benefitsArray}
+              product={product}
+            />
 
             {/* Price and button - pushed to bottom */}
             <div className=" pt-2 flex-shrink-0">
