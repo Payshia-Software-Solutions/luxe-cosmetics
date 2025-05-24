@@ -7,6 +7,7 @@ import Link from "next/link";
 interface Slide {
   id: number;
   image: string;
+  mini_image: string;
   title: string;
   titleAccent: string;
   subtitle: string;
@@ -17,12 +18,25 @@ interface Slide {
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640); // Tailwind 'sm' breakpoint
+    };
+
+    handleResize(); // check on mount
+    window.addEventListener("resize", handleResize); // update on resize
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const slides: Slide[] = [
     {
       id: 1,
       image:
         "http://content-provider.parisbeauty.lk/web-banners/ordinary-banner.webp",
+      mini_image:
+        "https://www.essentials.lk/cdn/shop/files/The_Ordinary_1080_X_1080_20e68f19-0cc9-4cad-9dbb-c956e5aded8f.jpg?v=1746685161&width=600",
       title: "Discover Your",
       titleAccent: "Natural Beauty",
       subtitle:
@@ -35,6 +49,8 @@ export default function Hero() {
       id: 2,
       image:
         "https://www.essentials.lk/cdn/shop/files/CeraVe_1920_X_680_Banner_cbafa554-699f-40e6-b3a2-15ec348f88e0.jpg?v=1746685296&width=1800",
+      mini_image:
+        "https://www.essentials.lk/cdn/shop/files/CeraVe_1080_X_1080_Banner_87dfa8de-b2b3-4326-a4df-bfcc8df14263.jpg?v=1746685297&width=600",
       title: "Luxury",
       titleAccent: "Skincare Collection",
       subtitle:
@@ -47,6 +63,8 @@ export default function Hero() {
       id: 3,
       image:
         "https://www.essentials.lk/cdn/shop/files/Outlet_1920_X_680_8a3f4fd7-f816-4223-a06b-8c7faa501e72.jpg?v=1742915125&width=1800",
+      mini_image:
+        "https://www.essentials.lk/cdn/shop/files/Outlet_1080_X_1080_fbc6c218-0ad5-4562-960d-8cd5444bb08e.jpg?v=1742915125&width=600",
       title: "Professional",
       titleAccent: "Makeup Line",
       subtitle:
@@ -94,9 +112,12 @@ export default function Hero() {
               ? "opacity-100 pointer-events-auto"
               : "opacity-0 pointer-events-none"
           }`}
-          style={{ backgroundImage: `url("${slide.image}")` }}
+          style={{
+            backgroundImage: `url("${
+              isMobile ? slide.mini_image : slide.image
+            }")`,
+          }}
         >
-          {/* Full-slide clickable link */}
           <Link
             href={slide.link}
             className="w-full h-full block cursor-pointer"
