@@ -156,7 +156,7 @@ export default function FeaturedProducts() {
             breakpoints={{
               640: { slidesPerView: 2.5 },
               1024: { slidesPerView: 3.5, spaceBetween: 15 },
-              1280: { slidesPerView: 4.5, spaceBetween: 20 },
+              1280: { slidesPerView: 3.5, spaceBetween: 20 },
             }}
             navigation={false}
             pagination={false}
