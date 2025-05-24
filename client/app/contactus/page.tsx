@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axios from 'axios';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import axios from "axios";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 interface FormData {
   full_name: string;
@@ -13,23 +13,27 @@ interface FormData {
 }
 
 interface StatusMessage {
-  type: 'success' | 'error';
+  type: "success" | "error";
   text: string;
 }
 
 function ContactUsPage() {
   const [formData, setFormData] = useState<FormData>({
-    full_name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
+    full_name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
   });
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(null);
+  const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(
+    null
+  );
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -41,34 +45,43 @@ function ContactUsPage() {
 
     // Basic validation
     if (!formData.full_name || !formData.email || !formData.message) {
-      setStatusMessage({ type: 'error', text: 'Please fill all required fields.' });
+      setStatusMessage({
+        type: "error",
+        text: "Please fill all required fields.",
+      });
       return;
     }
 
     try {
       setLoading(true);
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/contact-us`, formData); 
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/contact-us`,
+        formData
+      );
 
       if (response.status === 201) {
-        setStatusMessage({ type: 'success', text: 'Message sent successfully!' });
+        setStatusMessage({
+          type: "success",
+          text: "Message sent successfully!",
+        });
         setFormData({
-          full_name: '',
-          email: '',
-          phone: '',
-          subject: '',
-          message: '',
+          full_name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
         });
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response?.data?.error) {
         setStatusMessage({
-          type: 'error',
-          text: error.response.data.error
+          type: "error",
+          text: error.response.data.error,
         });
       } else {
         setStatusMessage({
-          type: 'error',
-          text: 'Something went wrong. Please try again.'
+          type: "error",
+          text: "Something went wrong. Please try again.",
         });
       }
     } finally {
@@ -76,16 +89,18 @@ function ContactUsPage() {
     }
   };
 
-
   return (
     <section className="py-16 bg-[#fff0e9] dark:bg-[#1e1e1e] transition-colors">
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto shadow-lg rounded-lg overflow-hidden mt-6 mb-6 bg-[#fff0e9]">
         {/* Left Column */}
         <div className="bg-pink-600 text-white p-8 md:p-12 md:w-1/2">
-          <h2 className="text-3xl md:text-4xl font-bold mb-2">Let&#39;s chat.</h2>
-          <h3 className="text-3xl md:text-4xl font-bold mb-4">Tell me about your project.</h3>
+          <h2 className="text-3xl md:text-4xl font-bold mb-2">
+            Let&#39;s chat.
+          </h2>
+          <h3 className="text-3xl md:text-4xl font-bold mb-4">
+            Tell me about your project.
+          </h3>
           <p className="mb-8">Let&#39;s create something together</p>
-
 
           <div className="space-y-6">
             <div className="bg-white text-[#302d2e] rounded-md p-4 flex items-center">
@@ -102,7 +117,9 @@ function ContactUsPage() {
                 <div>
                   <p className="font-medium">Our Head Office,</p>
                   <p className="font-medium">parisbeauty (PVT) LTD.</p>
-                  <p>135, West Tower, World Trade Center, Colombo 01, Sri Lanka</p>
+                  <p>
+                    135, West Tower, World Trade Center, Colombo 01, Sri Lanka
+                  </p>
                 </div>
               </div>
             </div>
@@ -111,7 +128,9 @@ function ContactUsPage() {
                 <MapPin className="mr-3 mt-1 flex-shrink-0" />
                 <div>
                   <p className="font-medium">Operation Branch,</p>
-                  <p>135, West Tower, World Trade Center, Colombo 01, Sri Lanka</p>
+                  <p>
+                    135, West Tower, World Trade Center, Colombo 01, Sri Lanka
+                  </p>
                 </div>
               </div>
             </div>
@@ -120,7 +139,9 @@ function ContactUsPage() {
 
         {/* Right Column - Contact Form */}
         <div className="bg-white p-8 md:p-12 md:w-1/2">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900">Send us a message</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-900">
+            Send us a message
+          </h2>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <input
@@ -176,13 +197,16 @@ function ContactUsPage() {
               disabled={loading}
               className="w-full bg-pink-600 text-white py-3 px-6 rounded-md hover:bg-pink-400 transition-colors"
             >
-              {loading ? 'Sending...' : 'Send message'}
+              {loading ? "Sending..." : "Send message"}
             </button>
 
             {statusMessage && (
               <p
-                className={`text-sm mt-3 ${statusMessage.type === 'success' ? 'text-green-600' : 'text-red-600'
-                  }`}
+                className={`text-sm mt-3 ${
+                  statusMessage.type === "success"
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
               >
                 {statusMessage.text}
               </p>

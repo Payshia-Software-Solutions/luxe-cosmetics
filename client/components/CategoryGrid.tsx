@@ -72,7 +72,7 @@ export default function ProductCategoryView({
   const isInWishlist = (productId: number) => wishlist.includes(productId);
 
   return (
-    <section className="py-16 bg-white dark:bg-[#1e1e1e] transition-colors">
+    <section className="py-16 dark:bg-[#161313] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 mb-8">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b-2 pb-2">
