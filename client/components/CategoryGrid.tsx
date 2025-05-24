@@ -2,11 +2,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ProductCard from "@/components/common/ProductCard"; // Import your ProductCard component
+
 import { Product, ProductCategoryViewProps } from "@/types/product"; // Import the Product interface
+import CollectionHeader from "@/components/CollectionHeader";
 
 export default function ProductCategoryView({
   searchTerm = "serum",
   initialData = null,
+  toggleBgColor = 0,
 }: ProductCategoryViewProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -72,12 +75,19 @@ export default function ProductCategoryView({
   const isInWishlist = (productId: number) => wishlist.includes(productId);
 
   return (
-    <section className="py-16 dark:bg-[#161313] transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      className={`py-16 transition-colors ${
+        toggleBgColor
+          ? "bg-[#fff0e9] dark:bg-[#1e1e1e]"
+          : "bg-white dark:bg-[#161313]"
+      }`}
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 mb-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b-2 pb-2">
-            {searchTerm.charAt(0).toUpperCase() + searchTerm.slice(1)}
-          </h2>
+          <CollectionHeader
+            title={searchTerm.charAt(0).toUpperCase() + searchTerm.slice(1)}
+            description=""
+          />
         </div>
 
         {loading ? (

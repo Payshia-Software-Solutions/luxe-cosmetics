@@ -24,7 +24,21 @@ export default function Home() {
       <FeaturedProducts />
       <BrandGrid />
       <TrendingProducts />
-      <CategoryGrid categoryName={""} />
+      <CategoryGrid
+        categoryName={"Eyes"}
+        searchTerm={"Eyes"}
+        toggleBgColor={0}
+      />
+      <CategoryGrid
+        categoryName={"Skincare"}
+        searchTerm={"Skincare"}
+        toggleBgColor={1}
+      />
+      <CategoryGrid
+        categoryName={"Moisturizers"}
+        searchTerm={"Moisturizers"}
+        toggleBgColor={0}
+      />
       <CTA />
     </div>
   );

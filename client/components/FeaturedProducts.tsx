@@ -12,6 +12,7 @@ import "swiper/css/pagination";
 import "react-toastify/dist/ReactToastify.css";
 
 import FeaturedProductCard from "./common/FeaturedProductCard";
+import TitleHeader from "@/components/TitleHeader";
 import { useCart } from "./CartContext";
 import { Product } from "@/types/product"; // Adjust the import path as necessary
 
@@ -105,10 +106,11 @@ export default function FeaturedProducts() {
   if (loading) {
     return (
       <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
-            Featured Products
-          </h2>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <TitleHeader
+            title="Featured Products"
+            description="Shop premium cosmetics at Paris Beauty. Explore top skincare and makeup products from trusted beauty brands."
+          />
           <div className="py-12 flex justify-center items-center">
             <div className="animate-pulse text-lg">Loading products...</div>
           </div>
@@ -120,10 +122,11 @@ export default function FeaturedProducts() {
   if (error) {
     return (
       <section className="py-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
-            Featured Products
-          </h2>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <TitleHeader
+            title="Featured Products"
+            description="Shop premium cosmetics at Paris Beauty. Explore top skincare and makeup products from trusted beauty brands."
+          />
           <div className="py-12 text-center text-red-600 dark:text-red-400">
             {error}
           </div>
@@ -134,11 +137,12 @@ export default function FeaturedProducts() {
 
   return (
     <section className="py-4 lg:p-16 dark:bg-[#1e1e1e] bg-[#fff0e9] transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <TitleHeader
+          title="Featured Products"
+          description="Shop premium cosmetics at Paris Beauty. Explore top skincare and makeup products from trusted beauty brands."
+        />
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white ">
-            Featured Products
-          </h2>
           {/* <button
             onClick={openCart}
             className="flex items-center text-sm md:text-xl gap-2 bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full"
@@ -156,7 +160,7 @@ export default function FeaturedProducts() {
             breakpoints={{
               640: { slidesPerView: 2.5 },
               1024: { slidesPerView: 3.5, spaceBetween: 15 },
-              1280: { slidesPerView: 3.5, spaceBetween: 20 },
+              1280: { slidesPerView: 4.5, spaceBetween: 20 },
             }}
             navigation={false}
             pagination={false}

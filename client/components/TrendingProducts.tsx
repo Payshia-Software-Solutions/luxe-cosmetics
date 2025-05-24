@@ -9,6 +9,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 import TrendingProductCard from "./common/TrendingProductCard";
+import TitleHeader from "@/components/TitleHeader";
 import { Product } from "@/types/product";
 
 export default function TrendingProducts() {
@@ -58,7 +59,7 @@ export default function TrendingProducts() {
   if (loading) {
     return (
       <section className="py-8 bg-[#fff0e9] dark:bg-[#1e1e1e] transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 mb-8">
             <Sparkles className="h-8 w-8 text-pink-600" />
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
@@ -83,12 +84,13 @@ export default function TrendingProducts() {
   if (error) {
     return (
       <section className="py-16 bg-[#fff0e9] dark:bg-[#1e1e1e] transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 mb-8">
             <Sparkles className="h-8 w-8 text-pink-600" />
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-              Trending Now
-            </h2>
+            <TitleHeader
+              title="Trending Products"
+              description="Discover what's hot at Paris Beauty. Shop trending cosmetics and beauty must-haves loved by our customers."
+            />
           </div>
 
           <div className="flex items-center justify-center py-12">
@@ -112,12 +114,13 @@ export default function TrendingProducts() {
   if (products.length === 0) {
     return (
       <section className="py-16 bg-[#fff0e9] dark:bg-[#1e1e1e] transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 mb-8">
             <Sparkles className="h-8 w-8 text-pink-600" />
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-              Trending Now
-            </h2>
+            <TitleHeader
+              title="Trending Products"
+              description="Discover what's hot at Paris Beauty. Shop trending cosmetics and beauty must-haves loved by our customers."
+            />
           </div>
 
           <div className="flex items-center justify-center py-12">
@@ -132,13 +135,11 @@ export default function TrendingProducts() {
 
   return (
     <section className="py-16 bg-[#fff0e9] dark:bg-[#1e1e1e] transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2 ">
-          <Sparkles className="h-8 w-8 text-pink-600" />
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-            Trending Now
-          </h2>
-        </div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <TitleHeader
+          title="Trending Products"
+          description="Discover what's hot at Paris Beauty. Shop trending cosmetics and beauty must-haves loved by our customers."
+        />
 
         <Swiper
           modules={[Autoplay, Navigation]}
