@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, Heart, ShoppingBag } from "lucide-react";
 import {  ProductCardProps } from "@/types/product"; // Import the interfaces from your product.ts file
+import BadgeContainer from './BadgeContainer'
 
 const FeaturedProductCard: React.FC<ProductCardProps> = ({
   product,
@@ -57,9 +58,9 @@ const FeaturedProductCard: React.FC<ProductCardProps> = ({
     >
       <Link href={`/products/${product.slug}`} className="h-full block">
         {/* Updated card with fixed height for uniformity */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col h-[450px] sm:h-[380px] md:h-[400px]">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col ">
           {/* Fixed height image container */}
-          <div className="relative w-full h-[200px] sm:h-[180px] md:h-[200px] flex-shrink-0">
+          <div className="relative w-full h-[270px] sm:h-[220px] md:h-[270px] flex-shrink-0">
             {/* Main image */}
           
             <div className="relative w-full h-full overflow-hidden rounded-t-lg group">
@@ -147,44 +148,29 @@ const FeaturedProductCard: React.FC<ProductCardProps> = ({
             </div>
 
             {/* Product name - fixed height with overflow handling */}
-            <div className="h-12 sm:h-7 mb-2 flex-shrink-0">
-              <h3 className="text-base sm:text-base md:text-lg font-medium text-gray-900 dark:text-white line-clamp-2 sm:line-clamp-1 overflow-hidden">
+            <div className="mb-2 flex-shrink-0">
+              <h3 className="text-base sm:text-lg md:text-lg font-bold text-gray-900 dark:text-white line-clamp-2 overflow-hidden min-h-[3rem] sm:min-h-[3rem]">
                 {product.display_name || product.product_name}
               </h3>
             </div>
 
+
             {/* Rating - fixed height */}
-            <div className="flex items-center mb-2 sm:mb-2 h-5 sm:h-5 flex-shrink-0">
-              <Star className="h-4 w-4 sm:h-4 sm:w-4 text-yellow-400 fill-current flex-shrink-0" />
+            <div className="flex items-center mb-2 sm:mb-2 flex-shrink-0">
+              <Star className="text-yellow-400 fill-current flex-shrink-0" />
               <span className="ml-1 text-sm sm:text-sm text-gray-600 dark:text-gray-300 truncate">
                 {parseFloat(product.rating).toFixed(1)} ({product.review})
               </span>
             </div>
 
             {/* Badges - fixed height with overflow handling */}
-            <div className="flex flex-wrap gap-1 mb-3 sm:mb-2 h-12 sm:h-6 overflow-hidden flex-shrink-0">
-              <span className="px-2 py-1 text-xs sm:text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full whitespace-nowrap">
-                {skinType}
-              </span>
-
-              {benefitsArray.length > 0 && (
-                <span className="px-2 py-1 text-xs sm:text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full whitespace-nowrap">
-                  {benefitsArray[0]}
-                </span>
-              )}
-
-              {product.measurement && (
-                <span className="px-2 py-1 text-xs sm:text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full whitespace-nowrap">
-                  {product.measurement}
-                </span>
-              )}
-            </div>
+            <BadgeContainer skinType={skinType} benefitsArray={benefitsArray} product={product}  />
 
             {/* Price and button - pushed to bottom */}
-            <div className="mt-auto pt-2 flex-shrink-0">
+            <div className=" pt-2 flex-shrink-0">
               <div className="flex items-center justify-between">
                 <span className="text-lg sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white">
-                  ${product.selling_price.toFixed(2)}
+                  LKR {product.selling_price.toFixed(2)}
                 </span>
 
                 <button
