@@ -1,11 +1,13 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import ProductCard from '@/components/common/ProductCard'; // Import your ProductCard component
-import { Product, ProductCategoryViewProps } from '@/types/product'; // Import the Product interface
+"use client";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import ProductCard from "@/components/common/ProductCard"; // Import your ProductCard component
+import { Product, ProductCategoryViewProps } from "@/types/product"; // Import the Product interface
 
-
-export default function ProductCategoryView({ searchTerm = 'serum', initialData = null }: ProductCategoryViewProps) {
+export default function ProductCategoryView({
+  searchTerm = "serum",
+  initialData = null,
+}: ProductCategoryViewProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,17 +26,23 @@ export default function ProductCategoryView({ searchTerm = 'serum', initialData 
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/search/category?term=${searchTerm}`); //         
-        
-        if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/products/search/category?term=${searchTerm}`
+        ); //
+
+        if (
+          response.data &&
+          response.data.success &&
+          Array.isArray(response.data.data)
+        ) {
           setProducts(response.data.data);
         } else {
           setProducts([]);
         }
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Failed to load products. Please try again later.');
+        console.error("Error fetching products:", err);
+        setError("Failed to load products. Please try again later.");
         setLoading(false);
       }
     };
@@ -51,9 +59,9 @@ export default function ProductCategoryView({ searchTerm = 'serum', initialData 
 
   // Handle toggling product in wishlist
   const handleToggleWishlist = (productId: number) => {
-    setWishlist(prevWishlist => {
+    setWishlist((prevWishlist) => {
       if (prevWishlist.includes(productId)) {
-        return prevWishlist.filter(id => id !== productId);
+        return prevWishlist.filter((id) => id !== productId);
       } else {
         return [...prevWishlist, productId];
       }
@@ -68,7 +76,7 @@ export default function ProductCategoryView({ searchTerm = 'serum', initialData 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 mb-8">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white border-b-2 pb-2">
-            {searchTerm}
+            {searchTerm.charAt(0).toUpperCase() + searchTerm.slice(1)}
           </h2>
         </div>
 
@@ -82,10 +90,12 @@ export default function ProductCategoryView({ searchTerm = 'serum', initialData 
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-10">
-            <p className="text-gray-600 dark:text-gray-300">No products found for &quot;{searchTerm}&quot;.</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              No products found for &quot;{searchTerm}&quot;.
+            </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map((product) => (
               <div key={product.product_id} className="h-full">
                 <ProductCard
