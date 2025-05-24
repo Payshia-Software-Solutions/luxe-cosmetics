@@ -479,15 +479,17 @@ const Shop: React.FC = () => {
           {filterActive && (
             <motion.div
               id="mobile-sidebar"
-              className="fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-white z-50 lg:hidden overflow-y-auto"
+              className="fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-white dark:bg-[#161313] z-50 lg:hidden overflow-y-auto"
               variants={sidebarVariants}
               initial="closed"
               animate="open"
               exit="closed"
             >
               {/* Mobile Sidebar Header */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
-                <h2 className="text-xl font-semibold text-gray-800">Filters</h2>
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white dark:bg-[#161313] sticky top-0 z-10">
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-50">
+                  Filters
+                </h2>
                 <button
                   onClick={() => setFilterActive(false)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
