@@ -2,15 +2,15 @@
 // config/database.php
 
 $host = 'localhost';
-$db   = 'paris_beauty';
+$db   = 'parisbea_paris_beauty';
 $user = 'root';
 $pass = "";
 $charset = 'utf8mb4';
 
-$host = '91.204.209.19';
-$db   = 'parisbea_paris_beauty';
-$user = 'parisbea';
-$pass = "3eylgtdd!KN6";
+// $host = '91.204.209.19';
+// $db   = 'parisbea_paris_beauty';
+// $user = 'parisbea';
+// $pass = "3eylgtdd!KN6";
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

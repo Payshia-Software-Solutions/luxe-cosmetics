@@ -9,6 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+echo "CORS headers set successfully.\n";
+
 ini_set('memory_limit', '256M');
 
 // Report all PHP errors
@@ -56,7 +58,9 @@ $PromoCodeRoutes = require './routes/PromoCodeRoutes.php';
 $SubscriptionRoutes = require './routes/SubscriptionRoutes.php';
 $ContactRoutes = require './routes/ContactRoutes.php';
 $ModeRoutes = require './routes/ModeRoutes.php';
-$PromoCodeProductRoutes = require './routes/PromoCodeProductRoutes.php';
+$PromoCodeProductRoutes = require './routes/PromoCodeProductRoutes.php';   //MetaFieldProductRoutes
+// $MetaFieldsRoutes = require './routes/MetaFieldsRoutes.php'; 
+// $MetaFieldProductRoutes = require './routes/MetaFieldProductRoutes.php'; 
 
 // Combine all routes
 $routes = array_merge(
@@ -96,7 +100,9 @@ $routes = array_merge(
     $SubscriptionRoutes,
     $ContactRoutes,
     $ModeRoutes,
-    $PromoCodeProductRoutes
+    $PromoCodeProductRoutes,
+    
+    
 );
 
 // Define the home route with trailing slash
