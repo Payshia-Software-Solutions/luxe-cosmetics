@@ -56,8 +56,16 @@ $PromoCodeRoutes = require './routes/PromoCodeRoutes.php';
 $SubscriptionRoutes = require './routes/SubscriptionRoutes.php';
 $ContactRoutes = require './routes/ContactRoutes.php';
 $ModeRoutes = require './routes/ModeRoutes.php';
+<<<<<<< Updated upstream
 $PromoCodeProductRoutes = require './routes/PromoCodeProductRoutes.php';
 $ContactRoutes = require './routes/ContactUsRoutes.php';
+=======
+$PromoCodeProductRoutes = require './routes/PromoCodeProductRoutes.php';   //MetaFieldProductRoutes
+$CollectionRoutes = require './routes/CollectionRoutes.php';
+$CollectionProductRoutes = require './routes/CollectionProductRoutes.php';
+// $MetaFieldsRoutes = require './routes/MetaFieldsRoutes.php'; 
+// $MetaFieldProductRoutes = require './routes/MetaFieldProductRoutes.php'; 
+>>>>>>> Stashed changes
 
 // Combine all routes
 $routes = array_merge(
@@ -98,7 +106,13 @@ $routes = array_merge(
     $ContactRoutes,
     $ModeRoutes,
     $PromoCodeProductRoutes,
+<<<<<<< Updated upstream
     $ContactRoutes
+=======
+    $CollectionRoutes,
+    $CollectionProductRoutes,
+
+>>>>>>> Stashed changes
 
 );
 

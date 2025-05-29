@@ -55,14 +55,16 @@ class PaymentController
         $data = json_decode(file_get_contents("php://input"), true);
 
         // Check if all necessary POST parameters are set
-        if (!isset(
+        if (
+            !isset(
             $data['totalAmount'],
             $data['paymentMethod'],
             $data['contactDetails'],
             $data['shippingAddress'],
             $data['sameAddressStatus'],
             $data['items'],
-        )) {
+        )
+        ) {
             // If any required field is missing, return an error
             echo json_encode(['error' => 'Missing required parameters']);
             exit;
@@ -229,7 +231,7 @@ class PaymentController
                     'table_id' => 0,
                     'invoice_number' => $invoiceNumber,
                     'cost_price' => $item['cost_price'] ?? $item['price'], // Adjust if cost differs
-                    'printed_status' =>  0,
+                    'printed_status' => 0,
                     'item_remark' => $item['remark'] ?? null,
                 ];
             }
@@ -282,10 +284,10 @@ class PaymentController
         return strtoupper(
             md5(
                 $this->merchant_id .
-                    $invoiceNumber .
-                    $totalAmount .
-                    $currency .
-                    strtoupper(md5($this->merchant_secret))
+                $invoiceNumber .
+                $totalAmount .
+                $currency .
+                strtoupper(md5($this->merchant_secret))
             )
         );
     }
@@ -295,14 +297,16 @@ class PaymentController
         $data = json_decode(file_get_contents("php://input"), true);
 
         // Check if all necessary POST parameters are set
-        if (!isset(
+        if (
+            !isset(
             $data['totalAmount'],
             $data['paymentMethod'],
             $data['contactDetails'],
             $data['shippingAddress'],
             $data['sameAddressStatus'],
             $data['items'],
-        )) {
+        )
+        ) {
             // If any required field is missing, return an error
             echo json_encode(['error' => 'Missing required parameters']);
             exit;
@@ -466,7 +470,7 @@ class PaymentController
                     'table_id' => 0,
                     'invoice_number' => $invoiceNumber,
                     'cost_price' => $item['cost_price'] ?? $item['price'], // Adjust if cost differs
-                    'printed_status' =>  0,
+                    'printed_status' => 0,
                     'item_remark' => $item['remark'] ?? null,
                 ];
             }
@@ -586,11 +590,11 @@ class PaymentController
         $local_md5sig = strtoupper(
             md5(
                 $merchant_id .
-                    $order_id .
-                    $payhere_amount .
-                    $payhere_currency .
-                    $status_code .
-                    strtoupper(md5($this->merchant_secret))
+                $order_id .
+                $payhere_amount .
+                $payhere_currency .
+                $status_code .
+                strtoupper(md5($this->merchant_secret))
             )
         );
 
@@ -702,7 +706,7 @@ class PaymentController
                         'table_id' => 0,
                         'invoice_number' => $invoiceNumber,
                         'cost_price' => $item['cost_price'], // Adjust if cost differs
-                        'printed_status' =>  0,
+                        'printed_status' => 0,
                         'item_remark' => null,
                     ];
                 }
